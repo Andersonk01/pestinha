@@ -7,13 +7,22 @@ Acessibilidade na primeira vez. Os retângulos saem em pixels físicos (pontos x
 
 import os
 import re
+import threading
 
-from ._comum import atalho_pynput, rodar
+from ._comum import rodar
+from PySide6.QtWidgets import QApplication
+from quickmachotkey import quickHotKey, mask
+from quickmachotkey.constants import (
+    kVK_ANSI_B,
+    controlKey,
+    cmdKey,
+    shiftKey,
+)
 
 LARGURA_MINIMA, ALTURA_MINIMA = 120, 60
 OPCOES_NA_TELA = (1 << 0) | (1 << 4)        # OnScreenOnly | ExcludeDesktopElements
 JANELA_NULA = 0
-
+_hotkey = None
 
 def _quartz():
     """Carrega o módulo Quartz (pyobjc); devolve None se não estiver instalado."""
@@ -141,7 +150,25 @@ def sem_foco_nativo(janela_id):
 
 
 def iniciar_atalho(callback):
-    """Desativa temporariamente o atalho global no macOS para evitar um crash
-    (SIGTRAP) associado ao pynput e ao acesso ao HIToolbox fora da thread principal.
-    """
-    return False
+    """Registra Ctrl+Alt+Shift+B pelo QuickMacHotKey; devolve True se conseguiu."""
+    global _hotkey
+
+    if _hotkey is not None:
+        return True
+
+    if threading.current_thread() is not threading.main_thread() or (
+        app := QApplication.instance()
+    ) is None:
+        return False
+
+    try:
+        _hotkey = quickHotKey(
+            virtualKey=kVK_ANSI_B,
+            modifierMask=mask(controlKey, cmdKey, shiftKey),
+        )(lambda: callback())
+
+        app.aboutToQuit.connect(_hotkey.unregister)
+        return True
+
+    except Exception:
+        return False
