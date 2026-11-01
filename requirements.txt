@@ -1,0 +1,11 @@
+# Para rodar o Pestinha (Python 3.11 ou mais novo). Windows 10/11, macOS ou Linux (X11).
+PySide6==6.11.0
+psutil==7.2.2
+numpy==2.4.6
+# atalho global Ctrl+Alt+Shift+B no macOS e no Linux (no Windows ele usa a API do sistema)
+pynput>=1.7.7; sys_platform != "win32"
+# Windows: leitura das janelas e do teclado
+pywin32==305; sys_platform == "win32"
+# macOS: janelas (Quartz) e programa em primeiro plano (AppKit)
+pyobjc-framework-Quartz>=11; sys_platform == "darwin"
+pyobjc-framework-Cocoa>=11; sys_platform == "darwin"
