@@ -141,5 +141,7 @@ def sem_foco_nativo(janela_id):
 
 
 def iniciar_atalho(callback):
-    """Registra Ctrl+Alt+Shift+B pelo pynput; devolve True se conseguiu."""
-    return atalho_pynput(callback)
+    """Desativa temporariamente o atalho global no macOS para evitar um crash
+    (SIGTRAP) associado ao pynput e ao acesso ao HIToolbox fora da thread principal.
+    """
+    return False
