@@ -201,8 +201,7 @@ O código do Pestinha é software livre, sob a [GNU General Public License v3.0 
 (GPL-3.0-or-later). Você pode usar, estudar, modificar e redistribuir, mas toda versão distribuída,
 modificada ou não, precisa continuar aberta e sob a mesma licença.
 
-As imagens e os textos de `assets/` não estão cobertos por esta licença até que os direitos de cada
-arquivo sejam confirmados.
+As imagens e os textos de `assets/` não estão cobertos por esta licença
 
 ## Limitações conhecidas
 
