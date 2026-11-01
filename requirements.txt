@@ -6,6 +6,7 @@ numpy>=2.4.6
 pynput>=1.7.7; sys_platform != "win32"
 # Windows: leitura das janelas e do teclado
 pywin32>=305; sys_platform == "win32"
-# macOS: janelas (Quartz) e programa em primeiro plano (AppKit)
+# macOS: janelas (Quartz), programa em primeiro plano (AppKit) e atalho teclado
 pyobjc-framework-Quartz>=11; sys_platform == "darwin"
 pyobjc-framework-Cocoa>=11; sys_platform == "darwin"
+quickmachotkey==2025.7.28
