@@ -191,6 +191,19 @@ def test_barra_de_tarefas_nao_esconde_monitor_abaixo():
     assert not b.grounded and b.vy > 0
 
 
+def test_desalinhamento_vertical_nao_prende_na_divisao():
+    areas = [(0, 0, 1920, 1032), (1920, 5, 3840, 1037)]
+    monitores = [(0, 0, 1920, 1080), (1920, 5, 3840, 1085)]
+    b = Body(1922.0, 987.0, 60.0, 45.0)
+    b.angle = 0.2                         # inclinação mínima já aumentava a caixa de colisão
+    b.vx = 180.0
+
+    b.step(1 / 60, areas[1], [], areas, monitores)
+
+    assert 1922 < b.x < 1930              # não foi encaixado em left + largura (≈ 1980)
+    assert b.vx > 0
+
+
 def test_passeio_pode_escolher_destino_no_monitor_ao_lado(monkeypatch):
     body = Body(930.0, 700.0, 60.0, 45.0)
     state = SimpleNamespace(tone=SimpleNamespace(drive=lambda: 1.0), protest_stage=0)

@@ -43,16 +43,16 @@ def _tem_vizinha(areas, atual, lado, coordenada, extensao, monitores=None):
         a_left, a_top, a_right, a_bottom = area
         if lado == "left":
             encosta = abs(m_right - left) <= 1
-            cabe = a_top + extensao <= coordenada <= a_bottom - extensao
+            cabe = a_top <= coordenada < a_bottom
         elif lado == "right":
             encosta = abs(m_left - right) <= 1
-            cabe = a_top + extensao <= coordenada <= a_bottom - extensao
+            cabe = a_top <= coordenada < a_bottom
         elif lado == "top":
             encosta = abs(m_bottom - top) <= 1
-            cabe = a_left + extensao <= coordenada <= a_right - extensao
+            cabe = a_left <= coordenada < a_right
         else:
             encosta = abs(m_top - bottom) <= 1
-            cabe = a_left + extensao <= coordenada <= a_right - extensao
+            cabe = a_left <= coordenada < a_right
         if encosta and cabe:
             return True
     return False
