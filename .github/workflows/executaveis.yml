@@ -28,10 +28,12 @@ jobs:
       - name: Montar a pasta de entrega (executável + assets + pets)
         shell: bash
         run: |
-          PASTA="executáveis/${RUNNER_OS,,}"
+          # Bash 3.2 no macOS não suporta a expansão ${VAR,,}.
+          SISTEMA="$(printf '%s' "$RUNNER_OS" | tr '[:upper:]' '[:lower:]')"
+          PASTA="executáveis/$SISTEMA"
           mkdir -p "$PASTA"
-          cp dist/Pestinha* "$PASTA/"
-          cp -r assets pets "$PASTA/"
+          cp -R dist/Pestinha* "$PASTA/"
+          cp -R assets pets "$PASTA/"
       - uses: actions/upload-artifact@v4
         with:
           name: pestinha-${{ runner.os }}

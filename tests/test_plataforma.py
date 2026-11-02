@@ -8,19 +8,36 @@ testado numa máquina de verdade (ver README).
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from pestinha import plataforma  # noqa: E402
-from pestinha.plataforma import linux, macos, windows  # noqa: E402
+from pestinha.plataforma import linux  # noqa: E402
 from pestinha.sense.senses import detect_activity  # noqa: E402
+
+# Backends nativos só podem ser importados no seu próprio sistema.
+# Isso evita carregar pywin32 no macOS e QuickMacHotKey no Windows/Linux.
+macos = None
+windows = None
+if sys.platform == "darwin":
+    from pestinha.plataforma import macos  # noqa: E402
+elif sys.platform == "win32":
+    from pestinha.plataforma import windows  # noqa: E402
 
 FUNCOES = ["ocioso_segundos", "processo_ativo", "retangulo_ativo", "tela_cheia",
            "janelas_visiveis", "sem_foco_nativo", "iniciar_atalho"]
 
 
 def test_cada_sistema_expoe_as_mesmas_funcoes():
-    for modulo in (windows, macos, linux):
+    modulos = [linux]
+    if macos is not None:
+        modulos.append(macos)
+    if windows is not None:
+        modulos.append(windows)
+
+    for modulo in modulos:
         for nome in FUNCOES:
             assert callable(getattr(modulo, nome)), (modulo.__name__, nome)
 
@@ -58,8 +75,10 @@ def test_wmctrl_nao_guarda_titulo():
     assert "Senha" not in repr(achadas)
 
 
+@pytest.mark.skipif(sys.platform != "darwin", reason="Requer backend macOS")
 def test_ioreg_converte_nanossegundos():
     texto = '  | |   "HIDIdleTime" = 2500000000\n  | |   "outra" = 5'
+    assert macos is not None
     assert macos.ocioso_do_ioreg(texto) == 2.5
     assert macos.ocioso_do_ioreg("sem a chave") == 0.0
 
@@ -69,16 +88,19 @@ def _janela(pid, x, y, w, h, camada=0, janela_id=1):
             "kCGWindowBounds": {"X": x, "Y": y, "Width": w, "Height": h}}
 
 
+@pytest.mark.skipif(sys.platform != "darwin", reason="Requer backend macOS")
 def test_quartz_janela_da_frente_e_do_programa_ativo():
     janelas = [
         _janela(10, 0, 0, 30, 20, janela_id=1),          # menu, pequeno: ignorado
         _janela(20, 100, 100, 800, 600, janela_id=2),    # programa ativo, a de cima
         _janela(20, 50, 50, 900, 700, janela_id=3),
     ]
+    assert macos is not None
     assert macos.janela_da_frente(janelas, pid=20) == (100, 100, 900, 700)
     assert macos.janela_da_frente(janelas, pid=99) is None
 
 
+@pytest.mark.skipif(sys.platform != "darwin", reason="Requer backend macOS")
 def test_quartz_ignora_camadas_e_o_proprio_pet():
     janelas = [
         _janela(7, 0, 0, 1440, 900, janela_id=1),                 # o próprio pet
@@ -86,11 +108,14 @@ def test_quartz_ignora_camadas_e_o_proprio_pet():
         _janela(9, 200, 150, 600, 400, janela_id=3),
     ]
     janelas[1]["kCGWindowLayer"] = 25
+    assert macos is not None
     achadas = macos.janelas_de(janelas, meu_pid=7, excluir={99}, escala=2.0)
     assert achadas == [(3, (400.0, 300.0, 1600.0, 1100.0), False)]
 
 
+@pytest.mark.skipif(sys.platform != "darwin", reason="Requer backend macOS")
 def test_tela_cheia_no_mac_compara_com_a_tela():
+    assert macos is not None
     assert macos._cobre((0, 0, 1440, 900), (0, 0, 1440, 900)) is True
     assert macos._cobre((100, 0, 1440, 900), (0, 0, 1440, 900)) is False
 
