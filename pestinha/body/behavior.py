@@ -25,6 +25,7 @@ MAX_CLIMB = 800             # px: altura máxima de um pulo até uma janela
 CURIOUS_DISTANCE = 170      # o curioso chega perto do cursor, mas não em cima
 DELIVER_TIMEOUT = 14.0
 CARRY_GAP = 14
+CROSS_SCREEN_CHANCE = 0.3  # em parte dos passeios, visita deliberadamente um monitor lateral
 
 
 class Behavior:
@@ -297,21 +298,31 @@ class Behavior:
             return left + 80 if x - left < right - x else right - 80   # cantinho mais perto
         if self.emotion == "observando" and random.random() < 1.0 - self.tone.drive():
             return None                         # às vezes só fica olhando mesmo
+        vizinhos = self._lateral_neighbors(left, right)
+        if vizinhos and random.random() < CROSS_SCREEN_CHANCE:
+            v_left, v_right = random.choice(vizinhos)
+            return random.uniform(v_left + 100, v_right - 100)
         reach = 120 + 450 * self.tone.drive()
         return min(walk_right - 80, max(walk_left + 80, x + random.uniform(-reach, reach)))
 
     def _movement_limits(self, left, right):
         """Amplia o passeio para monitores encostados à esquerda ou à direita do atual."""
         walk_left, walk_right = left, right
+        for a_left, a_right in self._lateral_neighbors(left, right):
+            walk_left = min(walk_left, a_left)
+            walk_right = max(walk_right, a_right)
+        return walk_left, walk_right
+
+    def _lateral_neighbors(self, left, right):
+        """Faixas horizontais dos monitores laterais alcançáveis na altura atual do pet."""
+        vizinhos = []
         y = self.body.y
         for a_left, a_top, a_right, a_bottom in self.screen_areas:
             if not (a_top <= y < a_bottom):
                 continue
-            if abs(a_right - left) <= 1:
-                walk_left = min(walk_left, a_left)
-            if abs(a_left - right) <= 1:
-                walk_right = max(walk_right, a_right)
-        return walk_left, walk_right
+            if abs(a_right - left) <= 1 or abs(a_left - right) <= 1:
+                vizinhos.append((a_left, a_right))
+        return vizinhos
 
     def _jump_to_window(self, platforms):
         """Pulo balístico até a barra de título de uma janela próxima."""

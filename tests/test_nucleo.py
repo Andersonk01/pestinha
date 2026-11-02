@@ -201,6 +201,19 @@ def test_passeio_pode_escolher_destino_no_monitor_ao_lado(monkeypatch):
     assert behavior._pick_target((0, 0), 0, 1000) > 1000
 
 
+def test_passeio_decide_visitar_monitor_vizinho(monkeypatch):
+    body = Body(300.0, 700.0, 60.0, 45.0)
+    state = SimpleNamespace(tone=SimpleNamespace(drive=lambda: 1.0), protest_stage=0)
+    behavior = Behavior(body, state, None)
+    behavior.emotion = "feliz"
+    behavior.screen_areas = [(0, 0, 1000, 800), (1000, 0, 2000, 800)]
+    monkeypatch.setattr("pestinha.body.behavior.random.random", lambda: 0.0)
+    monkeypatch.setattr("pestinha.body.behavior.random.choice", lambda itens: itens[0])
+    monkeypatch.setattr("pestinha.body.behavior.random.uniform", lambda a, b: (a + b) / 2)
+
+    assert behavior._pick_target((0, 0), 0, 1000) == 1500
+
+
 # ---------------- rede neural ----------------
 
 def test_rede_responde_a_estimulo_e_relaxa():
