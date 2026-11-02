@@ -19,6 +19,7 @@ Pastas de memória não criam personagens: os pets selecionáveis vêm só de pe
 import hashlib
 import json
 import os
+import re
 import time
 from dataclasses import dataclass, field
 
@@ -188,13 +189,22 @@ def _migrar_pet(paths, pet_id, lista, resultado):
 
 
 def restaurar(paths, pet_id):
-    """Desfaz a migração de um pet: devolve os originais do legado para memory/ e tira o marcador."""
+    """Desfaz a migração: restaura a geração mais recente e preserva backups anteriores no legado."""
     pasta = paths.legado / pet_id
     devolvidos = []
     if pasta.exists():
-        for arquivo in sorted(pasta.iterdir()):
-            alvo = paths.memory / arquivo.name
-            if arquivo.is_file() and not alvo.exists():
+        recentes = {}
+        for arquivo in pasta.iterdir():
+            if not arquivo.is_file():
+                continue
+            match = re.match(r"^(.*)\.(\d+)(\.[^.]+)$", arquivo.name)
+            nome = f"{match.group(1)}{match.group(3)}" if match else arquivo.name
+            geracao = int(match.group(2)) if match else 1
+            if nome not in recentes or geracao > recentes[nome][0]:
+                recentes[nome] = (geracao, arquivo)
+        for nome, (_geracao, arquivo) in sorted(recentes.items()):
+            alvo = paths.memory / nome
+            if not alvo.exists():
                 os.replace(arquivo, alvo)
                 devolvidos.append(alvo.name)
     marcador = paths.pet(pet_id).marcador
