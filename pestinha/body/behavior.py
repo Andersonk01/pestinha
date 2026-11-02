@@ -51,6 +51,7 @@ class Behavior:
         self.fuga_alvo = None       # x para onde ele está fugindo do cantinho (None: não está fugindo)
         self.march_dir = 1
         self.next_glance = 0.0
+        self.screen_areas = []      # áreas de todos os monitores, atualizadas pelo app
 
     def look_at(self, x, y, now):
         """Olha para um ponto da tela por alguns segundos."""
@@ -285,18 +286,32 @@ class Behavior:
     def _pick_target(self, cursor, left, right):
         """Escolhe um ponto de destino no chão: perto da bolinha se ele está brincando, senão ao acaso."""
         x = self.body.x
+        walk_left, walk_right = self._movement_limits(left, right)
         if self.toy and self.emotion in ("feliz", "curioso", "contente") and random.random() < 0.75:
             if abs(self.toy[0] - x) > 40:                  # brincando: vai atrás da bolinha
-                return min(right - 80, max(left + 80, self.toy[0]))
+                return min(walk_right - 80, max(walk_left + 80, self.toy[0]))
         if self.emotion == "curioso":
             side = 1 if x > cursor[0] else -1
-            return min(right - 80, max(left + 80, cursor[0] + side * CURIOUS_DISTANCE))
+            return min(walk_right - 80, max(walk_left + 80, cursor[0] + side * CURIOUS_DISTANCE))
         if self.canto:
             return left + 80 if x - left < right - x else right - 80   # cantinho mais perto
         if self.emotion == "observando" and random.random() < 1.0 - self.tone.drive():
             return None                         # às vezes só fica olhando mesmo
         reach = 120 + 450 * self.tone.drive()
-        return min(right - 80, max(left + 80, x + random.uniform(-reach, reach)))
+        return min(walk_right - 80, max(walk_left + 80, x + random.uniform(-reach, reach)))
+
+    def _movement_limits(self, left, right):
+        """Amplia o passeio para monitores encostados à esquerda ou à direita do atual."""
+        walk_left, walk_right = left, right
+        y = self.body.y
+        for a_left, a_top, a_right, a_bottom in self.screen_areas:
+            if not (a_top <= y < a_bottom):
+                continue
+            if abs(a_right - left) <= 1:
+                walk_left = min(walk_left, a_left)
+            if abs(a_left - right) <= 1:
+                walk_right = max(walk_right, a_right)
+        return walk_left, walk_right
 
     def _jump_to_window(self, platforms):
         """Pulo balístico até a barra de título de uma janela próxima."""

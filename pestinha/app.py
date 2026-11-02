@@ -245,8 +245,32 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
 
     # ---------------- geometria ----------------
 
+    def screen_bounds(self):
+        """Áreas úteis de todos os monitores, em coordenadas lógicas globais do Qt."""
+        return [(g.x(), g.y(), g.x() + g.width(), g.y() + g.height())
+                for g in (screen.availableGeometry() for screen in QGuiApplication.screens())]
+
+    def screen_geometries(self):
+        """Geometria física das telas, na mesma ordem de screen_bounds()."""
+        return [(g.x(), g.y(), g.x() + g.width(), g.y() + g.height())
+                for g in (screen.geometry() for screen in QGuiApplication.screens())]
+
+    def _bounds_at(self, areas, x, y):
+        """Área útil do monitor que contém o ponto, inclusive sobre barras reservadas pelo sistema."""
+        if x is not None:
+            encontrada = next((a for a in areas if a[0] <= x < a[2] and a[1] <= y < a[3]), None)
+            if encontrada is not None:
+                return encontrada
+            for area, geometria in zip(areas, self.screen_geometries()):
+                if geometria[0] <= x < geometria[2] and geometria[1] <= y < geometria[3]:
+                    return area
+        g = QGuiApplication.primaryScreen().availableGeometry()
+        return g.x(), g.y(), g.x() + g.width(), g.y() + g.height()
+
     def bounds(self):
-        """Área útil da tela principal (esquerda, topo, direita, base): onde o pet pode andar."""
+        """Área útil do monitor onde está o pet; usa a tela principal antes de ele ser criado."""
+        if hasattr(self, "pet"):
+            return self._bounds_at(self.screen_bounds(), self.pet.body.x, self.pet.body.y)
         g = QGuiApplication.primaryScreen().availableGeometry()
         return g.x(), g.y(), g.x() + g.width(), g.y() + g.height()
 
@@ -439,10 +463,13 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         if not self.pet.isVisible() or self.paused or self.wiping:
             return
 
+        areas = self.screen_bounds()
+        monitores = self.screen_geometries()
         bounds = self.bounds()
         cursor = cursor_pos()
         body = self.pet.body
-        body.step(dt, bounds, self.platforms)
+        body.step(dt, bounds, self.platforms, areas, monitores)
+        self.behavior.screen_areas = areas
         if not body.held and self.mesa.pin(body, now) == "arrancado":
             self.arrancar_notebook(now)
         speed = max(body.pop_impacts(), default=0.0)
@@ -463,7 +490,8 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         else:
             self.sad_ctl.drop_sign()
         self.protest_ctl.carry(now, self.asleep or preso)
-        self.ball.step(dt, bounds)
+        ball_bounds = self._bounds_at(areas, self.ball.body.x, self.ball.body.y)
+        self.ball.step(dt, ball_bounds, areas, monitores)
         self.revolucao.tick(
             now, dt, bounds, cursor, self.cursor_vel, self.pet.body, self.pet.isVisible(),
             revoltado=self.protest.stage == 4 and not self.asleep and not preso and self.pet.isVisible(),

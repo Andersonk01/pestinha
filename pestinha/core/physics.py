@@ -26,6 +26,38 @@ def wrap_angle(deg):
     return (deg + 180.0) % 360.0 - 180.0
 
 
+def _area_em(areas, x, y):
+    """Retângulo que contém o ponto, ou None quando ele está num vão entre monitores."""
+    return next((a for a in areas if a[0] <= x < a[2] and a[1] <= y < a[3]), None)
+
+
+def _tem_vizinha(areas, atual, lado, coordenada, extensao, monitores=None):
+    """Diz se há outro monitor encostado naquele lado e se o corpo cabe na abertura."""
+    monitores = monitores or areas
+    indice = areas.index(atual) if atual in areas else 0
+    left, top, right, bottom = monitores[indice]
+    for outro_indice, area in enumerate(areas):
+        if outro_indice == indice:
+            continue
+        m_left, m_top, m_right, m_bottom = monitores[outro_indice]
+        a_left, a_top, a_right, a_bottom = area
+        if lado == "left":
+            encosta = abs(m_right - left) <= 1
+            cabe = a_top + extensao <= coordenada <= a_bottom - extensao
+        elif lado == "right":
+            encosta = abs(m_left - right) <= 1
+            cabe = a_top + extensao <= coordenada <= a_bottom - extensao
+        elif lado == "top":
+            encosta = abs(m_bottom - top) <= 1
+            cabe = a_left + extensao <= coordenada <= a_right - extensao
+        else:
+            encosta = abs(m_top - bottom) <= 1
+            cabe = a_left + extensao <= coordenada <= a_right - extensao
+        if encosta and cabe:
+            return True
+    return False
+
+
 class Body:
     """Corpo na tela: posição, velocidade, ângulo e contato com as superfícies (chão e janelas)."""
     def __init__(self, x, y, half_w, half_h):
@@ -60,10 +92,12 @@ class Body:
         """Diz se o corpo está em pé (inclinado menos de 30 graus)."""
         return abs(wrap_angle(self.angle)) < 30.0
 
-    def step(self, dt, bounds, platforms):
+    def step(self, dt, bounds, platforms, areas=None, monitors=None):
         """
         bounds: (left, top, right, bottom) da área de trabalho.
         platforms: [(hwnd, left, right, top)] barras de título candidatas.
+        areas: áreas de todos os monitores; bordas compartilhadas viram passagens.
+        monitors: geometria física das telas, usada para reconhecer vizinhança apesar da barra de tarefas.
         """
         if self.held:
             return
@@ -88,18 +122,26 @@ class Body:
         self.x += self.vx * dt
         self.y += self.vy * dt
 
-        # paredes
-        if self.x - ex < left:
+        areas = list(areas or [bounds])
+        monitors = list(monitors or areas)
+        if bounds not in areas:                       # adaptadores/testes podem fornecer um mundo próprio
+            areas = [bounds]
+            monitors = [bounds]
+        atual = _area_em(areas, self.x, self.y) or bounds
+        left, top, right, bottom = atual
+
+        # paredes: uma borda compartilhada com outro monitor é uma passagem
+        if self.x - ex < left and not _tem_vizinha(areas, atual, "left", self.y, ey, monitors):
             self.x = left + ex
             self.impacts.append(abs(self.vx))
             self.vx = abs(self.vx) * RESTITUTION
             self.omega += self.vy * 0.15
-        elif self.x + ex > right:
+        elif self.x + ex > right and not _tem_vizinha(areas, atual, "right", self.y, ey, monitors):
             self.x = right - ex
             self.impacts.append(abs(self.vx))
             self.vx = -abs(self.vx) * RESTITUTION
             self.omega -= self.vy * 0.15
-        if self.y - ey < top:
+        if self.y - ey < top and not _tem_vizinha(areas, atual, "top", self.x, ex, monitors):
             self.y = top + ey
             self.impacts.append(abs(self.vy))
             self.vy = abs(self.vy) * RESTITUTION
@@ -114,6 +156,8 @@ class Body:
                     self.platform = None
                 else:
                     surface = plat[3]
+            elif abs(self.surface - bottom) > 4:
+                self.grounded = False                 # o monitor vizinho tem outro nível de chão
             if self.grounded:
                 self.surface = surface
                 self.y = surface - ey
@@ -132,7 +176,7 @@ class Body:
                 return
 
         # chão (acima da barra de tarefas)
-        if self.y + ey >= bottom:
+        if self.y + ey >= bottom and not _tem_vizinha(areas, atual, "bottom", self.x, ex, monitors):
             self._land(bottom, ey, None)
 
     def _land(self, surface, ey, platform):

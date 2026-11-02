@@ -7,6 +7,7 @@ Rodar (na pasta v7):  python -m pytest tests -q
 import math
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -26,6 +27,7 @@ def LIFBrain(seed=7, temperament=None):
     brain.rng = np.random.default_rng(123)
     return brain
 from pestinha.core.physics import Body  # noqa: E402
+from pestinha.body.behavior import Behavior  # noqa: E402
 
 PROFILE = {
     "emotion_tau": 1.5, "emotion_dwell": 0.6,
@@ -149,6 +151,54 @@ def test_batida_forte_na_parede_entra_em_impactos():
     impacts = b.pop_impacts()
     assert impacts and max(impacts) >= 1500
     assert b.pop_impacts() == []          # lidas uma vez só
+
+
+def test_corpo_passa_para_monitor_ao_lado():
+    areas = [(0, 0, 1000, 800), (1000, 0, 2000, 800)]
+    b = Body(930.0, 300.0, 60.0, 45.0)
+    b.vx = 800.0
+    for _ in range(8):
+        atual = areas[0] if b.x < 1000 else areas[1]
+        b.step(1 / 30, atual, [], areas)
+    assert b.x > 1000 and b.vx > 0
+
+
+def test_corpo_nao_atravessa_vao_entre_monitores():
+    areas = [(0, 0, 1000, 800), (1100, 0, 2100, 800)]
+    b = Body(930.0, 300.0, 60.0, 45.0)
+    b.vx = 800.0
+    b.step(1 / 30, areas[0], [], areas)
+    assert b.x <= 940 and b.vx < 0
+
+
+def test_corpo_cai_para_monitor_abaixo():
+    areas = [(0, 0, 1000, 800), (0, 800, 1000, 1600)]
+    b = Body(300.0, 730.0, 60.0, 45.0)
+    b.vy = 600.0
+    for _ in range(8):
+        atual = areas[0] if b.y < 800 else areas[1]
+        b.step(1 / 30, atual, [], areas)
+    assert b.y > 800 and not b.grounded
+
+
+def test_barra_de_tarefas_nao_esconde_monitor_abaixo():
+    areas = [(0, 0, 1000, 750), (0, 800, 1000, 1600)]
+    monitores = [(0, 0, 1000, 800), (0, 800, 1000, 1600)]
+    b = Body(300.0, 690.0, 60.0, 45.0)
+    b.vy = 600.0
+    b.step(1 / 30, areas[0], [], areas, monitores)
+    assert not b.grounded and b.vy > 0
+
+
+def test_passeio_pode_escolher_destino_no_monitor_ao_lado(monkeypatch):
+    body = Body(930.0, 700.0, 60.0, 45.0)
+    state = SimpleNamespace(tone=SimpleNamespace(drive=lambda: 1.0), protest_stage=0)
+    behavior = Behavior(body, state, None)
+    behavior.emotion = "feliz"
+    behavior.screen_areas = [(0, 0, 1000, 800), (1000, 0, 2000, 800)]
+    monkeypatch.setattr("pestinha.body.behavior.random.uniform", lambda _a, b: b)
+
+    assert behavior._pick_target((0, 0), 0, 1000) > 1000
 
 
 # ---------------- rede neural ----------------
