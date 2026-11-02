@@ -25,6 +25,8 @@ MAX_CLIMB = 800             # px: altura máxima de um pulo até uma janela
 CURIOUS_DISTANCE = 170      # o curioso chega perto do cursor, mas não em cima
 DELIVER_TIMEOUT = 14.0
 CARRY_GAP = 14
+CROSS_SCREEN_CHANCE = 0.3  # em parte dos passeios, visita deliberadamente um monitor lateral
+CROSS_SCREEN_SPEED = 180.0
 
 
 class Behavior:
@@ -36,6 +38,7 @@ class Behavior:
         self.mischief = mischief
         self.target_x = None
         self.next_roam = 0.0
+        self.crossing_screen = False
         self.emotion = "observando"
         self.tipped_since = None
         self.mission = None         # ("deliver", thing, x, prazo) | ("cross", x, prazo)
@@ -51,6 +54,7 @@ class Behavior:
         self.fuga_alvo = None       # x para onde ele está fugindo do cantinho (None: não está fugindo)
         self.march_dir = 1
         self.next_glance = 0.0
+        self.screen_areas = []      # áreas de todos os monitores, atualizadas pelo app
 
     def look_at(self, x, y, now):
         """Olha para um ponto da tela por alguns segundos."""
@@ -240,9 +244,12 @@ class Behavior:
         tone = self.tone
         if self.emotion in STILL:
             return
-        if now >= self.next_roam:
+        if now >= self.next_roam and not self.crossing_screen:
             self.next_roam = now + random.uniform(*prof["roam_interval"]) * tone.roam_scale()
             self.target_x = self._pick_target(cursor, left, right)
+            self.crossing_screen = bool(
+                self.target_x is not None and not (left + 80 <= self.target_x <= right - 80)
+            )
             if platforms and random.random() < tone.climb_chance() and self._jump_to_window(platforms):
                 return
             if random.random() < tone.hop_chance():
@@ -251,10 +258,14 @@ class Behavior:
                 return
 
         if self.target_x is not None:
-            if abs(body.x - self.target_x) < 12 or random.random() < tone.hesitation() * dt:
+            chegou = abs(body.x - self.target_x) < 12
+            hesitou = not self.crossing_screen and random.random() < tone.hesitation() * dt
+            if chegou or hesitou:
                 self.target_x = None            # chegou, ou hesitou no meio (curioso com sono)
+                self.crossing_screen = False
             else:
-                self._slide_to(self.target_x, tone.speed())
+                speed = max(CROSS_SCREEN_SPEED, tone.speed()) if self.crossing_screen else tone.speed()
+                self._slide_to(self.target_x, speed)
 
     def walk_to(self, x, speed):
         """Anda até x (usado por quem decide para onde ele vai, como a fuga do cantinho)."""
@@ -285,18 +296,42 @@ class Behavior:
     def _pick_target(self, cursor, left, right):
         """Escolhe um ponto de destino no chão: perto da bolinha se ele está brincando, senão ao acaso."""
         x = self.body.x
+        walk_left, walk_right = self._movement_limits(left, right)
         if self.toy and self.emotion in ("feliz", "curioso", "contente") and random.random() < 0.75:
             if abs(self.toy[0] - x) > 40:                  # brincando: vai atrás da bolinha
-                return min(right - 80, max(left + 80, self.toy[0]))
+                return min(walk_right - 80, max(walk_left + 80, self.toy[0]))
         if self.emotion == "curioso":
             side = 1 if x > cursor[0] else -1
-            return min(right - 80, max(left + 80, cursor[0] + side * CURIOUS_DISTANCE))
+            return min(walk_right - 80, max(walk_left + 80, cursor[0] + side * CURIOUS_DISTANCE))
         if self.canto:
             return left + 80 if x - left < right - x else right - 80   # cantinho mais perto
         if self.emotion == "observando" and random.random() < 1.0 - self.tone.drive():
             return None                         # às vezes só fica olhando mesmo
+        vizinhos = self._lateral_neighbors(left, right)
+        if vizinhos and random.random() < CROSS_SCREEN_CHANCE:
+            v_left, v_right = random.choice(vizinhos)
+            return random.uniform(v_left + 100, v_right - 100)
         reach = 120 + 450 * self.tone.drive()
-        return min(right - 80, max(left + 80, x + random.uniform(-reach, reach)))
+        return min(walk_right - 80, max(walk_left + 80, x + random.uniform(-reach, reach)))
+
+    def _movement_limits(self, left, right):
+        """Amplia o passeio para monitores encostados à esquerda ou à direita do atual."""
+        walk_left, walk_right = left, right
+        for a_left, a_right in self._lateral_neighbors(left, right):
+            walk_left = min(walk_left, a_left)
+            walk_right = max(walk_right, a_right)
+        return walk_left, walk_right
+
+    def _lateral_neighbors(self, left, right):
+        """Faixas horizontais dos monitores laterais alcançáveis na altura atual do pet."""
+        vizinhos = []
+        y = self.body.y
+        for a_left, a_top, a_right, a_bottom in self.screen_areas:
+            if not (a_top <= y < a_bottom):
+                continue
+            if abs(a_right - left) <= 1 or abs(a_left - right) <= 1:
+                vizinhos.append((a_left, a_right))
+        return vizinhos
 
     def _jump_to_window(self, platforms):
         """Pulo balístico até a barra de título de uma janela próxima."""

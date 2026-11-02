@@ -65,11 +65,11 @@ class Ball(QWidget):
         self.body.grounded = False
         self.body.platform = None
 
-    def step(self, dt, bounds):
+    def step(self, dt, bounds, areas=None, monitors=None):
         """Um passo de física: a bolinha rola conforme o pet anda e para aos poucos."""
         if not self.dragging:
             self.angle += self.body.vx * dt * 0.8        # rola conforme anda
-            self.body.step(dt, bounds, [])
+            self.body.step(dt, bounds, [], areas, monitors)
         self.place()
         self.update()
 

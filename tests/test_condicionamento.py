@@ -59,6 +59,19 @@ def test_desfecho_depois_da_janela_nao_conta():
     assert c.V["PRESS"] == 0.0
 
 
+def test_pausa_nao_expira_janela_de_condicionamento():
+    c = Conditioning(rate=0.5)
+    c.V["PRESS"] = 1.0
+    c.set_cue("PRESS", True, 10.0)
+    c.set_cue("PRESS", False, 10.1)
+
+    c.deslocar(60.0)
+    c.tick(70.1)                       # retomada imediata: a janela ainda está aberta
+
+    assert c.V["PRESS"] == 1.0
+    assert c.ended == [["PRESS", 70.1, False]]
+
+
 def test_persiste_entre_sessoes(tmp_path):
     path = tmp_path / "conditioning.json"
     c = Conditioning(path, rate=0.2)

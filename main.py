@@ -10,10 +10,11 @@ Dependências em requirements.txt. Pânico: Ctrl + Alt + Shift + B (desliga tudo
 """
 
 import argparse
+import shutil
 import sys
 
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QApplication, QDialog
+from PySide6.QtWidgets import QApplication, QDialog, QMessageBox
 
 from pestinha import config
 from pestinha.paths import Paths
@@ -21,6 +22,14 @@ from pestinha.settings_store import SettingsStore
 from pestinha.app import PestinhaApp
 from pestinha.ui.onboarding import Onboarding
 from pestinha.ui.ui import SettingsDialog, face_icon
+
+
+def apagar_memoria(paths):
+    """Apaga memory/ e confirma o resultado; devolve (sucesso, caminhos que falharam)."""
+    falhas = []
+    if paths.memory.exists():
+        shutil.rmtree(paths.memory, onerror=lambda _f, caminho, _e: falhas.append(str(caminho)))
+    return not falhas and not paths.memory.exists(), falhas
 
 
 def main():
@@ -45,8 +54,15 @@ def main():
         apagado = []
 
         def apagar_tudo():
-            import shutil
-            shutil.rmtree(paths.memory, ignore_errors=False, onerror=lambda *_: None)
+            sucesso, falhas = apagar_memoria(paths)
+            if not sucesso:
+                detalhe = f"\n\nArquivos que falharam: {', '.join(falhas)}" if falhas else ""
+                QMessageBox.warning(
+                    dialog, "Não foi possível apagar tudo",
+                    "Alguns dados continuam na pasta memory/. Feche programas que possam estar "
+                    f"usando esses arquivos e tente novamente.{detalhe}",
+                )
+                return
             apagado.append(True)
             dialog.reject()
 

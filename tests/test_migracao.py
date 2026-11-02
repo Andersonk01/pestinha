@@ -161,6 +161,21 @@ def test_restaurar_volta_a_estrutura_antiga(tmp_path):
     assert not paths.pet("bryan").marcador.exists()
 
 
+def test_restaurar_escolhe_a_geracao_mais_recente(tmp_path):
+    paths = Paths(root=tmp_path)
+    legado = paths.legado / "bryan"
+    legado.mkdir(parents=True)
+    (legado / "drives.json").write_text('{"versao": "antiga"}', encoding="utf-8")
+    (legado / "drives.2.json").write_text('{"versao": "atual"}', encoding="utf-8")
+
+    devolvidos = migracao.restaurar(paths, "bryan")
+
+    assert devolvidos == ["drives.json"]
+    assert json.loads((paths.memory / "drives.json").read_text(encoding="utf-8")) == {"versao": "atual"}
+    assert (legado / "drives.json").exists()       # a geração anterior continua recuperável
+    assert not (paths.memory / "drives.2.json").exists()
+
+
 def test_ids_antigos_nao_viram_personagens(tmp_path):
     paths = layout_antigo(tmp_path)
     (paths.memory / "bravo_nervous.json").write_bytes(b"{}")
