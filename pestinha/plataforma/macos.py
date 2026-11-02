@@ -15,7 +15,7 @@ from quickmachotkey import quickHotKey, mask
 from quickmachotkey.constants import (
     kVK_ANSI_B,
     controlKey,
-    cmdKey,
+    optionKey,
     shiftKey,
 )
 
@@ -164,7 +164,7 @@ def iniciar_atalho(callback):
     try:
         _hotkey = quickHotKey(
             virtualKey=kVK_ANSI_B,
-            modifierMask=mask(controlKey, cmdKey, shiftKey),
+            modifierMask=mask(controlKey, optionKey, shiftKey),
         )(lambda: callback())
 
         app.aboutToQuit.connect(_hotkey.unregister)

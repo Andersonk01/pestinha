@@ -120,6 +120,32 @@ def test_tela_cheia_no_mac_compara_com_a_tela():
     assert macos._cobre((100, 0, 1440, 900), (0, 0, 1440, 900)) is False
 
 
+@pytest.mark.skipif(sys.platform != "darwin", reason="Requer backend macOS")
+def test_atalho_do_mac_usa_control_option_shift(monkeypatch):
+    """O atalho registrado deve ser o mesmo Ctrl+Alt/Option+Shift+B mostrado na interface."""
+    assert macos is not None
+    from PySide6.QtWidgets import QApplication
+    app = QApplication.instance() or QApplication([])
+    assert app is not None
+    capturado = {}
+
+    class Atalho:
+        def unregister(self):
+            pass
+
+    def quick_hot_key(**kwargs):
+        capturado.update(kwargs)
+        return lambda _callback: Atalho()
+
+    monkeypatch.setattr(macos, "_hotkey", None)
+    monkeypatch.setattr(macos, "quickHotKey", quick_hot_key)
+    assert macos.iniciar_atalho(lambda: None) is True
+    assert capturado == {
+        "virtualKey": macos.kVK_ANSI_B,
+        "modifierMask": macos.mask(macos.controlKey, macos.optionKey, macos.shiftKey),
+    }
+
+
 def test_atividade_reconhece_nomes_de_todos_os_sistemas():
     assert detect_activity("code.exe", 0.0, 300.0) == "PROGRAMMING"        # Windows
     assert detect_activity("code", 0.0, 300.0) == "PROGRAMMING"            # Linux
