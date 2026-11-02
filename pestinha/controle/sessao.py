@@ -108,6 +108,7 @@ class SessaoMixin:
                 self.memory.deslocar(parado)                     # o tempo parado não expira episódios
                 self.castigo.deslocar(parado)                    # nem a fuga, a entrada e o cartaz
                 self.mesa.deslocar(parado)                       # nem o pedido de trabalho
+                self.conditioning.deslocar(parado)               # nem as janelas de condicionamento
                 self._pausado_em = None
             self._ultimo_think = now                             # a retomada não cobra o tempo parado
         self.festa.fogos.pausar(self.paused)

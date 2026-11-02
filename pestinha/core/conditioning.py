@@ -77,6 +77,13 @@ class Conditioning:
             self.V[cue] = min(MAX_V, max(MIN_V, v + self.rate * (lam - v)))
         self.ended = still
 
+    def deslocar(self, segundos):
+        """Desconta uma pausa dos relógios das pistas e dos episódios ainda aguardando desfecho."""
+        for info in self.active.values():
+            info["start"] += segundos
+        for ep in self.ended:
+            ep[1] += segundos
+
     def expectancy(self):
         """Força antecipada agora: V de cada cue que está ativo."""
         return {cue: self.V.get(cue, 0.0) for cue in self.active}
