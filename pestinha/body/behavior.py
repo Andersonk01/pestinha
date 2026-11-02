@@ -26,6 +26,7 @@ CURIOUS_DISTANCE = 170      # o curioso chega perto do cursor, mas não em cima
 DELIVER_TIMEOUT = 14.0
 CARRY_GAP = 14
 CROSS_SCREEN_CHANCE = 0.3  # em parte dos passeios, visita deliberadamente um monitor lateral
+CROSS_SCREEN_SPEED = 180.0
 
 
 class Behavior:
@@ -37,6 +38,7 @@ class Behavior:
         self.mischief = mischief
         self.target_x = None
         self.next_roam = 0.0
+        self.crossing_screen = False
         self.emotion = "observando"
         self.tipped_since = None
         self.mission = None         # ("deliver", thing, x, prazo) | ("cross", x, prazo)
@@ -242,9 +244,12 @@ class Behavior:
         tone = self.tone
         if self.emotion in STILL:
             return
-        if now >= self.next_roam:
+        if now >= self.next_roam and not self.crossing_screen:
             self.next_roam = now + random.uniform(*prof["roam_interval"]) * tone.roam_scale()
             self.target_x = self._pick_target(cursor, left, right)
+            self.crossing_screen = bool(
+                self.target_x is not None and not (left + 80 <= self.target_x <= right - 80)
+            )
             if platforms and random.random() < tone.climb_chance() and self._jump_to_window(platforms):
                 return
             if random.random() < tone.hop_chance():
@@ -253,10 +258,14 @@ class Behavior:
                 return
 
         if self.target_x is not None:
-            if abs(body.x - self.target_x) < 12 or random.random() < tone.hesitation() * dt:
+            chegou = abs(body.x - self.target_x) < 12
+            hesitou = not self.crossing_screen and random.random() < tone.hesitation() * dt
+            if chegou or hesitou:
                 self.target_x = None            # chegou, ou hesitou no meio (curioso com sono)
+                self.crossing_screen = False
             else:
-                self._slide_to(self.target_x, tone.speed())
+                speed = max(CROSS_SCREEN_SPEED, tone.speed()) if self.crossing_screen else tone.speed()
+                self._slide_to(self.target_x, speed)
 
     def walk_to(self, x, speed):
         """Anda até x (usado por quem decide para onde ele vai, como a fuga do cantinho)."""

@@ -27,7 +27,8 @@ def LIFBrain(seed=7, temperament=None):
     brain.rng = np.random.default_rng(123)
     return brain
 from pestinha.core.physics import Body  # noqa: E402
-from pestinha.body.behavior import Behavior  # noqa: E402
+from pestinha.body.behavior import Behavior, CROSS_SCREEN_SPEED  # noqa: E402
+from pestinha.body.pet_state import PetState  # noqa: E402
 
 PROFILE = {
     "emotion_tau": 1.5, "emotion_dwell": 0.6,
@@ -212,6 +213,27 @@ def test_passeio_decide_visitar_monitor_vizinho(monkeypatch):
     monkeypatch.setattr("pestinha.body.behavior.random.uniform", lambda a, b: (a + b) / 2)
 
     assert behavior._pick_target((0, 0), 0, 1000) == 1500
+
+
+def test_travessia_nao_hesita_nem_troca_de_destino(monkeypatch):
+    body = Body(930.0, 700.0, 60.0, 45.0)
+    body.grounded = True
+    state = PetState()
+    state.tone = SimpleNamespace(speed=lambda: 20.0, hesitation=lambda: 1.0, shake=lambda: 0.0)
+    behavior = Behavior(body, state, None)
+    behavior.target_x = 1500.0
+    behavior.crossing_screen = True
+    behavior.next_roam = 0.0
+    behavior.next_glance = 1e9
+    velocidades = []
+    monkeypatch.setattr(behavior, "_slide_to", lambda alvo, velocidade: velocidades.append((alvo, velocidade)))
+    monkeypatch.setattr("pestinha.body.behavior.random.random", lambda: 0.0)
+
+    behavior.tick(1.0, 100.0, (0, 0), (0, 0, 1000, 800), {})
+
+    assert behavior.target_x == 1500.0
+    assert behavior.crossing_screen is True
+    assert velocidades == [(1500.0, CROSS_SCREEN_SPEED)]
 
 
 # ---------------- rede neural ----------------
