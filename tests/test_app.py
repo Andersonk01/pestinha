@@ -22,6 +22,7 @@ from pestinha import config  # noqa: E402
 from pestinha.app import PestinhaApp  # noqa: E402
 from pestinha.paths import Paths  # noqa: E402
 from pestinha.settings_store import SettingsStore  # noqa: E402
+from main import apagar_memoria  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -58,6 +59,33 @@ def test_panico_fica_desligado_ao_reabrir(tmp_path):
     store = SettingsStore(paths)
     store.panic()
     assert SettingsStore(paths)["ativo"] is False
+
+
+def test_apagar_memoria_confirma_que_a_pasta_sumiu(tmp_path):
+    paths = Paths(root=tmp_path)
+    paths.memory.mkdir()
+    (paths.memory / "dado.json").write_text("{}", encoding="utf-8")
+
+    sucesso, falhas = apagar_memoria(paths)
+
+    assert sucesso is True
+    assert falhas == []
+    assert not paths.memory.exists()
+
+
+def test_apagar_memoria_informa_falha_sem_fingir_sucesso(tmp_path, monkeypatch):
+    paths = Paths(root=tmp_path)
+    paths.memory.mkdir()
+
+    def falhar(_path, onerror):
+        onerror(None, paths.memory / "bloqueado.json", None)
+
+    monkeypatch.setattr("main.shutil.rmtree", falhar)
+    sucesso, falhas = apagar_memoria(paths)
+
+    assert sucesso is False
+    assert falhas == [str(paths.memory / "bloqueado.json")]
+    assert paths.memory.exists()
 
 
 def test_modo_teste_mostra_os_paineis(buddy):
