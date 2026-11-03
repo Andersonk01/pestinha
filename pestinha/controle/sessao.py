@@ -11,7 +11,7 @@ from .. import log as log_module
 from ..log import log
 import time
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon
-from .. import config
+from .. import config, store
 from ..ui.ui import SettingsDialog
 
 
@@ -145,12 +145,9 @@ class SessaoMixin:
 
     def wipe_all_data(self):
         """Apaga a pasta memory/ inteira e fecha. Nada é gravado depois disso, nem o log."""
-        import shutil
         self.wiping = True
         log_module.desligar_arquivo()
-        falhas = []
-        if self.paths.memory.exists():
-            shutil.rmtree(self.paths.memory, onerror=lambda _f, caminho, _e: falhas.append(caminho))
+        falhas = store.apagar_pasta(self.paths.memory) if self.paths.memory.exists() else []
         if falhas or self.paths.memory.exists():
             print(f"[dados] não consegui apagar tudo: {falhas or self.paths.memory}")
         else:
