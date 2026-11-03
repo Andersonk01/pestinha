@@ -7,6 +7,8 @@ Se o arquivo não puder ser escrito, a mensagem vai só para o terminal.
 
 import datetime
 import os
+import sys
+import traceback
 from pathlib import Path
 
 MAX_BYTES = 1_000_000
@@ -42,6 +44,11 @@ def log(*parts):
         print(text)
     except UnicodeEncodeError:
         print(text.encode("ascii", "replace").decode("ascii"))
+    _gravar(text)
+
+
+def _gravar(text):
+    """Acrescenta a mensagem ao arquivo do log, se houver um."""
     if _file is None:
         return
     try:
@@ -52,3 +59,18 @@ def log(*parts):
         _trim()
     except OSError:
         pass
+
+
+def capturar_erros():
+    """Grava no log os erros não tratados: o executável não tem terminal onde eles apareceriam."""
+    anterior = sys.excepthook
+    if getattr(anterior, "_do_pestinha", False):
+        return
+
+    def gancho(tipo, valor, rastro):
+        """Registra o erro e deixa o tratamento anterior seguir normalmente."""
+        _gravar("[erro] " + "".join(traceback.format_exception(tipo, valor, rastro)).rstrip())
+        anterior(tipo, valor, rastro)
+
+    gancho._do_pestinha = True
+    sys.excepthook = gancho

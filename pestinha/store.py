@@ -58,6 +58,18 @@ def apagar_pasta(path):
     return falhas
 
 
+def pasta_gravavel(pasta):
+    """Diz se dá para criar e gravar arquivos na pasta (criando-a, se preciso)."""
+    teste = Path(pasta) / ".teste_de_gravacao"
+    try:
+        teste.parent.mkdir(parents=True, exist_ok=True)
+        teste.write_bytes(b"")
+        teste.unlink()
+    except OSError:
+        return False
+    return True
+
+
 def append_line(path, line):
     """Acrescenta uma linha no fim de um arquivo de texto (cria a pasta se preciso)."""
     path = Path(path)

@@ -14,7 +14,9 @@ from ..mathutil import clamp
 # Nomes sem ".exe" e em minúsculo: vale para Windows, macOS e Linux (ver detect_activity)
 ACTIVITY_APPS = {
     "PROGRAMMING": {"code", "visual studio code", "devenv", "pycharm64", "pycharm", "xcode",
-                    "claude", "codex"},
+                    "claude", "codex", "cursor", "windsurf", "zed", "windowsterminal", "wt",
+                    "idea64", "idea", "webstorm64", "rider64", "clion64", "goland64", "phpstorm64",
+                    "sublime_text", "notepad++"},
     "DESIGNING": {"fusion360", "fusion"},
     "GAMING": {"valorant", "cs2", "csgo"},
     "BROWSING": {"chrome", "google chrome", "chromium", "firefox", "msedge", "microsoft edge", "opera",
@@ -33,7 +35,38 @@ ACTIVITY_CHANNEL = {
     "BROWSING": "WEB",
 }
 
+_programas_extras = {}          # os de assets/comum/programas.json, por categoria (ver definir_programas)
 
+
+def _nome_do_programa(nome):
+    """Nome comparável entre sistemas: minúsculo e sem '.exe'."""
+    nome = nome.strip().lower()
+    return nome[:-4] if nome.endswith(".exe") else nome
+
+
+def definir_programas(extras):
+    """Soma à lista padrão os programas escolhidos por você; categorias desconhecidas são ignoradas."""
+    global _programas_extras
+    _programas_extras = {categoria: {_nome_do_programa(nome) for nome in nomes}
+                         for categoria, nomes in extras.items() if categoria in ACTIVITY_APPS}
+
+
+def tela_nativa(x, y, telas):
+    """A tela que contém o ponto em pixels físicos. telas: [(x, y, largura, altura, dpr)] do Qt."""
+    for tela in telas:
+        tx, ty, largura, altura, dpr = tela
+        if tx <= x < tx + largura * dpr and ty <= y < ty + altura * dpr:
+            return tela
+    return None
+
+
+def nativo_para_logico(x, y, tela):
+    """
+    Pixel físico para coordenada do Qt. No Windows, o canto de cada tela é o mesmo nos dois sistemas;
+    só a distância até esse canto é dividida pela escala daquela tela.
+    """
+    tx, ty, _largura, _altura, dpr = tela
+    return tx + (x - tx) / dpr, ty + (y - ty) / dpr
 
 
 
@@ -56,11 +89,9 @@ def detect_activity(app, idle_seconds, away_after):
     """Classifica o momento: AWAY se ficou ocioso demais; senão, a atividade do programa (ou IDLE)."""
     if idle_seconds >= away_after:
         return "AWAY"
-    nome = app.lower()
-    if nome.endswith(".exe"):
-        nome = nome[:-4]
+    nome = _nome_do_programa(app)
     for activity, apps in ACTIVITY_APPS.items():
-        if nome in apps:
+        if nome in apps or nome in _programas_extras.get(activity, ()):
             return activity
     return "IDLE"
 
