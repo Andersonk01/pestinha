@@ -10,13 +10,12 @@ Dependências em requirements.txt. Pânico: Ctrl + Alt + Shift + B (desliga tudo
 """
 
 import argparse
-import shutil
 import sys
 
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication, QDialog, QMessageBox
 
-from pestinha import config
+from pestinha import config, store
 from pestinha.paths import Paths
 from pestinha.settings_store import SettingsStore
 from pestinha.app import PestinhaApp
@@ -26,9 +25,7 @@ from pestinha.ui.ui import SettingsDialog, face_icon
 
 def apagar_memoria(paths):
     """Apaga memory/ e confirma o resultado; devolve (sucesso, caminhos que falharam)."""
-    falhas = []
-    if paths.memory.exists():
-        shutil.rmtree(paths.memory, onerror=lambda _f, caminho, _e: falhas.append(str(caminho)))
+    falhas = store.apagar_pasta(paths.memory) if paths.memory.exists() else []
     return not falhas and not paths.memory.exists(), falhas
 
 
