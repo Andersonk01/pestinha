@@ -10,7 +10,7 @@ Mixin de PestinhaApp: usa os atributos criados em PestinhaApp.__init__.
 from .. import log as log_module
 from ..log import log
 import time
-from PySide6.QtWidgets import QApplication, QSystemTrayIcon
+from PySide6.QtWidgets import QApplication, QMessageBox, QSystemTrayIcon
 from .. import config, store
 from ..ui.ui import SettingsDialog
 
@@ -37,6 +37,7 @@ class SessaoMixin:
         st.show_label = self.perms["modo_teste"] and self.perms["mostrar_emocao"]
         st.allow_drag = self.perms["arrastar"]
         st.allow_poke = self.perms["cutucar"]
+        self._atualizar_parada()
         self.update_visibility()
 
     def floats_allowed(self):
@@ -99,20 +100,25 @@ class SessaoMixin:
     def toggle_pause(self):
         """Pausa ou retoma: na pausa a rede e os sentidos param, e os prazos são empurrados para não 'vencerem' de uma vez."""
         self.paused = not self.paused
-        now = time.monotonic()
-        if self.paused:
-            self._pausado_em = now
-        else:
-            if self._pausado_em is not None:
-                parado = now - self._pausado_em
-                self.memory.deslocar(parado)                     # o tempo parado não expira episódios
-                self.castigo.deslocar(parado)                    # nem a fuga, a entrada e o cartaz
-                self.mesa.deslocar(parado)                       # nem o pedido de trabalho
-                self.conditioning.deslocar(parado)               # nem as janelas de condicionamento
-                self._pausado_em = None
-            self._ultimo_think = now                             # a retomada não cobra o tempo parado
+        self._atualizar_parada()
         self.festa.fogos.pausar(self.paused)
         self.update_visibility()
+
+    def _atualizar_parada(self):
+        """Marca quando o pet parou (pausa ou pânico) e, ao voltar, empurra os prazos pelo tempo parado."""
+        now = time.monotonic()
+        parado_agora = self.paused or not self.perms["ativo"]
+        if parado_agora:
+            if self._pausado_em is None:
+                self._pausado_em = now
+        elif self._pausado_em is not None:
+            parado = now - self._pausado_em
+            self.memory.deslocar(parado)                     # o tempo parado não expira episódios
+            self.castigo.deslocar(parado)                    # nem a fuga, a entrada e o cartaz
+            self.mesa.deslocar(parado)                       # nem o pedido de trabalho
+            self.conditioning.deslocar(parado)               # nem as janelas de condicionamento
+            self._pausado_em = None
+            self._ultimo_think = now                         # a retomada não cobra o tempo parado
 
     def menu_close(self):
         """Esconde o pet pelo menu (sem desligar)."""
@@ -131,6 +137,7 @@ class SessaoMixin:
     def panic(self):
         """Desliga tudo e grava: só volta quando você religar na tela inicial."""
         self.store.panic()
+        self._atualizar_parada()
         self.pet.cancel_interaction()
         self.clear_things()
         self.protest_ctl.drop_sign()
@@ -150,6 +157,12 @@ class SessaoMixin:
         falhas = store.apagar_pasta(self.paths.memory) if self.paths.memory.exists() else []
         if falhas or self.paths.memory.exists():
             print(f"[dados] não consegui apagar tudo: {falhas or self.paths.memory}")
+            lista = "\n".join(falhas[:5]) or str(self.paths.memory)
+            QMessageBox.warning(
+                self.settings, "Não foi possível apagar tudo",
+                f"Alguns dados continuam em {self.paths.memory}. O programa vai fechar; feche o que possa "
+                f"estar usando esses arquivos e tente de novo.\n\nArquivos que falharam:\n{lista}",
+            )
         else:
             print("[dados] tudo apagado pelo usuário")
         self.quit()
@@ -158,25 +171,19 @@ class SessaoMixin:
         """Grava o estado do pet e do app (não grava depois de 'apagar tudo')."""
         if self.wiping:
             return
-        try:
-            self.brain.save(str(self.state_file))
-        except Exception as error:
-            log(f"[app] não salvou o cérebro: {error}")
-        try:
-            self.drives.save(self.pet_paths.drives)
-        except OSError as error:
-            log(f"[app] não salvou a homeostase: {error}")
-        self.memory.save()
-        self.castigo.salvar()
-        try:
-            self.conditioning.save()
-        except OSError as error:
-            log(f"[app] não salvou o condicionamento: {error}")
-        try:
-            self.protest_ctl.save()
-            self.sad.save()
-        except OSError as error:
-            log(f"[app] não salvou o protesto: {error}")
+        for nome, gravar in (
+            ("o cérebro", lambda: self.brain.save(str(self.state_file))),
+            ("a homeostase", lambda: self.drives.save(self.pet_paths.drives)),
+            ("a memória", self.memory.save),
+            ("o cantinho", self.castigo.salvar),
+            ("o condicionamento", self.conditioning.save),
+            ("o protesto", self.protest_ctl.save),
+            ("a tristeza", self.sad.save),
+        ):
+            try:
+                gravar()
+            except Exception as error:       # uma parte com problema não impede as outras nem o fechamento
+                log(f"[app] não salvou {nome}: {error}")
         if self.perms["modo_teste"]:
             sleeping = "  (dormindo)" if self.asleep else ""
             log(f"[homeostase] {self.drives.describe()}{sleeping}")
@@ -186,19 +193,20 @@ class SessaoMixin:
                 log("[aprendizado] " + "  ".join(f"{c}->{post} {w:+.3f}" for c, post, w in learned))
 
     def quit(self):
-        """Salva tudo e fecha o programa."""
-        self.save()
-        self.mesa.fechar()
-        self.festa.fechar()
-        self.revolucao.fechar()
-        if self.wiping:
+        """Salva tudo e fecha o programa; um erro no caminho nunca impede de fechar."""
+        try:
+            self.save()
+            self.mesa.fechar()
+            self.festa.fechar()
+            self.revolucao.fechar()
+            if not self.wiping:
+                self.protest_ctl.drop_sign()
+                self.sad_ctl.drop_sign()
+                if self.perms["rotina"]:
+                    self.timeline.close()
+                self.mischief.clear()
+        except Exception as error:
+            log(f"[app] erro ao fechar: {error}")
+        finally:
             self.tray.icon.hide()
             QApplication.quit()
-            return
-        self.protest_ctl.drop_sign()
-        self.sad_ctl.drop_sign()
-        if self.perms["rotina"]:
-            self.timeline.close()
-        self.mischief.clear()
-        self.tray.icon.hide()
-        QApplication.quit()

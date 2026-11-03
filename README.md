@@ -66,12 +66,16 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Na primeira vez, um passo a passo explica o que ele vê e não vê, e depois abre a tela de permissões.
-Para pular a tela e usar as opções salvas:
+Na primeira vez, um passo a passo explica o que ele vê e não vê, e depois abre a tela de permissões. Depois
+de clicar em **Começar**, as próximas aberturas vão direto para o pet. A tela volta a aparecer se o pânico
+tiver desligado o programa. Para abrir a tela de propósito:
 
 ```bash
-python main.py --direto
+python main.py --configurar
 ```
+
+Com o programa aberto, as opções também ficam em **Configurações**, no ícone da bandeja. No Windows, é lá que
+se marca **Abrir o Pestinha ao entrar no Windows**. Só uma cópia abre por vez.
 
 ### Como interagir
 
@@ -98,8 +102,9 @@ terminal mostra as decisões.
 
 Ele roda só no seu computador e não envia nada para a internet. Lê o **nome** do programa em primeiro
 plano, o tempo sem usar teclado e mouse, a posição do cursor e a geometria das janelas. **Nunca** lê
-conteúdo nem título de janela. Tudo o que ele grava fica em `memory/` e pode ser apagado pela tela de
-configurações. Detalhes em [PRIVACIDADE.md](PRIVACIDADE.md).
+conteúdo nem título de janela. Tudo o que ele grava fica na pasta de dados e pode ser apagado pela tela de
+configurações: `memory/`, rodando pelo código, ou `%LOCALAPPDATA%\Pestinha`, no executável do Windows.
+Detalhes em [PRIVACIDADE.md](PRIVACIDADE.md).
 
 ## Personalizar
 
@@ -107,6 +112,7 @@ configurações. Detalhes em [PRIVACIDADE.md](PRIVACIDADE.md).
   Pode editar com ele aberto.
 - **Bolinhas, notebook e suas fotos:** `assets/comum/`, valem para qualquer personagem
   ([assets/LEIA-ME.txt](assets/LEIA-ME.txt)).
+- **Programas que ele reconhece:** `assets/comum/programas.json` soma programas à lista de trabalho, jogo, música etc.
 - **Personalidade:** `pets/bryan.json` (semente da rede, temperamento, pesos de brincadeira, reação ao notebook).
 - **Números do comportamento:** `pestinha/ajustes.py`, todos validados ao abrir.
 
@@ -166,8 +172,18 @@ O PyInstaller só gera o executável do sistema onde roda, por isso um Windows n
 3. O resultado fica em `build/onefile/` (`Pestinha.exe` no Windows, `Pestinha` nos outros).
 
 4. Monte a pasta de entrega: copie o executável e as pastas `assets/` e `pets/` para uma mesma pasta.
-   O programa lê o conteúdo dessas pastas ao lado do executável. A `memory/` é criada sozinha na primeira execução,
-   então não copie a sua.
+   O programa lê o conteúdo dessas pastas ao lado do executável. No Windows, a memória fica em
+   `%LOCALAPPDATA%\Pestinha`, a menos que já exista uma pasta `memory/` ao lado dele. Nos outros sistemas, a
+   `memory/` é criada sozinha na primeira execução, então não copie a sua.
+
+5. Opcional, no Windows: gere o instalador com o [Inno Setup 6](https://jrsoftware.org/isinfo.php). Ele usa o
+   executável do passo 3, instala só para o usuário atual e não pede administrador:
+
+   ```bash
+   ISCC instalador/pestinha.iss
+   ```
+
+   O resultado fica em `instalador/saida/`.
 
 #### Opção 2: pelo GitHub (os três sistemas de uma vez)
 
@@ -190,7 +206,7 @@ na tag criada), e não dentro do repositório: cada executável tem cerca de 60 
 
 #### Depois de gerar
 
-- Teste o executável numa pasta separada da sua, para não gravar na sua `memory/`.
+- Para testar sem misturar com a sua memória, crie uma pasta `memory/` vazia ao lado do executável de teste.
 - O executável não é assinado: o Windows e o macOS avisam na primeira execução. No macOS, a permissão de
   Acessibilidade é necessária para o atalho Ctrl+Alt+Shift+B; no Linux, o atalho e as janelas precisam de
   `xdotool`, `wmctrl` e `xprintidle`.
@@ -209,6 +225,7 @@ As imagens e os textos de `assets/` não estão cobertos por esta licença
   escrita e testada só nas partes de texto (ver `tests/test_plataforma.py`).
 - No macOS, o pet precisa da permissão de Acessibilidade para o atalho Ctrl+Alt+Shift+B funcionar.
 - No Linux com Wayland, o pet não enxerga janelas nem o tempo ocioso, e o atalho global não funciona.
-- Pouco testado com escala de tela acima de 100% e com vários monitores.
+- Pouco testado com escala de tela acima de 100% e com vários monitores. A tela cheia num monitor esconde o
+  pet em todos.
 - Jogos em janela sem borda podem não ser detectados como tela cheia.
 - O executável não é assinado; o Windows pode avisar na primeira execução.
