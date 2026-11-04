@@ -22,14 +22,15 @@ def test_ocioso_vira_ausente_mesmo_com_editor_aberto():
 
 
 def test_design_video_e_fatiadores_3d_sao_design():
-    for app in ("blender.exe", "Photoshop.exe", "Resolve.exe", "CapCut.exe", "bambu-studio.exe",
-                "orca-slicer.exe", "Figma"):
+    for app in ("blender.exe", "Photoshop.exe", "Adobe Photoshop", "Resolve.exe", "CapCut.exe",
+                "bambu-studio.exe", "Bambu Studio", "orca-slicer.exe", "prusa-slicer", "PrusaSlicer",
+                "ultimaker-cura", "UltiMaker Cura", "Figma"):
         assert detect_activity(app, 0.0, 300.0) == "DESIGNING", app
 
 
 def test_jogos_populares_sao_jogo():
-    for app in ("League of Legends.exe", "RobloxPlayerBeta.exe", "Minecraft.Windows.exe",
-                "FortniteClient-Win64-Shipping.exe", "r5apex.exe", "dota2"):
+    for app in ("League of Legends.exe", "RobloxPlayerBeta.exe", "Roblox", "Minecraft.Windows.exe",
+                "Minecraft", "FortniteClient-Win64-Shipping.exe", "r5apex.exe", "dota2"):
         assert detect_activity(app, 0.0, 300.0) == "GAMING", app
 
 
