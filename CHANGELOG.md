@@ -1,5 +1,18 @@
 # Histórico de versões
 
+## Estilos, o Cypher e sons
+
+- Estilo em Configurações: Original (as cores do personagem), Rosa, Cyber, Matrix e Âmbar. Vale na hora,
+  sem reabrir, e mantém os acessórios do personagem. O contorno do notebook acende na cor do estilo.
+- Efeitos de tela para personagens e estilos: chuva de código, scanlines e glitch (o Cyber usa os três,
+  nas cores da intro do Ryoku).
+- Acessórios novos: capuz e headset. A cor de um acessório pode acompanhar a do corpo (`"moldura"`...).
+- Personagem novo, o Cypher: hacker de cibersegurança, com notebook cheio de adesivos e voz digital.
+- Sons: bipes nas interações e emoções (com intervalo mínimo, para não virar sirene) e a digitação dele
+  no notebook enquanto trabalha. Tudo sintetizado por `ferramentas/gerar_sons.py`; volume baixo, médio
+  ou alto; desliga em Configurações. Toca com pw-play, paplay ou aplay no Linux, afplay no macOS e
+  winsound no Windows. Escondido, pausado ou em pânico, fica mudo.
+
 ## 0.8.0 — melhorias para o Windows
 
 ### Correções

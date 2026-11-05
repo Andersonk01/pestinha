@@ -144,6 +144,13 @@ class SettingsDialog(QDialog):
         self.pet_aviso.setWordWrap(True)
         self.pet_aviso.setVisible(not first_run)
         top_layout.addWidget(self.pet_aviso)
+
+        estilo_row = QHBoxLayout()
+        estilo_row.addWidget(QLabel("Estilo:"))
+        self.estilo_combo = self._combo(config.ESTILOS, config.ESTILO_NOMES, perms["estilo"], "estilo")
+        self.estilo_combo.setToolTip("As cores dele (e os efeitos da tela). Vale na hora.")
+        estilo_row.addWidget(self.estilo_combo, 1)
+        top_layout.addLayout(estilo_row)
         root.addWidget(top)
 
         for group_title, items in config.PERMISSION_GROUPS:
@@ -164,6 +171,12 @@ class SettingsDialog(QDialog):
             if group_title == "Travessuras":
                 self.resumo = self._asset_summary()
                 layout.addWidget(self.resumo)
+            if group_title == "Sons":
+                volume_row = QHBoxLayout()
+                volume_row.addWidget(QLabel("Volume:"))
+                self.volume_combo = self._combo(config.VOLUMES, config.VOLUME_NOMES, perms["volume"], "volume")
+                volume_row.addWidget(self.volume_combo, 1)
+                layout.addLayout(volume_row)
             if group_title == "Rotina":
                 row = QHBoxLayout()
                 self.history_label = QLabel()
@@ -271,6 +284,15 @@ class SettingsDialog(QDialog):
         self.inicio_box.blockSignals(False)
         QMessageBox.warning(self, config.APP_NOME, "O sistema não permitiu mudar essa opção.")
 
+    def _combo(self, opcoes, nomes, atual, chave):
+        """Uma lista de opções (estilo, volume) que grava a escolha na hora."""
+        combo = QComboBox()
+        for opcao in opcoes:
+            combo.addItem(nomes.get(opcao, opcao), opcao)
+        combo.setCurrentIndex(max(0, combo.findData(atual)))
+        combo.currentIndexChanged.connect(lambda _i, c=combo, k=chave: self._set(k, c.currentData()))
+        return combo
+
     def _trocar_pet(self, _indice):
         """Só grava a escolha: o pet que está na tela continua até reabrir (a memória dele é outra)."""
         self._set("pet", self.pet_combo.currentData())
@@ -288,6 +310,9 @@ class SettingsDialog(QDialog):
         for key in ("memes", "fotos", "bilhetes"):
             self.boxes[key].setEnabled(master)
         self.boxes["mostrar_emocao"].setEnabled(self.perms["modo_teste"])
+        self.boxes["digitacao"].setEnabled(self.perms["sons"])
+        if hasattr(self, "volume_combo"):
+            self.volume_combo.setEnabled(self.perms["sons"])
 
     def set_active(self, on):
         """Atualiza a caixa 'ligado' sem disparar a gravação (usado pelo pânico)."""

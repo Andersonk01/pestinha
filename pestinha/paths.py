@@ -122,6 +122,10 @@ class ConteudoPaths:
                 return base / nome
         return self.proprio / nome
 
+    def pastas(self, nome):
+        """As duas pastas `nome`, na ordem de busca: a do pet e a comum (podem não existir)."""
+        return [self.proprio / nome, self.comum / nome]
+
     @property
     def memes(self):
         """Pasta de memes por emoção (feliz/, bravo/...)."""
@@ -239,6 +243,11 @@ class Paths:
     def log(self):
         """Log do programa (sem conteúdo de janelas)."""
         return self.memory / "logs" / "pestinha.log"
+
+    @property
+    def cache_sons(self):
+        """Cópias dos sons já no volume escolhido (refeitas sozinhas se faltarem)."""
+        return self.memory / "cache" / "sons"
 
     # ----- estado de cada personagem -----
 

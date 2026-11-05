@@ -15,3 +15,4 @@ Controladores de decisão: ligam o que a rede decide à cena (sono, mesa, protes
 | `protest_ctl.py` | Liga o protesto (core/protesto.py) à cena: cartaz, estágio, repressão. |
 | `revolucao.py` | As bolinhas de papel que o pet atira no cursor quando está em revolução. |
 | `sleep.py` | Quando ele dorme, quando acorda, e o que acontece ao adormecer. |
+| `sons.py` | Quando o pet faz barulho. |

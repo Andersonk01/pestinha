@@ -12,6 +12,7 @@ from ..log import log
 import time
 from PySide6.QtWidgets import QApplication, QMessageBox, QSystemTrayIcon
 from .. import config, store
+from ..body.estilos import com_estilo
 from ..ui.ui import SettingsDialog
 
 
@@ -38,6 +39,12 @@ class SessaoMixin:
         st.allow_drag = self.perms["arrastar"]
         st.allow_poke = self.perms["cutucar"]
         self.mesa.permitir(self.perms["notebook"])
+        # estilo: vale na hora, por cima das cores do personagem; o notebook acende na cor da moldura
+        self.pet.aparencia = com_estilo(self.aparencia_base, self.perms["estilo"])
+        self.pet.update()
+        self.mesa.caderno.set_destaque(self.pet.aparencia.moldura)
+        self.voz.configurar(self.perms["sons"], self.perms["volume"])
+        self.sons.configurar(self.perms["digitacao"])
         self._atualizar_parada()
         self.update_visibility()
 
@@ -60,6 +67,7 @@ class SessaoMixin:
         if visible != self.pet.isVisible():
             self.pet.setVisible(visible)
             if not visible:
+                self.sons.silenciar()                # escondido, pânico ou tela cheia: nada de barulho
                 self.behavior.drop_carried()
                 self.pet.cancel_interaction()        # escondido ou desligado no meio do arraste
                 self.senses.set_dragging(False)
@@ -101,6 +109,8 @@ class SessaoMixin:
     def toggle_pause(self):
         """Pausa ou retoma: na pausa a rede e os sentidos param, e os prazos são empurrados para não 'vencerem' de uma vez."""
         self.paused = not self.paused
+        if self.paused:
+            self.sons.silenciar()
         self._atualizar_parada()
         self.festa.fogos.pausar(self.paused)
         self.update_visibility()
@@ -196,6 +206,7 @@ class SessaoMixin:
     def quit(self):
         """Salva tudo e fecha o programa; um erro no caminho nunca impede de fechar."""
         try:
+            self.sons.silenciar()
             self.save()
             self.mesa.fechar()
             self.festa.fechar()

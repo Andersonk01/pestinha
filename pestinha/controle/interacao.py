@@ -31,6 +31,7 @@ class InteracaoMixin:
             return
         self.sad.grievance = max(0.0, self.sad.grievance - 0.25)     # cutucar alegra um pouco
         self.last_poke = now
+        self.sons.cutucada(now)
         self.conditioning.outcome(now)
         self.senses.poke()
         self.timeline.note_interaction()
@@ -147,6 +148,7 @@ class InteracaoMixin:
         if self._congelado():
             return
         self.pet_state.mark_caress()
+        self.sons.carinho(time.monotonic())
         self.drives.touched("caress")
         self.memory.on_interaction()
         self.timeline.note_interaction()

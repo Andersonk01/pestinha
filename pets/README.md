@@ -15,7 +15,7 @@ Um pet são duas coisas com o mesmo nome:
 | `brincadeira` | Pesos de cada jeito de brincar: `bola` (chuta), `arremesso` (joga no cursor), `postit` (cola post-its). Peso 0 desliga. |
 | `temperamento` | Ganhos que multiplicam estímulos antes de chegarem aos interneurônios. Ex.: `"DISMISS->FRUSTRATION": 1.3` deixa o pet mais irritado quando você dispensa coisas. Os nomes estão em [docs/REDE_NEURAL.md](../docs/REDE_NEURAL.md). |
 | `reacao_notebook` | `"bravo"` ou `"triste"`: o que ele sente quando arrancam o notebook dele. |
-| `aparencia` | Opcional. Cores `#rrggbb` de `moldura`, `casca`, `tela`, `olho` e `brilho`, e `acessorios` com a cor de cada um: `{"oculos": "#f2f2f2", "gravata": "#b3261e"}`. Sem o campo, o visual original. |
+| `aparencia` | Opcional. Cores `#rrggbb` de `moldura`, `casca`, `tela`, `olho`, `brilho` e `codigo` (a cor da chuva de código); `acessorios` com a cor de cada um: `capuz`, `fones` (headset), `oculos` e `gravata`, por exemplo `{"capuz": "#26324a", "fones": "moldura"}`. A cor de um acessório pode ser o nome de uma parte do corpo (`"moldura"`, `"olho"`, `"brilho"`): aí ele acompanha o estilo escolhido. `efeitos`: lista com `"chuva"` (chuva de código atrás dos olhos), `"scanlines"` e `"glitch"`. Sem o campo, o visual original. O estilo das configurações troca as cores e os efeitos por cima destes; os acessórios ficam. |
 
 Campos com tipo errado são ignorados e ficam com o valor padrão (não derrubam o app).
 
@@ -31,6 +31,7 @@ Pode editar com ele aberto: ele relê os textos e procura imagens novas sozinho.
 | `recadinhos_tristes.txt` | Bilhetes que ele cola quando está triste. |
 | `cartazes.txt` | Cartazes por seção: `[reclamacao]`, `[manifestacao]`, `[greve]`, `[revolucao]`, `[acordo]`, `[desistiu]`, `[saudade]`, `[chorando]`, `[abandonado]`, `[volto]`, e no cantinho do castigo `[castigo]` e `[xingamento]`. |
 | `bolinha_tenis.png`, `bolinha_papel.png`, `notebook.png` | Opcionais: se existirem aqui, valem no lugar dos de `assets/comum/`. |
+| `sons/` | Opcional: `.wav` de 16 bits com os nomes de `assets/comum/sons/` (`bip`, `feliz`, `triste`, `bravo`, `susto`, `curioso`, `batida`, `fogos`, `liga`, `digitando_1`...). Cada um que existir aqui vale no lugar do comum; se houver algum `digitando_*` aqui, só os daqui são sorteados. |
 
 O que faltar na pasta do pet é procurado em `assets/comum/`. Se também não estiver lá, ele usa frases
 neutras (cartazes) ou simplesmente não faz aquela travessura (memes, post-its). **Nunca** usa o conteúdo
@@ -43,6 +44,12 @@ de outro pet.
   com atenção, desesperado quando dispensam as coisas dele e quase nunca triste. O panfleto que ele atira
   (`jorge/bolinha_papel.png`) é desenhado por `ferramentas/gerar_panfleto.py`. Moldura e olhos dourados
   e gravata vermelha. Memes felizes, contentes, curiosos e bravos próprios em `jorge/memes/feliz/`, `contente/`, `curioso/` e `bravo/`; as outras emoções ainda sem memes.
+
+- **Cypher** (`cypher.json`, `cypher/`): hacker de cibersegurança, de capuz e headset. Mais focado quando
+  você programa, curioso com coisa nova, irritado quando arrastam ou dispensam as coisas dele, e cola mais
+  post-its (de segurança). Visual da intro do Ryoku: ciano, chuva de código, scanlines e glitch. Notebook
+  próprio (`cypher/notebook.png`, desenhado por `ferramentas/gerar_notebook_cypher.py`) e voz digital
+  própria (`cypher/sons/`, de `ferramentas/gerar_sons.py`); a digitação vem do comum. Sem memes ainda.
 
 ## Criar outro pet
 

@@ -9,6 +9,9 @@ Aqui em assets/comum/ fica só o que é neutro, de qualquer personagem:
     bolinha_tenis.png    a bolinha que ele chuta (sem o arquivo, ele desenha uma bolinha verde).
     bolinha_papel.png    as bolinhas de papel da revolução (sem o arquivo, ele desenha).
     notebook.png         o notebook (sem o arquivo, ele desenha um notebook cinza).
+    sons/                os sons (bip, feliz, triste, bravo, susto, curioso, batida, fogos, liga e
+                         digitando_1..3), sintetizados por ferramentas/gerar_sons.py. Troque por .wav
+                         de 16 bits com o mesmo nome; o volume é o das Configurações.
     fotos/               suas fotos; só aparecem com "Trazer fotos" ligado.
 
 Cada item é procurado primeiro na pasta do pet e depois aqui. Então um personagem pode ter a

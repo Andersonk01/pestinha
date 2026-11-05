@@ -49,9 +49,11 @@ from .body.behavior import Behavior
 from .body.bolinha import Ball, load_sprite
 from .body.brincadeira import Play
 from .body.desenho_rosto import aparencia_de
+from .body.estilos import com_estilo
 from .body.pet import PetWindow, cursor_pos
 from .body.pet_state import PetState
 from .body.toy import ToyTracker, bounce_off, push_from_cursor
+from .body.voz import Voz
 from .controle.interacao import InteracaoMixin
 from .controle.remoto import ControleLocal
 from .controle.sessao import SessaoMixin
@@ -68,6 +70,7 @@ from .mind.mesa import MesaController, pull
 from .mind.mischief_ctl import MischiefController
 from .mind.protest_ctl import ProtestController
 from .mind.revolucao import RevolucaoController
+from .mind.sons import SonsController
 from .mind.sleep import SleepController
 from .paths import Paths
 from .sense import senses
@@ -144,7 +147,8 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         # ----- corpo e travessuras -----
         left, top, right, _bottom = self.bounds()
         self.pet = PetWindow(right - 220, top + 120, self.pet_state)
-        self.pet.aparencia = aparencia_de(pet_def.get("aparencia"))
+        self.aparencia_base = aparencia_de(pet_def.get("aparencia"))     # a do personagem; o estilo vem por cima
+        self.pet.aparencia = com_estilo(self.aparencia_base, self.perms["estilo"])
         self.pet.poked.connect(self.on_poke)
         self.pet.drag_started.connect(self.on_drag_started)
         self.pet.drag_ended.connect(lambda: self.senses.set_dragging(False))
@@ -181,6 +185,10 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         self.castigo = CastigoController(self, self.debugging)
         paper = load_sprite(self.conteudo.bolinha_papel)
         self.revolucao = RevolucaoController(self.behavior.play, self.debugging, sprite=paper)
+        self.voz = Voz(self.conteudo, self.paths.cache_sons)     # bipes e digitação (pets/<pet>/sons/ ou comum)
+        self.sons = SonsController(self.voz)
+        self._carinho_antes = False     # para o som tocar quando o carinho começa, não durante
+        self._dormia = False            # para o som de acordar
 
         # ----- reflexos e medições -----
         self.in_flight = False      # voando depois de um arremesso
@@ -239,6 +247,12 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
                 self.nome, f"Estou aqui. Pânico: {config.PANIC_HOTKEY_TEXT}",
                 QSystemTrayIcon.Information, 3000,
             )
+            QTimer.singleShot(700, self, self._som_de_chegada)     # preso ao app: some junto com ele
+
+    def _som_de_chegada(self):
+        """O "liga" quando ele aparece na tela ao abrir."""
+        if self.pet.isVisible() and not self._congelado():
+            self.sons.liga(time.monotonic())
 
     def _timer(self, ms, slot):
         """Cria um relógio que chama `slot` a cada `ms` milissegundos."""
@@ -469,6 +483,9 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         if caressing:
             self.emotion.force("contente", 0.5, now, PRIORITY["carinho"])     # fecha os olhinhos na hora
             self.timeline.note_interaction(dt)
+            if not self._carinho_antes:
+                self.sons.carinho(now)
+        self._carinho_antes = caressing
 
         self.sleep.tick(now, body, self.in_flight, self.protest.stage, self.behavior.mission)
 
@@ -480,10 +497,15 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
             self.emotion.force("triste", 0.3, now, PRIORITY["protesto"])    # abandonado: cara triste
             emotion = self.emotion.update(motor, 0.0, self.prof)
         self.timeline.note_emotion(emotion, dt)
-        self.festa.tick(now, motor, emotion, self.pet.body, self._pode_soltar_fogo(), dt)
+        if self.festa.tick(now, motor, emotion, self.pet.body, self._pode_soltar_fogo(), dt):
+            self.sons.fogos(now)
         self._atualizar_mesa(now)
         self.memory.tick(now, self.prof["episode_ok"], self.prof["episode_window"])
         st.emotion = emotion
+        if self._dormia and not self.asleep and self.pet.isVisible():
+            self.sons.liga(now)                     # acordou
+        self._dormia = self.asleep
+        self.sons.tick(now, emotion, self.mesa.sentado, self.pet.isVisible(), self.asleep)
         self.behavior.on_emotion(emotion, time.monotonic())
 
     def frame(self):
@@ -507,6 +529,7 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         if speed >= HARD_IMPACT and now - self.last_impact >= IMPACT_COOLDOWN:
             self.last_impact = now
             self.senses.impact(min(1.0, 0.3 + (speed - HARD_IMPACT) / 1500.0))
+            self.sons.batida(now)
             if self.asleep:
                 self.sleep.wake(startled=True)
             if speed >= DIZZY_IMPACT:

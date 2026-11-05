@@ -5,6 +5,7 @@ Só usa a biblioteca padrão: roda com o Python do sistema, sem o venv e sem o Q
 
     pestinha_ctl.py status                    estado e permissões (JSON)
     pestinha_ctl.py perms bolinha=off fogos=on muda permissões (as da tela de configurações)
+    pestinha_ctl.py perms estilo=rosa volume=baixo   as escolhas também (o pet confere as opções)
     pestinha_ctl.py panico                    o mesmo que Ctrl+Alt+Shift+B
     pestinha_ctl.py religar                   liga de novo depois do pânico
     pestinha_ctl.py configuracoes             abre a tela de configurações
@@ -17,12 +18,15 @@ foi recusado.
 
 import json
 import os
+import re
 import socket
 import sys
 
 SIMPLES = {"status", "panico", "religar", "configuracoes", "pausar", "esconder", "sair"}
 VERDADE = {"1", "true", "on", "sim", "yes"}
 MENTIRA = {"0", "false", "off", "nao", "não", "no"}
+ESCOLHAS = {"estilo", "volume"}              # as permissões que são uma opção, não liga/desliga
+OPCAO = re.compile(r"[a-z0-9_-]{1,24}")      # o valor de uma escolha (estilo=cyber, volume=alto)
 
 
 def caminho_do_socket(ambiente=None):
@@ -48,7 +52,11 @@ def montar_pedido(args):
             if not sep or not chave:
                 raise ValueError(f"use chave=valor: {item!r}")
             texto = valor.strip().lower()
-            if texto in VERDADE:
+            if chave in ESCOLHAS:
+                if not OPCAO.fullmatch(texto):
+                    raise ValueError(f"opção inválida para {chave}: {valor!r}")
+                valores[chave] = texto              # quem confere se a opção existe é o pet
+            elif texto in VERDADE:
                 valores[chave] = True
             elif texto in MENTIRA:
                 valores[chave] = False

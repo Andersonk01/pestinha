@@ -32,6 +32,7 @@ app inteiro usam um relógio virtual: avançam o tempo sem esperar.
 | `test_condicionamento.py` | Testes do condicionamento: aprender a reagir antes, extinguir, e persistir. |
 | `test_conteudo.py` | Etapa 2 do multipet: conteúdo por pet (frases, cartazes, memes, imagens). |
 | `test_escolha_pet.py` | Etapa 3 do multipet: escolha do personagem nas configurações e o nome certo em cada texto. |
+| `test_estilos_sons.py` | Estilos (cores por cima das do personagem), os acessórios e efeitos novos, o Cypher e os sons. |
 | `test_festa.py` | Fogos de artifício ligados à rede e brincadeira mais animada quando feliz. |
 | `test_homeostase.py` | Homeostase: trabalhar é estímulo, então o tédio não sobe enquanto ele programa. |
 | `test_hyprland.py` | Backend do Hyprland (pestinha/plataforma/hyprland.py), o tempo ocioso pelo Wayland (_ocioso_wayland.py), o controle local (controle/remoto.py) e o ferramentas/pestinha_ctl.py. |

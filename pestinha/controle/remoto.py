@@ -5,7 +5,8 @@ sistema, pelo `ferramentas/pestinha_ctl.py`. Ligado só onde a plataforma pede (
 
 Uma linha JSON por conexão, e uma linha JSON de resposta:
     {"cmd": "status"}                       estado e permissões
-    {"cmd": "perms", "valores": {...}}      muda permissões (as mesmas da tela de configurações)
+    {"cmd": "perms", "valores": {...}}      muda permissões (as mesmas da tela de configurações,
+                                            inclusive as escolhas "estilo" e "volume")
     {"cmd": "panico"}                       o mesmo que Ctrl+Alt+Shift+B: desliga tudo
     {"cmd": "religar"}                      liga de novo depois do pânico
     {"cmd": "configuracoes"}                abre a tela de configurações

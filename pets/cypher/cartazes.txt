@@ -1,0 +1,87 @@
+# Cartazes do Cypher, hacker de cibersegurança. Uma frase por linha, dentro de cada seção.
+# É brincadeira: nada aqui invade, testa ou desliga nada de verdade.
+# Os estágios são os mesmos do Bryan; muda só a leitura:
+#   reclamação = ping sem resposta, manifestação = campanha de segurança,
+#   greve = firewall fechado, revolução = "hackeamos o mainframe".
+# Pode editar com ele rodando: ele relê ao levantar um cartaz novo.
+
+[reclamacao]
+PING? PING? PING?
+404: CARINHO NOT FOUND
+ACESSO NEGADO À ATENÇÃO
+
+[manifestacao]
+CHEGA DE SENHA 123456!
+ATIVE O 2FA. E ME DÊ ATENÇÃO.
+EXIJO ROOT NO MEU NOTEBOOK!
+NADA DE PHISHING NO MEU TURNO!
+CRIPTOGRAFIA PARA TODOS!
+ATUALIZE ESSE SISTEMA!
+SEU WI-FI ESTÁ SEM SENHA. EU VI.
+
+[greve]
+FIREWALL ATIVO: NINGUÉM PASSA
+PROCESSO SUSPENSO (SIGSTOP)
+SEM COMMIT ATÉ SEGUNDA ORDEM
+MODO OFFLINE ATIVADO
+SERVIDOR EM MANUTENÇÃO
+
+[revolucao]
+HACKEAMOS O MAINFRAME!
+RM -RF /TÉDIO
+O SISTEMA CAIU. FUI EU.
+DERRUBEM O PROXY!
+LIBERDADE AOS PACOTES!
+TODO PODER AO TERMINAL!
+SUDO MAKE ME A SANDWICH
+CHMOD 777 NA ALEGRIA!
+DEPLOY NA SEXTA!
+A NUVEM É SÓ O PC DE OUTRA PESSOA!
+
+[acordo]
+HANDSHAKE OK
+CONEXÃO SEGURA
+ACCESS GRANTED
+
+[desistiu]
+...timeout.
+conexão recusada
+indo para o modo seguro
+
+# Tristeza: quando ele fica triste ou sozinho por muito tempo (não tem repressão)
+[saudade]
+ping... alguém?
+cadê meu usuário?
+sessão expirada?
+
+[chorando]
+kernel panic emocional
+pacotes perdidos: 100%
+erro 500 no coração
+
+[abandonado]
+...
+sem sinal
+desconectado
+
+[volto]
+RECONECTADO!
+VOLTEI DO MODO SEGURO!
+SESSÃO RESTAURADA!
+
+# Cantinho do castigo: o que ele levanta preso na placa
+[castigo]
+ISSO É UM AMBIENTE ISOLADO. EU ESCAPO.
+ESTOU NUMA SANDBOX. ESTUDANDO A SAÍDA.
+NÃO É CASTIGO. É HONEYPOT.
+JÁ ACHEI TRÊS FALHAS NESSA PLACA.
+VOU ABRIR UM CHAMADO NO SUPORTE.
+ISSO VIOLA A LGPD DOS PETS.
+
+# Cantinho do castigo, com raiva: xinga (só símbolos e jargão)
+[xingamento]
+@#$%&!! SEGFAULT!
+%&#@*!!
+0xDEAD#@$%!!
+#@$%... STACK OVERFLOW!
+@!#$% DE FIREWALL!!

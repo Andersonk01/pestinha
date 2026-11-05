@@ -13,6 +13,7 @@ from .arrastavel import FloatingWidget
 NOTEBOOK_W, NOTEBOOK_H = 110, 70     # tamanho do desenho de reserva
 SPRITE_W = 150                       # largura da foto notebook.png (do pet ou de assets/comum/), se existir
 MARGEM_TELA = 24                     # px da borda da tela no primeiro uso
+COR_TRABALHANDO = "#63e56f"          # contorno aceso enquanto ele trabalha, até o app passar a cor do pet
 
 
 def _default_position(size):
@@ -42,6 +43,13 @@ class Notebook(FloatingWidget):
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setAttribute(Qt.WA_ShowWithoutActivating)
         self.working = False
+        self.cor_destaque = QColor(COR_TRABALHANDO)     # a moldura do pet (muda com o estilo)
+
+    def set_destaque(self, cor):
+        """A cor do contorno aceso: a da moldura do pet, para combinar com o estilo."""
+        if QColor(cor) != self.cor_destaque:
+            self.cor_destaque = QColor(cor)
+            self.update()
 
     def set_working(self, working):
         """Acende a borda quando você está trabalhando (o pet sentado)."""
@@ -62,7 +70,7 @@ class Notebook(FloatingWidget):
         p.setRenderHint(QPainter.SmoothPixmapTransform)
         p.drawPixmap(0, 0, self.sprite)
         if self.working:                                   # trabalhando: contorno verde
-            p.setPen(QPen(QColor("#63e56f"), 2))
+            p.setPen(QPen(self.cor_destaque, 2))
             p.setBrush(Qt.NoBrush)
             p.drawRoundedRect(QRectF(self.rect()).adjusted(1, 1, -1, -1), 6, 6)
         p.end()
@@ -75,7 +83,7 @@ class Notebook(FloatingWidget):
         gradiente = QLinearGradient(tampa.topLeft(), tampa.bottomLeft())
         gradiente.setColorAt(0.0, QColor("#5d6165"))
         gradiente.setColorAt(1.0, QColor("#3b3e41"))
-        borda = QColor("#63e56f") if self.working else QColor("#24272a")
+        borda = self.cor_destaque if self.working else QColor("#24272a")
         p.setPen(QPen(borda, 2.5 if self.working else 1.2))
         p.setBrush(gradiente)
         p.drawRoundedRect(tampa, 6, 6)

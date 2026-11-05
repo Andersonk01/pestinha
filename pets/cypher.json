@@ -1,0 +1,37 @@
+{
+  "_ajuda": "Cypher: hacker de cibersegurança, de capuz e headset. Mesma rede do Bryan, outra semente e outro temperamento. Adora quando você programa (digitação e trabalho viram foco), fica curioso com coisa nova e com a web, se irrita quando arrastam ou dispensam as coisas dele e, entediado, apronta. Carinho acalma. Visual: o da intro do Ryoku (ciano, chuva de código, scanlines e glitch). aparencia: cores #rrggbb (moldura, casca, tela, olho, brilho, codigo = cor da chuva), acessórios (capuz, fones, oculos, gravata) com a cor de cada um ou o nome de uma parte do corpo (\"moldura\", \"olho\", \"brilho\") para acompanhar o estilo, e efeitos (chuva, scanlines, glitch).",
+  "nome": "Cypher",
+  "seed": 1337,
+  "temperamento": {
+    "TYPING->FOCUS": 1.5,
+    "WORK->FOCUS": 1.4,
+    "PEDIDO->FOCUS": 1.3,
+    "NOVELTY->CURIOUS": 1.4,
+    "WEB->CURIOUS": 1.3,
+    "POKE->CURIOUS": 1.2,
+    "BOREDOM->TRAVESSURA": 1.4,
+    "DRAG->FRUSTRATION": 1.3,
+    "DISMISS->FRUSTRATION": 1.4,
+    "CARESS->CALM": 1.3,
+    "LONELY->GLOOM": 0.8
+  },
+  "brincadeira": {
+    "bola": 0.6,
+    "arremesso": 0.5,
+    "postit": 1.2
+  },
+  "reacao_notebook": "bravo",
+  "aparencia": {
+    "moldura": "#6EE7F9",
+    "casca": "#05080c",
+    "tela": "#08111a",
+    "olho": "#6EE7F9",
+    "brilho": "#e6fbff",
+    "codigo": "#34D399",
+    "acessorios": {
+      "capuz": "#26324a",
+      "fones": "moldura"
+    },
+    "efeitos": ["chuva", "scanlines", "glitch"]
+  }
+}

@@ -26,9 +26,14 @@ memes dele). Todos usam a mesma rede neural, mas cada um tem a própria memória
 passa para o outro. Você escolhe o personagem em **Configurações**; a troca vale na próxima vez que abrir.
 Para criar um, veja [pets/README.md](pets/README.md).
 
+O **estilo** (também em Configurações) troca as cores de qualquer personagem na hora, sem reabrir:
+Original (as dele), Rosa, Cyber (ciano com chuva de código, scanlines e glitch, como a intro do Ryoku),
+Matrix e Âmbar. Os acessórios continuam os do personagem.
+
 | Personagem | Quem é |
 |---|---|
 | **Bryan** | Revoltado contra o cursor, o Alt+F4 e o Gerenciador de Tarefas. Protesta, faz greve e revolução. |
+| **Cypher** | Hacker de cibersegurança, de capuz e headset, com a tela em ciano, chuva de código e glitch. Adora quando você programa, fica curioso com coisa nova, se irrita quando arrastam ou dispensam as coisas dele e cola post-its de segurança ("2FA. ATIVE. AGORA."). Tem o próprio notebook cheio de adesivos e uma voz digital. É brincadeira: não invade nem testa nada. |
 | **Jorge** | Personagem de sátira. Não é referência a nenhum coach, empresa ou pessoa real. Os mesmos estágios viram prospecção, marketing agressivo, "assinatura premium" (só no cartaz) e colapso financeiro; ele atira panfletos de mentoria. É sátira: não vende, cobra nem bloqueia nada. Tem cinco memes felizes, contentes, curiosos e bravos próprios; as outras emoções ainda não têm. |
 
 ## O que o pet faz
@@ -45,6 +50,7 @@ Para criar um, veja [pets/README.md](pets/README.md).
 | **Tristeza** | Sozinho ou ignorado, fica triste, vai para o cantinho e cola bilhetes tristes. |
 | **Cantinho do castigo** | Uma placa que você arrasta para onde quiser. Solte ele na frente dela e ele fica de castigo: olha para você, vira de costas, xinga em cartazes e, se a frustração durar, foge. Carinho faz ele perdoar. |
 | **Sono e fogos** | Dorme quando a energia acaba. Muito feliz, solta fogos de artifício. |
+| **Sons** | Bipes quando você cutuca, faz carinho, ele bate, se assusta, fica bravo, triste ou curioso, e o barulhinho dele digitando enquanto trabalha no notebook. Tudo sintetizado (nada gravado), com volume baixo, médio ou alto, e dá para desligar em Configurações. |
 
 Tudo o que ele aprende (carinho, condicionamento, o que deu certo nas travessuras, fugas do castigo)
 fica salvo localmente e muda o jeito dele com o tempo.
@@ -141,8 +147,11 @@ Detalhes em [PRIVACIDADE.md](PRIVACIDADE.md).
 
 - **Memes, recadinhos e cartazes do Bryan:** pasta `pets/bryan/`, explicada em [pets/README.md](pets/README.md).
   Pode editar com ele aberto.
-- **Bolinhas, notebook e suas fotos:** `assets/comum/`, valem para qualquer personagem
-  ([assets/LEIA-ME.txt](assets/LEIA-ME.txt)).
+- **Bolinhas, notebook, sons e suas fotos:** `assets/comum/`, valem para qualquer personagem
+  ([assets/LEIA-ME.txt](assets/LEIA-ME.txt)). Um personagem pode ter os próprios (o Cypher tem notebook e
+  voz próprios em `pets/cypher/`).
+- **Cores, acessórios e efeitos:** o campo `aparencia` do `pets/<pet>.json` (capuz, headset, óculos,
+  gravata; chuva de código, scanlines, glitch), explicado em [pets/README.md](pets/README.md).
 - **Programas que ele reconhece:** `assets/comum/programas.json` soma programas à lista de trabalho, jogo, música etc.
 - **Personalidade:** `pets/bryan.json` (semente da rede, temperamento, pesos de brincadeira, reação ao notebook).
 - **Números do comportamento:** `pestinha/ajustes.py`, todos validados ao abrir.

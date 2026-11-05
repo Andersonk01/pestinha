@@ -10,6 +10,7 @@ Tudo que depende do sistema operacional: programa em primeiro plano, tempo ocios
 |---|---|
 | `_comum.py` | Partes que os três sistemas compartilham: rodar comandos do sistema e o atalho global via pynput. |
 | `_ocioso_wayland.py` | Tempo ocioso no Wayland pelo protocolo ext-idle-notify-v1: um cliente mínimo que fala o protocolo do Wayland direto no socket do compositor, sem bibliotecas. |
+| `_som.py` | Toca um .wav sem travar o pet, com o tocador que o sistema tiver. |
 | `hyprland.py` | Linux com Hyprland: as leituras vêm do próprio compositor, pelo socket de controle dele (o mesmo que o `hyprctl` usa), e o tempo ocioso pelo protocolo ext-idle-notify do Wayland (_ocioso_wayland.py). |
 | `linux.py` | Linux (X11): xdotool e wmctrl para as janelas, xprintidle para o tempo ocioso, e pynput para o atalho. |
 | `macos.py` | MacOS: Quartz (pyobjc) para as janelas e o tempo ocioso; AppKit para o programa em primeiro plano. |

@@ -28,6 +28,17 @@ IMAGE_EXT = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp"}
 
 PANIC_HOTKEY_TEXT = "Ctrl + Alt + Shift + B"
 
+# Estilo: as cores (e os efeitos de tela) que valem por cima das do personagem. "original" deixa as do
+# pets/<pet>.json; as paletas ficam em body/estilos.py. Vale na hora, sem reabrir.
+ESTILOS = ("original", "rosa", "cyber", "matrix", "ambar")
+ESTILO_NOMES = {"original": "Original do personagem", "rosa": "Rosa", "cyber": "Cyber",
+                "matrix": "Matrix", "ambar": "Âmbar"}
+# Volume dos sons (o ganho de cada nível fica em body/voz.py)
+VOLUMES = ("baixo", "medio", "alto")
+VOLUME_NOMES = {"baixo": "Baixo", "medio": "Médio", "alto": "Alto"}
+# permissões que são uma escolha entre opções, e não liga/desliga
+ESCOLHAS = {"estilo": ESTILOS, "volume": VOLUMES}
+
 # ============================================================
 # PERMISSÕES
 # ============================================================
@@ -51,6 +62,10 @@ DEFAULT_PERMISSIONS = {
     "bolinha": True,           # a bolinha para ele brincar
     "notebook": True,          # o notebook dele, onde ele senta para trabalhar quando você programa
     "fogos": True,             # fogo de artifício quando ele fica feliz de verdade (rede)
+    "estilo": "original",      # um de ESTILOS: cores por cima das do personagem
+    "sons": True,              # bipes quando você cutuca, faz carinho, ele se assusta, fica bravo...
+    "digitacao": True,         # o barulhinho dele digitando no notebook (só com "sons" ligado)
+    "volume": "medio",         # um de VOLUMES
 }
 
 # (chave, rótulo, descrição) na ordem da tela inicial
@@ -84,6 +99,12 @@ PERMISSION_GROUPS = [
         ("notebook", "Notebook", "Ele senta no notebook dele para trabalhar quando você programa. Desligado, "
          "o notebook some e ele não senta."),
     ]),
+    ("Sons", [
+        ("sons", "Sons", "Bipes quando você cutuca, faz carinho, ele se assusta, bate, fica bravo ou triste. "
+         "Sem nada gravado: os sons são sintetizados (assets/comum/sons/)."),
+        ("digitacao", "Digitação no notebook", "Enquanto ele trabalha sentado no notebook, dá para ouvir ele "
+         "digitando, de vez em quando."),
+    ]),
     ("Teste", [
         ("modo_teste", "Modo teste", "Tempos curtos: travessuras e emoções acontecem em segundos."),
         ("mostrar_emocao", "Mostrar nome da emoção", "Texto pequeno embaixo dele (só no modo teste)."),
@@ -92,9 +113,10 @@ PERMISSION_GROUPS = [
 
 
 def permissoes_validas(novo):
-    """Mantém só as chaves conhecidas e com o mesmo tipo do padrão."""
+    """Mantém só as chaves conhecidas, com o mesmo tipo do padrão (e, nas escolhas, uma opção que existe)."""
     return {k: v for k, v in novo.items()
-            if k in DEFAULT_PERMISSIONS and type(v) is type(DEFAULT_PERMISSIONS[k])}
+            if k in DEFAULT_PERMISSIONS and type(v) is type(DEFAULT_PERMISSIONS[k])
+            and (k not in ESCOLHAS or v in ESCOLHAS[k])}
 
 
 def load_permissions(paths):

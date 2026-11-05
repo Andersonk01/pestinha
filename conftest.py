@@ -4,6 +4,7 @@ Configuração comum dos testes (pasta tests/).
 - Qt sem janela: os testes rodam em qualquer máquina, sem abrir nada na tela.
 - Backend do X11 mesmo dentro do Hyprland: o app dos testes não abre o controle local de verdade nem
   fala com o compositor (tests/test_hyprland.py testa aquele backend direto, com saídas de exemplo).
+- Mudo: PESTINHA_SEM_SOM deixa o tocador de som sem tocador (nenhum teste faz barulho de verdade).
 - Isolamento: apps e janelas criados num teste não continuam rodando nos seguintes.
 """
 import gc
@@ -11,6 +12,7 @@ import os
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("PESTINHA_PLATAFORMA", "x11")
+os.environ.setdefault("PESTINHA_SEM_SOM", "1")
 
 import pytest
 

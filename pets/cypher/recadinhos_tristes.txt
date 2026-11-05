@@ -1,0 +1,11 @@
+# Bilhetes do Cypher quando ele está triste. Linhas que começam com # são ignoradas.
+conexão perdida.
+ninguém respondeu meu ping.
+minha sessão expirou.
+perdi 100% dos pacotes.
+o firewall me bloqueou de você.
+tentei reconectar três vezes.
+kernel panic. de saudade.
+ficou tudo em modo somente leitura.
+meu terminal está vazio.
+até o servidor me deu timeout.

@@ -28,6 +28,9 @@ Opcionais (quem não tem fica com o padrão do Qt):
 Só no Windows, por enquanto (TEM_INICIO_AUTOMATICO diz se existe):
     inicia_com_sistema()         o programa está marcado para abrir ao entrar no sistema
     definir_inicio_com_sistema(ligado)   liga ou desliga isso; devolve True se conseguiu
+
+Igual em todos (_som.py):
+    Tocador                      toca .wav sem travar (pw-play, paplay, aplay, afplay ou winsound)
 """
 
 import os
@@ -67,5 +70,7 @@ TEM_CONTROLE_LOCAL = getattr(_backend, "TEM_CONTROLE_LOCAL", False)
 AVISO_SEM_ATALHO = getattr(_backend, "AVISO_SEM_ATALHO", "")
 
 TEM_INICIO_AUTOMATICO = hasattr(_backend, "definir_inicio_com_sistema")
+from ._som import Tocador  # noqa: E402  (o mesmo em todo sistema: escolhe pw-play, afplay, winsound...)
+
 inicia_com_sistema = getattr(_backend, "inicia_com_sistema", lambda: False)
 definir_inicio_com_sistema = getattr(_backend, "definir_inicio_com_sistema", lambda ligado: False)
