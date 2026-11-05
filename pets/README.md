@@ -16,7 +16,7 @@ Um pet são duas coisas com o mesmo nome:
 | `brincadeira` | Pesos de cada jeito de brincar: `bola` (chuta), `arremesso` (joga no cursor), `postit` (cola post-its). Peso 0 desliga. |
 | `temperamento` | Ganhos que multiplicam estímulos antes de chegarem aos interneurônios. Ex.: `"DISMISS->FRUSTRATION": 1.3` deixa o pet mais irritado quando você dispensa coisas. Os nomes estão em [docs/REDE_NEURAL.md](../docs/REDE_NEURAL.md). |
 | `reacao_notebook` | `"bravo"` ou `"triste"`: o que ele sente quando arrancam o notebook dele. |
-| `aparencia` | Opcional. Cores `#rrggbb` de `moldura`, `casca`, `tela`, `olho`, `brilho` e `codigo` (a cor da chuva de código); `acessorios` com a cor de cada um: `capuz`, `fones` (headset), `oculos` e `gravata`, por exemplo `{"capuz": "#26324a", "fones": "moldura"}`. A cor de um acessório pode ser o nome de uma parte do corpo (`"moldura"`, `"olho"`, `"brilho"`): aí ele acompanha o estilo escolhido. `efeitos`: lista com `"chuva"` (chuva de código atrás dos olhos), `"scanlines"` e `"glitch"`. Sem o campo, o visual original. O estilo das configurações troca as cores e os efeitos por cima destes; os acessórios ficam. |
+| `aparencia` | Opcional. Cores `#rrggbb` de `moldura`, `casca`, `tela`, `olho`, `brilho` e `codigo` (a cor da chuva de código); `acessorios` com a cor de cada um: `capuz`, `fones` (headset), `oculos` e `gravata`, por exemplo `{"capuz": "#26324a", "fones": "moldura"}`. A cor de um acessório pode ser o nome de uma parte do corpo (`"moldura"`, `"olho"`, `"brilho"`): aí ele acompanha o estilo escolhido. `efeitos`: lista com `"chuva"` (chuva de código atrás dos olhos), `"scanlines"` e `"glitch"`. `forma`: `"tela"` (o monitorzinho, o padrão) ou `"bola"` (corpo redondo de pelo, como o do Bolota: o pelo vem de `<pet>/corpo.png` e olhos, patinhas e pezinhos são desenhados por cima; as cores viram `tela` = branco do olho, `olho` = pupila, `brilho` = reflexo, `casca` = contornos e `moldura` = patinhas; acessórios não valem nela). Sem o campo, o visual original. O estilo das configurações troca as cores e os efeitos por cima destes (na bola, também tinge o pelo); os acessórios ficam. |
 
 Campos com tipo errado são ignorados e ficam com o valor padrão (não derrubam o app).
 
@@ -32,6 +32,7 @@ Pode editar com ele aberto: ele relê os textos e procura imagens novas sozinho.
 | `recadinhos_tristes.txt` | Bilhetes que ele cola quando está triste. |
 | `cartazes.txt` | Cartazes por seção: `[reclamacao]`, `[manifestacao]`, `[greve]`, `[revolucao]`, `[acordo]`, `[desistiu]`, `[saudade]`, `[chorando]`, `[abandonado]`, `[volto]`, e no cantinho do castigo `[castigo]` e `[xingamento]`. |
 | `bolinha_tenis.png`, `bolinha_papel.png`, `notebook.png` | Opcionais: se existirem aqui, valem no lugar dos de `assets/comum/`. |
+| `corpo.png` | Só para `"forma": "bola"`: o pelo, quadrado, com o meio da bola no centro, sem olhos e sem patinhas (o pet desenha os dois por cima). Sem ele, o pet avisa e desenha um pelo simples por código. O do Bolota sai de `ferramentas/gerar_bolota.py`. |
 | `sons/` | Opcional: `.wav` de 16 bits com os nomes de `assets/comum/sons/` (`bip`, `feliz`, `triste`, `bravo`, `susto`, `curioso`, `batida`, `fogos`, `liga`, `digitando_1`...). Cada um que existir aqui vale no lugar do comum; se houver algum `digitando_*` aqui, só os daqui são sorteados. |
 
 O que faltar na pasta do pet é procurado em `assets/comum/`. Se também não estiver lá, ele usa frases
@@ -47,6 +48,15 @@ a original, da pasta do pet e depois de `assets/comum/`. Para conferir os cartaz
 `PESTINHA_IDIOMA=en python ferramentas/medir_cartazes.py <pet>`.
 
 ## Personagens que já existem
+
+- **Bolota** (`bolota.json`, `bolota/`): uma bolinha de pelo marrom, brincalhona e carinhosa. A bolinha,
+  a cutucada e o carinho viram alegria; quase nunca fica bravo, e o que irrita os outros nele vira
+  tristeza; batida e arraste o assustam, e a solidão pesa. Corpo redondo (`"forma": "bola"`): o pelo é
+  `bolota/corpo.png` e o tufo que ele atira na revolução é `bolota/bolinha_papel.png`, os dois feitos por
+  `ferramentas/gerar_bolota.py` a partir da arte em `ferramentas/arte/bolota.png` (uma imagem do autor do
+  fork, feita com IA). Anda rolando, corre com os pezinhos quando está feliz, acena ao acordar e achata
+  quando cai. Voz própria de bichinho de pelúcia (`bolota/sons/`, de `ferramentas/gerar_sons.py`).
+  Sem memes ainda.
 
 - **Bryan** (`bryan.json`, `bryan/`): o original, de moldura verde. Curioso e brincalhão, é o que mais gosta
   da bolinha e o que mais sofre quando tiram ela dele; ser arrastado quase não o incomoda, mas bater com

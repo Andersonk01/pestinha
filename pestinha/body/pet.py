@@ -29,6 +29,7 @@ from ..ajustes import (
     DESLOCAMENTO_CARINHO as RUB_MIN_TRAVEL,
 )
 
+from .desenho_bola import AnimacaoBola, CorpoBola, cor_dos_textos, desenhar_bola
 from .desenho_rosto import BODY_H, BODY_W, PADRAO, draw_face, draw_zzz, lerp_shape
 
 CX, CY = WIN / 2, WIN / 2 - 6   # centro do corpo dentro da janela
@@ -79,6 +80,8 @@ class PetWindow(QWidget):
         self.body = Body(x, y, BODY_W / 2, BODY_H / 2)
         self.state = state
         self.aparencia = PADRAO      # cores e acessórios do pet (pets/<pet>.json)
+        self.corpo = None            # o pelo de um pet de forma "bola" (CorpoBola); sem ele, um pelo por código
+        self.animacao_bola = AnimacaoBola()
         self.next_blink = time.monotonic() + random.uniform(2.0, 5.0)
 
         self._press = None          # (pos global, tempo)
@@ -132,6 +135,9 @@ class PetWindow(QWidget):
             sway = max(-35.0, min(35.0, -vx * 0.03))
             self.body.angle += (self._held_angle + sway - self.body.angle) * 0.25
 
+        if self.aparencia.forma == "bola":
+            self.animacao_bola.passo(now, self.body.x, self.body.vy, self.body.grounded, self.body.held,
+                                     st.emotion, sentado=st.desk_top is not None)
         self.move(int(self.body.x - CX), int(self.body.y - CY))
         self.update()
 
@@ -160,15 +166,22 @@ class PetWindow(QWidget):
         p.rotate(self.body.angle + sway)
         agora = time.monotonic()
         blink = 0.08 if agora < st.blink_until else 1.0
-        draw_face(p, st.shape, st.gaze, blink, st.emotion, carinho=st.feliz_fechado(), aparencia=self.aparencia,
-                  agora=agora)
+        if self.aparencia.forma == "bola":
+            if self.corpo is None:
+                self.corpo = CorpoBola()
+            desenhar_bola(p, self.corpo, self.animacao_bola.pose, st.shape, st.gaze, blink, st.emotion,
+                          carinho=st.feliz_fechado(), aparencia=self.aparencia, agora=agora)
+        else:
+            draw_face(p, st.shape, st.gaze, blink, st.emotion, carinho=st.feliz_fechado(),
+                      aparencia=self.aparencia, agora=agora)
         p.restore()
+        cor_texto = cor_dos_textos(self.aparencia) if self.aparencia.forma == "bola" else self.aparencia.olho
 
         if st.emotion == "dormindo":
-            draw_zzz(p, CX + jitter_x, CY + jitter_y, time.monotonic(), self.aparencia.olho)
+            draw_zzz(p, CX + jitter_x, CY + jitter_y, time.monotonic(), cor_texto)
 
         if st.show_label:
-            p.setPen(self.aparencia.olho)
+            p.setPen(cor_texto)
             p.setFont(QFont("Consolas", 9, QFont.Bold))
             p.drawText(QRectF(0, WIN - 22, WIN, 20), Qt.AlignCenter, tr(EMOTION_NAMES.get(st.emotion, st.emotion)))
         p.end()

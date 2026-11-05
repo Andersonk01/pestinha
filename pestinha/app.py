@@ -26,7 +26,7 @@ import math
 import time
 
 from PySide6.QtCore import QObject, QTimer
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QGuiApplication, QImage
 from PySide6.QtWidgets import QSystemTrayIcon
 
 from . import config
@@ -49,6 +49,7 @@ from .ajustes import (
 from .body.behavior import Behavior
 from .body.bolinha import Ball, load_sprite
 from .body.brincadeira import Play
+from .body.desenho_bola import CorpoBola
 from .body.desenho_rosto import aparencia_de
 from .body.estilos import com_estilo
 from .body.pet import PetWindow, cursor_pos
@@ -150,6 +151,8 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         self.pet = PetWindow(right - 220, top + 120, self.pet_state)
         self.aparencia_base = aparencia_de(pet_def.get("aparencia"))     # a do personagem; o estilo vem por cima
         self.pet.aparencia = com_estilo(self.aparencia_base, self.perms["estilo"])
+        if self.aparencia_base.forma == "bola":                         # o pelo vem de pets/<pet>/corpo.png
+            self.pet.corpo = CorpoBola(QImage(str(self.conteudo.corpo)))
         self.pet.poked.connect(self.on_poke)
         self.pet.drag_started.connect(self.on_drag_started)
         self.pet.drag_ended.connect(lambda: self.senses.set_dragging(False))
@@ -231,7 +234,7 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         self._apply_settings()
         self.sense()
         self.scan_windows()
-        problems = config.check_assets(self.conteudo)
+        problems = config.check_assets(self.conteudo, self.aparencia_base.forma)
         for text in problems:
             log(f"[assets] {text}")
         if self.aviso_migracao:

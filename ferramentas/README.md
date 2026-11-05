@@ -13,12 +13,15 @@ python ferramentas/gerar_doc_rede.py
   `python -B ferramentas/fuzz_pestinha.py 150 80` (rodadas, ações por rodada).
 - `medir_cartazes.py` confere se cada frase cabe na placa (rode no Windows, com as fontes reais);
   `PESTINHA_IDIOMA=en` mede os cartazes em inglês (`cartazes.en.txt`).
-- `gerar_sons.py` sintetiza os sons (`assets/comum/sons/` e `pets/cypher/sons/`), sempre iguais;
-  `gerar_notebook_cypher.py` desenha `pets/cypher/notebook.png`.
+- `gerar_sons.py` sintetiza os sons (`assets/comum/sons/`, `pets/cypher/sons/` e `pets/bolota/sons/`),
+  sempre iguais; `gerar_notebook_cypher.py` desenha `pets/cypher/notebook.png`.
+- `gerar_bolota.py` tira os olhos e as patinhas da arte do Bolota (`ferramentas/arte/bolota.png`) e grava
+  o pelo em `pets/bolota/corpo.png` e o tufo que ele atira em `pets/bolota/bolinha_papel.png`.
 
 | Arquivo | O que faz |
 |---|---|
 | `fuzz_pestinha.py` | Roda o app inteiro com relógio virtual e ações aleatórias, checando invariantes. |
+| `gerar_bolota.py` | Prepara o corpo do Bolota (pets/bolota/corpo.png) a partir da arte original (ferramentas/arte/bolota.png): só o pelo, sem os olhos e sem as patinhas, que o pet desenha por código por cima (body/desenho_bola.py) para piscar, mudar de expressão, acenar, correr e rolar. |
 | `gerar_doc_rede.py` | Gera docs/REDE_NEURAL.md a partir do código (canais, interneurônios, motores, conexões e limiares). |
 | `gerar_notebook_cypher.py` | Desenha o notebook do Cypher (pets/cypher/notebook.png): o verso da tampa, escuro, com um cadeado ciano brilhando no meio e adesivos de hacker. |
 | `gerar_panfleto.py` | Desenha pets/jorge/bolinha_papel.png: um panfleto de mentoria amassado, que o Jorge atira na revolução. |

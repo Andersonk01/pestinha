@@ -170,11 +170,11 @@ def test_conteudo_prefere_a_versao_do_idioma_e_volta_a_original(tmp_path, em):
     assert c.notes == pet / "recadinhos.txt" and c.memes == pet / "memes"
 
 
-def test_os_tres_pets_tem_as_frases_em_ingles_com_as_mesmas_secoes():
+def test_todos_os_pets_tem_as_frases_em_ingles_com_as_mesmas_secoes():
     from pestinha.core.protesto import load_signs
     from pestinha.paths import Paths
     paths = Paths()
-    for pet in ("bryan", "cypher", "jorge"):
+    for pet in ("bolota", "bryan", "cypher", "jorge"):
         pasta = paths.pets / pet
         for nome in ("cartazes", "recadinhos", "recadinhos_tristes"):
             assert (pasta / f"{nome}.en.txt").is_file(), (pet, nome)

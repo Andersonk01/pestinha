@@ -193,6 +193,11 @@ class ConteudoPaths:
         """Imagem do notebook."""
         return self.resolver("notebook.png")
 
+    @property
+    def corpo(self):
+        """O pelo de um pet redondo (forma "bola"), sem olhos e sem patinhas."""
+        return self.resolver("corpo.png")
+
 
 @dataclass(frozen=True)
 class Paths:

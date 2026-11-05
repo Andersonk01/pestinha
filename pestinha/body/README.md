@@ -11,6 +11,7 @@ O corpo do pet: a janela com o rosto, o estado que ele mostra, o comportamento (
 | `behavior.py` | Como a rede e a emoção viram movimento. |
 | `bolinha.py` | A janela da bolinha: desenho e mouse. |
 | `brincadeira.py` | Como o pet brinca: chuta a bolinha, arremessa no cursor, cola post-its. |
+| `desenho_bola.py` | O corpo redondo de pelo (o Bolota). |
 | `desenho_rosto.py` | Só o que se desenha do pet: moldura, olhos, brilho, acessórios, efeitos de tela e os Zzz. |
 | `estilos.py` | Paletas que valem por cima das cores do personagem (a escolha "estilo" das configurações). |
 | `pet.py` | A telinha com olhinhos: janela transparente, desenho e mouse. |

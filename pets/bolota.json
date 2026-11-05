@@ -1,0 +1,41 @@
+{
+  "_ajuda": "Bolota: bolinha de pelo marrom, brincalhona e carinhosa. Mesma rede do Bryan, outra semente e outro temperamento. A bolinha e as brincadeiras o animam muito (bola, cutucada e carinho viram alegria); quase nunca fica bravo (dispensa, recusa, arraste e batida irritam pouco) e o que irrita os outros nele vira tristeza; batida e arraste o assustam, e a solidão pesa. aparencia: \"forma\": \"bola\" desenha o corpo redondo de pelo (o pelo vem de pets/bolota/corpo.png, feito por ferramentas/gerar_bolota.py); as cores são tela = branco do olho, olho = pupila, brilho = reflexo, casca = contornos e moldura = patinhas.",
+  "nome": "Bolota",
+  "descricao": {
+    "en": "A brown furball with huge eyes and short little paws. The most playful one: he rolls across the screen, runs on his tiny feet when he is happy and waves when he wakes up. He loves the ball (he is one too) and melts under petting, which turns into joy right away. He almost never gets angry: what annoys the others makes him sad instead. A hard hit or being dragged scares him, and loneliness weighs on him. In a revolution he throws tufts of fur.",
+    "pt": "Uma bolinha de pelo marrom, de olhos enormes e patinhas curtas. É o mais brincalhão: anda rolando pela tela, corre com os pezinhos quando está feliz e acena quando acorda. Adora a bolinha (ele também é uma) e se derrete com carinho, que vira alegria na hora. Quase nunca fica bravo: o que irrita os outros nele vira tristeza. Uma batida forte ou ser arrastado o assustam, e a solidão pesa. Na revolução, atira tufos de pelo."
+  },
+  "seed": 4096,
+  "temperamento": {
+    "PLAYFUL": 1.3,
+    "TOY_NEAR->PLAYFUL": 1.6,
+    "PLAY->PLAYFUL": 1.4,
+    "POKE->PLAYFUL": 1.4,
+    "CARESS->PLAYFUL": 1.7,
+    "CARESS->CALM": 1.3,
+    "IMPACT->ALERT": 1.6,
+    "DRAG->ALERT": 1.5,
+    "DRAG->FRUSTRATION": 0.4,
+    "IMPACT->FRUSTRATION": 0.5,
+    "DISMISS->FRUSTRATION": 0.5,
+    "RECUSA->FRUSTRATION": 0.6,
+    "TOY_TAKEN->FRUSTRATION": 0.4,
+    "DISMISS->GLOOM": 1.3,
+    "TOY_TAKEN->GLOOM": 1.4,
+    "LONELY->GLOOM": 1.4
+  },
+  "brincadeira": {
+    "bola": 1.5,
+    "arremesso": 0.5,
+    "postit": 0.6
+  },
+  "reacao_notebook": "triste",
+  "aparencia": {
+    "forma": "bola",
+    "moldura": "#6b3e22",
+    "casca": "#2b170c",
+    "tela": "#f6e6c8",
+    "olho": "#2a160c",
+    "brilho": "#ffffff"
+  }
+}

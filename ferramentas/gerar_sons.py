@@ -5,6 +5,7 @@ Sintetiza os sons do Pestinha do zero (sem gravação nenhuma, então sem licen�
     assets/comum/sons/   a voz padrão, de robozinho: bip, feliz, triste, bravo, susto, curioso, batida,
                          fogos, liga e os trechos de digitação digitando_1..3
     pets/cypher/sons/    a voz do Cypher, digital e glitchada (o que faltar vem do comum)
+    pets/bolota/sons/    a voz do Bolota, de bichinho de pelúcia: pius redondos, trinado e choramingo
 
     python ferramentas/gerar_sons.py
 
@@ -333,6 +334,80 @@ def cypher_susto():
     return norm(fade(biquad(s, "lp", 7000), 0.5, 8))
 
 
+# ---------------- a voz do Bolota (bichinho de pelúcia) ----------------
+
+def piu(f0, f1, dur, vibrato=0.0, tau=None):
+    """Um "piu" redondo: seno puro com a frequência indo de f0 a f1 e uma pitada de harmônico."""
+    n = n_of(dur)
+    t = t_axis(n)
+    f = f0 * (f1 / f0) ** (t / dur) * (1 + vibrato * np.sin(2 * np.pi * 7 * t))
+    s = osc(f, n) + 0.12 * osc(f * 2, n)
+    env = (1 - np.exp(-t / 0.012)) * (np.exp(-t / tau) if tau else np.sin(np.pi * np.minimum(t / dur, 1)) ** 0.6)
+    return fade(s * env, 1, 6)
+
+
+def bolota_bip():
+    x = np.zeros(n_of(0.16))
+    place(x, piu(900, 1400, 0.07), 0.0)                       # "mip!"
+    place(x, piu(1300, 1650, 0.06) * 0.7, 0.075)
+    return norm(biquad(x, "lp", 6000))
+
+
+def bolota_feliz():
+    """Um trinado subindo: "pirururu!"."""
+    x = np.zeros(n_of(0.6))
+    for i, f in enumerate((880, 1047, 1175, 1319, 1568)):
+        place(x, piu(f, f * 1.12, 0.09, vibrato=0.02) * (1 - 0.08 * i), 0.07 * i)
+    place(x, piu(1568, 2093, 0.2, vibrato=0.03) * 0.6, 0.36)
+    return norm(biquad(x, "lp", 7000))
+
+
+def bolota_triste():
+    """Um choramingo: escorrega para baixo, tremido."""
+    x = np.zeros(n_of(0.8))
+    place(x, piu(760, 470, 0.42, vibrato=0.035), 0.0)
+    place(x, piu(620, 390, 0.32, vibrato=0.04) * 0.7, 0.42)
+    return norm(biquad(x, "lp", 3200), 0.7)
+
+
+def bolota_bravo():
+    """Um "hmpf" baixinho: o máximo de bravo que ele consegue."""
+    n = n_of(0.26)
+    t = t_axis(n)
+    s = osc(260 * (1 - 0.25 * t / 0.26), n, "tri") * (1 + 0.5 * np.sin(2 * np.pi * 24 * t))
+    s += biquad(rng.standard_normal(n), "bp", 900, 1.2) * 0.25
+    return norm(fade(biquad(s * decay(n, 0.11), "lp", 1800), 2, 30), 0.7)
+
+
+def bolota_susto():
+    return norm(biquad(piu(700, 2300, 0.13, tau=0.07), "lp", 7000))      # "iip!"
+
+
+def bolota_curioso():
+    """ "Hm?": desce um pouquinho e sobe no fim."""
+    x = np.zeros(n_of(0.36))
+    place(x, piu(820, 740, 0.14), 0.0)
+    place(x, piu(780, 1250, 0.18), 0.15)
+    return norm(biquad(x, "lp", 6000), 0.8)
+
+
+def bolota_batida():
+    """ "Pof": pelo amortece a pancada (sem o "tim" da telinha)."""
+    n = n_of(0.2)
+    t = t_axis(n)
+    surdo = osc(120 * (1 + 0.4 * np.exp(-t / 0.012)), n) * decay(n, 0.05)
+    ruido = biquad(rng.standard_normal(n), "lp", 600) * decay(n, 0.03)
+    return norm(fade(surdo + 0.5 * ruido, 0.5, 20), 0.75)
+
+
+def bolota_liga():
+    """Acordando: um bocejo que sobe e um "piu!" no fim."""
+    x = np.zeros(n_of(0.7))
+    place(x, piu(420, 620, 0.38, vibrato=0.02) * 0.7, 0.0)
+    place(x, piu(1047, 1568, 0.12), 0.42)
+    return norm(biquad(x, "lp", 6000))
+
+
 def main():
     comum = RAIZ / "assets" / "comum" / "sons"
     for nome, fazer in (("bip", bip), ("feliz", feliz), ("triste", triste), ("bravo", bravo),
@@ -346,7 +421,13 @@ def main():
                         ("bravo", cypher_glitch), ("triste", cypher_triste), ("curioso", cypher_curioso),
                         ("susto", cypher_susto)):
         gravar(cypher, nome, fazer())
-    print(f"sons gravados em {comum.relative_to(RAIZ)} e {cypher.relative_to(RAIZ)}", file=sys.stderr)
+    bolota = RAIZ / "pets" / "bolota" / "sons"
+    for nome, fazer in (("bip", bolota_bip), ("feliz", bolota_feliz), ("triste", bolota_triste),
+                        ("bravo", bolota_bravo), ("susto", bolota_susto), ("curioso", bolota_curioso),
+                        ("batida", bolota_batida), ("liga", bolota_liga)):
+        gravar(bolota, nome, fazer())
+    print(f"sons gravados em {comum.relative_to(RAIZ)}, {cypher.relative_to(RAIZ)} e {bolota.relative_to(RAIZ)}",
+          file=sys.stderr)
 
 
 if __name__ == "__main__":

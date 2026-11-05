@@ -30,6 +30,8 @@ COR_PADRAO_ACESSORIO = {"capuz": "#26324a", "fones": "moldura", "oculos": "#e8e8
 # um acessório pode ter a cor de uma parte do corpo: assim ele acompanha o estilo escolhido
 CORES_DO_CORPO = ("moldura", "olho", "brilho")
 EFEITOS = ("chuva", "scanlines", "glitch")
+# "tela": o monitorzinho (Bryan, Jorge, Cypher); "bola": a bola de pelo do Bolota (body/desenho_bola.py)
+FORMAS = ("tela", "bola")
 
 TELA = QRectF(-BODY_W / 2 + 11, -BODY_H / 2 + 11, BODY_W - 22, BODY_H - 22)
 RAIO_TELA = 12
@@ -48,6 +50,8 @@ class Aparencia:
     acessorios: tuple = ()             # ((nome, QColor ou "moldura"/"olho"/"brilho"), ...)
     efeitos: frozenset = frozenset()   # de EFEITOS
     codigo: QColor = None              # cor da chuva de código; sem ela, a do olho
+    forma: str = "tela"                # de FORMAS
+    tinta: QColor = None               # a cor do estilo, que tinge o pelo da bola; sem ela, o pelo da imagem
 
 
 CAMPOS_DE_COR = ("moldura", "casca", "tela", "olho", "brilho")
@@ -77,7 +81,8 @@ def aparencia_de(dados):
     efeitos = dados.get("efeitos")
     efeitos = frozenset(e for e in efeitos if e in EFEITOS) if isinstance(efeitos, list) else frozenset()
     codigo = QColor(dados["codigo"]) if _cor_valida(dados.get("codigo")) else None
-    return Aparencia(**cores, acessorios=tuple(acessorios), efeitos=efeitos, codigo=codigo)
+    forma = dados.get("forma") if dados.get("forma") in FORMAS else "tela"
+    return Aparencia(**cores, acessorios=tuple(acessorios), efeitos=efeitos, codigo=codigo, forma=forma)
 
 
 PADRAO = Aparencia()
@@ -189,29 +194,34 @@ def _olhos(p, shape, gaze, blink, emotion, a, cor=None, dx=0.0, brilho=True):
             p.restore()
 
 
-def _clip_tela(p):
-    """Recorta o pincel na tela do pet (os efeitos nunca saem dela), somando com o recorte do notebook."""
-    tela = QPainterPath()
-    tela.addRoundedRect(TELA, RAIO_TELA, RAIO_TELA)
-    p.setClipPath(tela, Qt.IntersectClip)
+def _clip_tela(p, area=None):
+    """
+    Recorta o pincel na tela do pet (os efeitos nunca saem dela), somando com o recorte do notebook.
+    `area` troca a tela por outra forma (a bola de pelo do Bolota).
+    """
+    if area is None:
+        area = QPainterPath()
+        area.addRoundedRect(TELA, RAIO_TELA, RAIO_TELA)
+    p.setClipPath(area, Qt.IntersectClip)
 
 
-def _chuva(p, a, agora):
+def _chuva(p, a, agora, area=None):
     """Chuva de código bem fraquinha atrás dos olhos: colunas que descem em velocidades diferentes."""
     p.save()
-    _clip_tela(p)
+    _clip_tela(p, area)
+    caixa = TELA if area is None else area.boundingRect()
     fonte = QFont("monospace")
     fonte.setStyleHint(QFont.Monospace)
     fonte.setPixelSize(7)
     p.setFont(fonte)
     base = QColor(a.codigo if a.codigo is not None else a.olho)
-    passo, linhas = 7, int(TELA.height() // 7) + 1
-    for coluna in range(12):
+    passo, linhas = 7, int(caixa.height() // 7) + 1
+    for coluna in range(max(1, int(caixa.width() // 8))):
         semente = (coluna * 2654435761) & 0xFFFFFFFF
         velocidade = 5 + semente % 9                    # linhas por segundo
         fase = (semente >> 9) % 37
         cabeca = int(agora * velocidade + fase) % (linhas + 9)
-        x = TELA.left() + 3 + coluna * 8
+        x = caixa.left() + 3 + coluna * 8
         for rastro in range(5):
             linha = cabeca - rastro
             if not 0 <= linha < linhas:
@@ -220,18 +230,19 @@ def _chuva(p, a, agora):
             cor.setAlpha(165 if rastro == 0 else 105 - rastro * 18)
             p.setPen(cor)
             indice = (semente + linha * 31 + (int(agora * 6) if rastro == 0 else 0)) % len(SIMBOLOS_CHUVA)
-            p.drawText(QPointF(x, TELA.top() + linha * passo + 6), SIMBOLOS_CHUVA[indice])
+            p.drawText(QPointF(x, caixa.top() + linha * passo + 6), SIMBOLOS_CHUVA[indice])
     p.restore()
 
 
-def _scanlines(p):
+def _scanlines(p, area=None):
     """Linhas finas de monitor antigo, por cima dos olhos."""
     p.save()
-    _clip_tela(p)
+    _clip_tela(p, area)
+    caixa = TELA if area is None else area.boundingRect()
     p.setPen(QPen(QColor(0, 0, 0, 58), 1))
-    y = TELA.top() + 1
-    while y < TELA.bottom():
-        p.drawLine(QPointF(TELA.left(), y), QPointF(TELA.right(), y))
+    y = caixa.top() + 1
+    while y < caixa.bottom():
+        p.drawLine(QPointF(caixa.left(), y), QPointF(caixa.right(), y))
         y += 3
     p.restore()
 

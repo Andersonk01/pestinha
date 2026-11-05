@@ -30,10 +30,11 @@ Para criar um, veja [pets/README.md](pets/README.md).
 
 O **estilo** (também em Configurações) troca as cores de qualquer personagem na hora, sem reabrir:
 Original (as dele), Rosa, Cyber (ciano com chuva de código, scanlines e glitch, como a intro do Ryoku),
-Matrix e Âmbar. Os acessórios continuam os do personagem.
+Matrix e Âmbar. Os acessórios continuam os do personagem. No Bolota, o estilo tinge o pelo e acende as pupilas.
 
 | Personagem | Como ele é |
 |---|---|
+| **Bolota** | Uma bolinha de pelo marrom, de olhos enormes e patinhas curtas. É o mais brincalhão: anda rolando pela tela, corre com os pezinhos quando está feliz e acena quando acorda. Adora a bolinha (ele também é uma) e se derrete com carinho, que vira alegria na hora. Quase nunca fica bravo: o que irrita os outros nele vira tristeza. Uma batida forte ou ser arrastado o assustam, e a solidão pesa. Na revolução, atira tufos de pelo. O corpo é redondo e o pelo vem de uma imagem; olhos, patinhas e pezinhos são desenhados por cima, e os estilos tingem o pelo. Tem voz própria, de bichinho de pelúcia. Sem memes ainda. |
 | **Bryan** | O original, de moldura verde. Curioso e brincalhão, é o que mais gosta da bolinha e fica triste de verdade quando tiram ela dele. Ser arrastado quase não o incomoda, mas bater com força ou ter as coisas dele dispensadas o deixa bravo: protesta contra o cursor, o Alt+F4 e o Gerenciador de Tarefas, faz greve e chega à revolução, atirando bolinhas de papel. |
 | **Cypher** | Hacker de cibersegurança, de capuz e headset, com a tela em ciano, chuva de código e glitch. É o mais focado: quando você digita ou programa, senta no notebook dele e trabalha junto. Coisa nova, a web e uma cutucada o deixam curioso, e a solidão pesa menos nele. Se irrita quando o arrastam ou dispensam as coisas dele; carinho acalma. Entediado, prefere colar post-its de segurança ("2FA. ATIVE. AGORA.") a brincar de bola. Tem o próprio notebook cheio de adesivos e uma voz digital. É brincadeira: não invade nem testa nada. |
 | **Jorge** | Coach de finanças e IA, trambiqueiro e confiante, de moldura dourada e gravata vermelha. Ignorado, insiste: o tédio vira curiosidade e brincadeira. Com atenção, se anima muito. Quase nunca fica triste, mas se desespera quando recusam ou dispensam as coisas dele. Os mesmos estágios viram prospecção, marketing agressivo, "assinatura premium" (só no cartaz) e colapso financeiro; ele atira panfletos de mentoria. Personagem de sátira: não é referência a nenhum coach, empresa ou pessoa real, e não vende, cobra nem bloqueia nada. Tem cinco memes felizes, contentes, curiosos e bravos próprios; as outras emoções ainda não têm. |
@@ -230,8 +231,9 @@ telas, a bandeja, o menu, os avisos, o comando `ferramentas/pestinha_ctl.py` e o
 - **Bolinhas, notebook, sons e suas fotos:** `assets/comum/`, valem para qualquer personagem
   ([assets/LEIA-ME.txt](assets/LEIA-ME.txt)). Um personagem pode ter os próprios (o Cypher tem notebook e
   voz próprios em `pets/cypher/`).
-- **Cores, acessórios e efeitos:** o campo `aparencia` do `pets/<pet>.json` (capuz, headset, óculos,
-  gravata; chuva de código, scanlines, glitch), explicado em [pets/README.md](pets/README.md).
+- **Forma, cores, acessórios e efeitos:** o campo `aparencia` do `pets/<pet>.json` (o monitorzinho ou a bola
+  de pelo do Bolota; capuz, headset, óculos, gravata; chuva de código, scanlines, glitch), explicado em
+  [pets/README.md](pets/README.md).
 - **Programas que ele reconhece:** `assets/comum/programas.json` soma programas à lista de trabalho, jogo, música etc.
 - **Personalidade:** `pets/<pet>.json` (descrição, semente da rede, temperamento, pesos de brincadeira, reação ao
   notebook).

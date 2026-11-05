@@ -1,0 +1,83 @@
+# Cartazes do Bolota, a bolinha de pelo. Uma frase por linha, dentro de cada seção.
+# Os estágios são os mesmos do Bryan; muda só a leitura:
+#   reclamação = pede colo, manifestação = fofura organizada,
+#   greve = virou bolinha e não sai, revolução = chuva de pelo.
+# Pode editar com ele rodando: ele relê ao levantar um cartaz novo.
+
+[reclamacao]
+CADÊ MEU CARINHO?
+ME DÁ COLO?
+OI? TÔ AQUI EMBAIXO!
+
+[manifestacao]
+MAIS CARINHO, MENOS CLIQUE!
+BOLINHA PARA TODOS!
+FOFURA TAMBÉM TEM DIREITOS!
+QUEREMOS COLO JÁ!
+NÃO ME ARRASTA, ME ABRAÇA!
+PELO MERECE RESPEITO!
+
+[greve]
+VIREI BOLINHA. NÃO SAIO.
+GREVE DE FOFURA
+HOJE NÃO ROLO
+SEM ACENO ATÉ SEGUNDA ORDEM
+FECHADO PARA CARINHO (MENTIRA)
+
+[revolucao]
+CHUVA DE PELO!
+TODO PODER ÀS BOLINHAS!
+A REVOLUÇÃO SERÁ FOFINHA!
+ROLEM SOBRE O SISTEMA!
+NINGUÉM SEGURA UMA BOLA!
+PELO NO TECLADO DE TODOS!
+QUEM AMA, ROLA!
+ABAIXO O ASPIRADOR!
+
+[acordo]
+TÁ BOM, UM ABRAÇO
+PAZ E PELO
+AMIGOS DE NOVO?
+
+[desistiu]
+...tá bom.
+vou rolar pra lá.
+tudo bem, eu espero.
+
+# Tristeza: quando ele fica triste ou sozinho por muito tempo (não tem repressão)
+[saudade]
+cadê você?
+tô com saudade...
+volta pra brincar?
+
+[chorando]
+snif... snif...
+meu pelo murchou
+ninguém me abraça
+
+[abandonado]
+...
+sozinho
+pelo frio
+
+[volto]
+VOLTEI ROLANDO!
+OI OI OI!
+SAUDADE DE VOCÊ!
+
+# Cantinho do castigo: o que ele levanta preso na placa
+[castigo]
+SOU SÓ UMA BOLINHA...
+EU NÃO FIZ NADA (FIZ)
+PROMETO NÃO ROLAR MAIS
+POSSO SAIR SE EU FOR FOFO?
+JÁ ESTOU ARREPENDIDO
+ESSE CANTO É FRIO
+
+# Cantinho do castigo, com raiva: até a raiva dele é fofa
+[xingamento]
+GRRR... (FOFO)
+HMPF!!
+SEU... SEU... CHATO!
+&%#@... BOLINHA!
+NHAC! NHAC!

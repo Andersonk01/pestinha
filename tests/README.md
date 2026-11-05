@@ -21,6 +21,7 @@ app inteiro usam um relógio virtual: avançam o tempo sem esperar.
 | `test_atividade.py` | Programas de trabalho: VS Code, Claude e Codex contam como programação. |
 | `test_auditoria_30.py` | Contratos dos 30 bugs da auditoria (docs/auditorias/AUDITORIA_30_BUGS.md). |
 | `test_bolinha.py` | Testes da bolinha e da tristeza (abandono). |
+| `test_bolota.py` | O Bolota: a bolinha de pelo, de forma "bola" (body/desenho_bola.py). |
 | `test_brincadeira.py` | Bolinha: colisão com post-its e estilos de brincadeira por pet. |
 | `test_cantinho_cenarios.py` | 100 cenários explícitos do cantinho. |
 | `test_cantinho_rede.py` | As 10 funções do cantinho que mexem na rede neural: entrada, aprendizado e efeito nos motores. |

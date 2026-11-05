@@ -215,10 +215,12 @@ def load_programas(paths):
             for categoria, nomes in salvo.items() if isinstance(nomes, list)}
 
 
-def check_assets(conteudo):
+def check_assets(conteudo, forma="tela"):
     """Lista o que falta no conteúdo do pet (pets/<pet>/ ou assets/comum/), para avisar em vez de quebrar."""
     warnings = []
     pasta = _relativo(conteudo.proprio)
+    if forma == "bola" and not conteudo.corpo.exists():
+        warnings.append(tr("sem corpo.png em {pasta}: o pelo é desenhado por código", pasta=pasta))
     if not conteudo.memes.exists():
         warnings.append(tr("sem pasta memes/ em {pasta} nem em assets/comum/: sem memes", pasta=pasta))
     elif not any(list_images(conteudo.memes / e) for e in EMOTIONS):

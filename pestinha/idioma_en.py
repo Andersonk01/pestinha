@@ -484,6 +484,8 @@ TEXTOS = {
     'Alguns dados continuam em {pasta}. O programa vai fechar; feche o que possa estar usando esses arquivos e tente de novo.\n\nArquivos que falharam:\n{lista}':
         'Some data is still in {pasta}. The program will close; close anything that may be using those files and try again.\n\nFiles that failed:\n{lista}',
     # config.py (avisos)
+    'sem corpo.png em {pasta}: o pelo é desenhado por código':
+        'no corpo.png in {pasta}: the fur is drawn by code',
     'sem pasta memes/ em {pasta} nem em assets/comum/: sem memes':
         'no memes/ folder in {pasta} or in assets/comum/: no memes',
     'a pasta {pasta} está vazia: sem memes':

@@ -1,5 +1,21 @@
 # Histórico de versões
 
+## O Bolota, a bolinha de pelo
+
+- Personagem novo, o Bolota: uma bolinha de pelo marrom, brincalhona e carinhosa. A bolinha, a cutucada e o
+  carinho viram alegria; quase nunca fica bravo (o que irrita os outros nele vira tristeza); batida e
+  arraste o assustam, e a solidão pesa. Descrição em inglês e em português.
+- Forma nova de corpo, `"forma": "bola"` (`pestinha/body/desenho_bola.py`): o pelo vem de uma imagem
+  (`pets/bolota/corpo.png`) e olhos com pálpebras, patinhas e pezinhos são desenhados por cima, com as
+  mesmas expressões dos outros. Andando, ele rola (a distância vira giro, e o pelo sempre encosta no chão);
+  parado, termina a volta e fica em pé; feliz e rápido, corre com os pezinhos, olhos ^^ e linhas de
+  velocidade; achata ao pousar de uma queda; acena ao acordar e quando fica feliz.
+- Os estilos tingem o pelo e acendem as pupilas; a chuva de código e as scanlines ficam dentro da bola.
+- `ferramentas/gerar_bolota.py` tira os olhos e as patinhas da arte original (`ferramentas/arte/bolota.png`)
+  e faz o corpo e o tufo de pelo que ele atira na revolução.
+- Recadinhos, bilhetes tristes e cartazes dele em português e em inglês, e voz própria de bichinho de
+  pelúcia (`pets/bolota/sons/`, de `ferramentas/gerar_sons.py`).
+
 ## Instalação no Hyprland explicada
 
 - O README mostra como baixar este fork (branch `anderson`) e instalar num ambiente virtual.

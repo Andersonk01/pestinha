@@ -2,7 +2,8 @@
 ESTILOS - paletas que valem por cima das cores do personagem (a escolha "estilo" das configurações).
 
 O estilo troca as cores do corpo e os efeitos da tela; os acessórios continuam os do personagem (um
-acessório com a cor "moldura", "olho" ou "brilho" acompanha a paleta nova). "original" deixa tudo
+acessório com a cor "moldura", "olho" ou "brilho" acompanha a paleta nova). Num corpo de pelo (o Bolota),
+a cor da moldura também tinge o pelo (`tinta`). "original" deixa tudo
 como está no pets/<pet>.json. Os nomes válidos ficam em config.ESTILOS.
 """
 
@@ -35,4 +36,4 @@ def com_estilo(base, nome):
         return base
     cores = {k: QColor(paleta[k]) for k in CAMPOS_DE_COR}
     codigo = QColor(paleta["codigo"]) if "codigo" in paleta else None
-    return replace(base, **cores, codigo=codigo, efeitos=frozenset(paleta["efeitos"]))
+    return replace(base, **cores, codigo=codigo, efeitos=frozenset(paleta["efeitos"]), tinta=cores["moldura"])

@@ -1,0 +1,83 @@
+# Bolota's protest signs, the furball. One line per sign, inside each section.
+# The stages are the same as Bryan's; only the reading changes:
+#   complaint = wants a cuddle, protest = organized cuteness,
+#   strike = curled into a ball and won't come out, revolution = fur rain.
+# You can edit it while he runs: he rereads it when he raises a new sign.
+
+[reclamacao]
+WHERE'S MY PAT?
+CUDDLE ME?
+HI? I'M DOWN HERE!
+
+[manifestacao]
+MORE PETS, FEWER CLICKS!
+A BALL FOR EVERYONE!
+CUTENESS HAS RIGHTS TOO!
+CUDDLES NOW!
+DON'T DRAG ME, HUG ME!
+FUR DESERVES RESPECT!
+
+[greve]
+I'M A BALL NOW. NOT COMING OUT.
+CUTENESS STRIKE
+NO ROLLING TODAY
+NO WAVING UNTIL FURTHER NOTICE
+CLOSED FOR PETS (JUST KIDDING)
+
+[revolucao]
+FUR RAIN!
+ALL POWER TO THE BALLS!
+THE REVOLUTION WILL BE FLUFFY!
+ROLL OVER THE SYSTEM!
+NOBODY STOPS A BALL!
+FUR ON EVERY KEYBOARD!
+WHO LOVES, ROLLS!
+DOWN WITH THE VACUUM!
+
+[acordo]
+OK, ONE HUG
+PEACE AND FUR
+FRIENDS AGAIN?
+
+[desistiu]
+...fine.
+i'll roll over there.
+it's ok, i'll wait.
+
+# Sadness: when he stays sad or alone for a long time (no repression)
+[saudade]
+where are you?
+i miss you...
+come back and play?
+
+[chorando]
+sniff... sniff...
+my fur went flat
+nobody hugs me
+
+[abandonado]
+...
+alone
+cold fur
+
+[volto]
+I ROLLED BACK!
+HI HI HI!
+MISSED YOU!
+
+# Time-out corner: what he holds up, stuck on the sign
+[castigo]
+I'M JUST A LITTLE BALL...
+I DIDN'T DO ANYTHING (I DID)
+I PROMISE NOT TO ROLL AGAIN
+CAN I GO IF I'M CUTE?
+I'M ALREADY SORRY
+THIS CORNER IS COLD
+
+# Time-out corner, angry: even his anger is cute
+[xingamento]
+GRRR... (CUTE)
+HMPH!!
+YOU... YOU... MEANIE!
+&%#@... FURBALL!
+NOM! NOM!

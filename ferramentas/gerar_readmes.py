@@ -119,8 +119,10 @@ python ferramentas/gerar_doc_rede.py
   `python -B ferramentas/fuzz_pestinha.py 150 80` (rodadas, ações por rodada).
 - `medir_cartazes.py` confere se cada frase cabe na placa (rode no Windows, com as fontes reais);
   `PESTINHA_IDIOMA=en` mede os cartazes em inglês (`cartazes.en.txt`).
-- `gerar_sons.py` sintetiza os sons (`assets/comum/sons/` e `pets/cypher/sons/`), sempre iguais;
-  `gerar_notebook_cypher.py` desenha `pets/cypher/notebook.png`."""),
+- `gerar_sons.py` sintetiza os sons (`assets/comum/sons/`, `pets/cypher/sons/` e `pets/bolota/sons/`),
+  sempre iguais; `gerar_notebook_cypher.py` desenha `pets/cypher/notebook.png`.
+- `gerar_bolota.py` tira os olhos e as patinhas da arte do Bolota (`ferramentas/arte/bolota.png`) e grava
+  o pelo em `pets/bolota/corpo.png` e o tufo que ele atira em `pets/bolota/bolinha_papel.png`."""),
 ]
 
 
