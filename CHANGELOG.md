@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## Descrição dos personagens
+
+- Cada `pets/<pet>.json` ganha o campo `descricao`, que diz como o personagem é. Aparece em Configurações,
+  embaixo da escolha do personagem, e no Hub do Ryoku (Desktop > Pestinha), que lista todos.
+- Bryan, Jorge e Cypher têm a sua, e o README e o `pets/README.md` contam a personalidade de cada um.
+
 ## Estilos, o Cypher e sons
 
 - Estilo em Configurações: Original (as cores do personagem), Rosa, Cyber, Matrix e Âmbar. Vale na hora,

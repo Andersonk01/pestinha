@@ -2,7 +2,7 @@
 
 Um pet são duas coisas com o mesmo nome:
 
-- `<pet>.json`: quem ele é (nome, semente da rede, temperamento). É o que faz o pet existir e aparecer
+- `<pet>.json`: quem ele é (nome, descrição, semente da rede, temperamento). É o que faz o pet existir e aparecer
   como opção. Só os `.json` desta pasta contam; uma pasta de memória antiga não cria personagem.
 - `<pet>/`: o conteúdo dele (frases, cartazes, memes e, se quiser, imagens próprias).
 
@@ -11,6 +11,7 @@ Um pet são duas coisas com o mesmo nome:
 | Campo | Para que serve |
 |---|---|
 | `nome` | Nome que aparece nos textos. |
+| `descricao` | Como ele é, em poucas frases. Aparece em Configurações, embaixo da escolha do personagem, e no Hub do Ryoku (Desktop > Pestinha). Espaços e quebras de linha viram um espaço só, e passa de 600 caracteres é cortado. Sem o campo, não aparece nada. |
 | `seed` | Semente da rede (inteiro ≥ 0): outra semente é outro "indivíduo" com a mesma estrutura. |
 | `brincadeira` | Pesos de cada jeito de brincar: `bola` (chuta), `arremesso` (joga no cursor), `postit` (cola post-its). Peso 0 desliga. |
 | `temperamento` | Ganhos que multiplicam estímulos antes de chegarem aos interneurônios. Ex.: `"DISMISS->FRUSTRATION": 1.3` deixa o pet mais irritado quando você dispensa coisas. Os nomes estão em [docs/REDE_NEURAL.md](../docs/REDE_NEURAL.md). |
@@ -39,22 +40,25 @@ de outro pet.
 
 ## Personagens que já existem
 
-- **Bryan** (`bryan.json`, `bryan/`): o original.
+- **Bryan** (`bryan.json`, `bryan/`): o original, de moldura verde. Curioso e brincalhão, é o que mais gosta
+  da bolinha e o que mais sofre quando tiram ela dele; ser arrastado quase não o incomoda, mas bater com
+  força e dispensarem as coisas dele o deixam bravo.
 - **Jorge** (`jorge.json`, `jorge/`): coach trambiqueiro. Mais insistente quando ignorado, muito animado
   com atenção, desesperado quando dispensam as coisas dele e quase nunca triste. O panfleto que ele atira
   (`jorge/bolinha_papel.png`) é desenhado por `ferramentas/gerar_panfleto.py`. Moldura e olhos dourados
   e gravata vermelha. Memes felizes, contentes, curiosos e bravos próprios em `jorge/memes/feliz/`, `contente/`, `curioso/` e `bravo/`; as outras emoções ainda sem memes.
 
 - **Cypher** (`cypher.json`, `cypher/`): hacker de cibersegurança, de capuz e headset. Mais focado quando
-  você programa, curioso com coisa nova, irritado quando arrastam ou dispensam as coisas dele, e cola mais
-  post-its (de segurança). Visual da intro do Ryoku: ciano, chuva de código, scanlines e glitch. Notebook
+  você programa, curioso com coisa nova, com a web e com uma cutucada, irritado quando arrastam ou dispensam
+  as coisas dele, e cola mais post-its (de segurança) do que brinca de bola. A solidão pesa menos nele, e o
+  carinho acalma. Visual da intro do Ryoku: ciano, chuva de código, scanlines e glitch. Notebook
   próprio (`cypher/notebook.png`, desenhado por `ferramentas/gerar_notebook_cypher.py`) e voz digital
   própria (`cypher/sons/`, de `ferramentas/gerar_sons.py`); a digitação vem do comum. Sem memes ainda.
 
 ## Criar outro pet
 
 1. Copie `bryan.json` com o novo nome (letras minúsculas, números, `-` ou `_`), por exemplo `jorge.json`,
-   e mude os valores.
+   e mude os valores, inclusive a `descricao`.
 2. Crie a pasta `jorge/` com as frases e memes dele. Pode começar vazia: ele funciona com o neutro.
 3. Escolha o personagem em Configurações. A troca vale na próxima vez que abrir.
 4. A memória dele fica separada, em `memory/pets/jorge/`.

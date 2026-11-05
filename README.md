@@ -1,6 +1,6 @@
 # Pestinha
 
-Pets de tela para Windows, macOS e Linux, cada um com o próprio cérebro. São dois personagens por enquanto:
+Pets de tela para Windows, macOS e Linux, cada um com o próprio cérebro. São três personagens por enquanto:
 
 - **Bryan**, o original: uma telinha com dois olhos que mora no seu monitor principal. Cai, quica, pousa nas
   barras de título das janelas, brinca com uma bolinha, trabalha num notebook quando você programa, apronta
@@ -9,8 +9,10 @@ Pets de tela para Windows, macOS e Linux, cada um com o próprio cérebro. São 
   quem está na frente do computador. **Jorge não é uma referência a nenhum coach, empresa ou pessoa real.**
   É um personagem inventado para fazer piada com a cultura de promessas de enriquecimento rápido. Não vende,
   cobra nem pede nada de ninguém.
+- **Cypher**, um hacker de cibersegurança de capuz e headset, com a tela em ciano, chuva de código e glitch.
+  Trabalha junto quando você programa e cola post-its de segurança. É brincadeira: não invade nem testa nada.
 
-Os dois têm a mesma rede neural, mas cada um tem seu temperamento, seu conteúdo e sua memória, separados.
+Os três têm a mesma rede neural, mas cada um tem seu temperamento, seu conteúdo e sua memória, separados.
 Quem decide o que o pet sente e faz é uma **rede neural pulsada** de 470 neurônios (integração e disparo com
 vazamento), alimentada pelo que acontece no seu computador e pelo que você faz com ele. Algumas regras
 do programa (limiares, o que pode ou não acontecer) são escritas à mão; a seção
@@ -30,11 +32,14 @@ O **estilo** (também em Configurações) troca as cores de qualquer personagem 
 Original (as dele), Rosa, Cyber (ciano com chuva de código, scanlines e glitch, como a intro do Ryoku),
 Matrix e Âmbar. Os acessórios continuam os do personagem.
 
-| Personagem | Quem é |
+| Personagem | Como ele é |
 |---|---|
-| **Bryan** | Revoltado contra o cursor, o Alt+F4 e o Gerenciador de Tarefas. Protesta, faz greve e revolução. |
-| **Cypher** | Hacker de cibersegurança, de capuz e headset, com a tela em ciano, chuva de código e glitch. Adora quando você programa, fica curioso com coisa nova, se irrita quando arrastam ou dispensam as coisas dele e cola post-its de segurança ("2FA. ATIVE. AGORA."). Tem o próprio notebook cheio de adesivos e uma voz digital. É brincadeira: não invade nem testa nada. |
-| **Jorge** | Personagem de sátira. Não é referência a nenhum coach, empresa ou pessoa real. Os mesmos estágios viram prospecção, marketing agressivo, "assinatura premium" (só no cartaz) e colapso financeiro; ele atira panfletos de mentoria. É sátira: não vende, cobra nem bloqueia nada. Tem cinco memes felizes, contentes, curiosos e bravos próprios; as outras emoções ainda não têm. |
+| **Bryan** | O original, de moldura verde. Curioso e brincalhão, é o que mais gosta da bolinha e fica triste de verdade quando tiram ela dele. Ser arrastado quase não o incomoda, mas bater com força ou ter as coisas dele dispensadas o deixa bravo: protesta contra o cursor, o Alt+F4 e o Gerenciador de Tarefas, faz greve e chega à revolução, atirando bolinhas de papel. |
+| **Cypher** | Hacker de cibersegurança, de capuz e headset, com a tela em ciano, chuva de código e glitch. É o mais focado: quando você digita ou programa, senta no notebook dele e trabalha junto. Coisa nova, a web e uma cutucada o deixam curioso, e a solidão pesa menos nele. Se irrita quando o arrastam ou dispensam as coisas dele; carinho acalma. Entediado, prefere colar post-its de segurança ("2FA. ATIVE. AGORA.") a brincar de bola. Tem o próprio notebook cheio de adesivos e uma voz digital. É brincadeira: não invade nem testa nada. |
+| **Jorge** | Coach de finanças e IA, trambiqueiro e confiante, de moldura dourada e gravata vermelha. Ignorado, insiste: o tédio vira curiosidade e brincadeira. Com atenção, se anima muito. Quase nunca fica triste, mas se desespera quando recusam ou dispensam as coisas dele. Os mesmos estágios viram prospecção, marketing agressivo, "assinatura premium" (só no cartaz) e colapso financeiro; ele atira panfletos de mentoria. Personagem de sátira: não é referência a nenhum coach, empresa ou pessoa real, e não vende, cobra nem bloqueia nada. Tem cinco memes felizes, contentes, curiosos e bravos próprios; as outras emoções ainda não têm. |
+
+Um resumo de cada um fica no campo `descricao` do `pets/<pet>.json` e aparece em **Configurações**, embaixo
+da escolha do personagem (e, no Ryoku, em Hub > Desktop > Pestinha, que lista todos).
 
 ## O que o pet faz
 
@@ -153,7 +158,8 @@ Detalhes em [PRIVACIDADE.md](PRIVACIDADE.md).
 - **Cores, acessórios e efeitos:** o campo `aparencia` do `pets/<pet>.json` (capuz, headset, óculos,
   gravata; chuva de código, scanlines, glitch), explicado em [pets/README.md](pets/README.md).
 - **Programas que ele reconhece:** `assets/comum/programas.json` soma programas à lista de trabalho, jogo, música etc.
-- **Personalidade:** `pets/bryan.json` (semente da rede, temperamento, pesos de brincadeira, reação ao notebook).
+- **Personalidade:** `pets/<pet>.json` (descrição, semente da rede, temperamento, pesos de brincadeira, reação ao
+  notebook).
 - **Números do comportamento:** `pestinha/ajustes.py`, todos validados ao abrir.
 
 ## Estrutura

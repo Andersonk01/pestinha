@@ -240,11 +240,13 @@ def profile(perms):
 # PETS
 # ============================================================
 
+DESCRICAO_MAXIMA = 600             # caracteres; o resto do texto é cortado
 APP_NOME = "Pestinha"             # o programa; cada personagem tem o próprio nome (pets/<pet>.json)
 PET_PADRAO = "bryan"
 
 DEFAULT_PET = {
     "nome": None,                       # sem nome no .json: o id com inicial maiúscula
+    "descricao": "",                    # como ele é, em poucas frases: aparece em Configurações e no Hub
     "seed": 7,
     "brincadeira": {"bola": 1.0, "arremesso": 0.6, "postit": 0.5},   # pesos: 0 desliga
     "temperamento": {},
@@ -279,6 +281,8 @@ def _pet_valido(saved):
     out = {}
     if isinstance(saved.get("nome"), str) and saved["nome"].strip():
         out["nome"] = saved["nome"]
+    if isinstance(saved.get("descricao"), str):
+        out["descricao"] = " ".join(saved["descricao"].split())[:DESCRICAO_MAXIMA]
     if type(saved.get("seed")) is int and saved["seed"] >= 0:
         out["seed"] = saved["seed"]
     brinc = saved.get("brincadeira")

@@ -1,6 +1,7 @@
 {
   "_ajuda": "Cypher: hacker de cibersegurança, de capuz e headset. Mesma rede do Bryan, outra semente e outro temperamento. Adora quando você programa (digitação e trabalho viram foco), fica curioso com coisa nova e com a web, se irrita quando arrastam ou dispensam as coisas dele e, entediado, apronta. Carinho acalma. Visual: o da intro do Ryoku (ciano, chuva de código, scanlines e glitch). aparencia: cores #rrggbb (moldura, casca, tela, olho, brilho, codigo = cor da chuva), acessórios (capuz, fones, oculos, gravata) com a cor de cada um ou o nome de uma parte do corpo (\"moldura\", \"olho\", \"brilho\") para acompanhar o estilo, e efeitos (chuva, scanlines, glitch).",
   "nome": "Cypher",
+  "descricao": "Hacker de cibersegurança, de capuz e headset, com a tela em ciano, chuva de código e glitch. É o mais focado: quando você digita ou programa, senta no notebook dele e trabalha junto. Coisa nova e a web o deixam curioso, uma cutucada também, e a solidão pesa menos nele. Se irrita quando o arrastam ou dispensam as coisas dele; carinho acalma. Entediado, prefere colar post-its de segurança (“2FA. ATIVE. AGORA.”) a brincar de bola. É brincadeira: não invade nem testa nada.",
   "seed": 1337,
   "temperamento": {
     "TYPING->FOCUS": 1.5,

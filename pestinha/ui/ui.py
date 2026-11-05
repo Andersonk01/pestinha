@@ -35,6 +35,8 @@ QWidget#conteudo, QWidget#qt_scrollarea_viewport { background: #0c1f13; }
 QLabel { color: #b9f5c8; }
 QLabel#title { color: #63e56f; font: bold 20px 'Consolas'; }
 QLabel#hint { color: #6f9c7b; font-size: 11px; }
+QLabel#descricao { color: #b9f5c8; font-size: 12px; background: #102a19; border: 1px solid #24402c;
+                   border-radius: 6px; padding: 6px 8px; }
 QGroupBox { color: #63e56f; font: bold 12px; border: 1px solid #24402c;
             border-radius: 8px; margin-top: 14px; padding: 10px 8px 6px 8px; }
 QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 4px; }
@@ -132,13 +134,21 @@ class SettingsDialog(QDialog):
         pet_row = QHBoxLayout()
         pet_row.addWidget(QLabel("Personagem:"))
         self.pet_combo = QComboBox()
+        self.pet_descricoes = {}
         for pet_id in config.list_pets(self.paths):            # só pets/<id>.json; memória antiga não conta
-            self.pet_combo.addItem(config.load_pet(self.paths, pet_id)["nome"], pet_id)
+            pet_def = config.load_pet(self.paths, pet_id)
+            self.pet_combo.addItem(pet_def["nome"], pet_id)
+            self.pet_descricoes[pet_id] = pet_def["descricao"]
         atual = config.escolher_pet(self.paths, perms["pet"])
         self.pet_combo.setCurrentIndex(max(0, self.pet_combo.findData(atual)))
         self.pet_combo.currentIndexChanged.connect(self._trocar_pet)
         pet_row.addWidget(self.pet_combo, 1)
         top_layout.addLayout(pet_row)
+        self.pet_descricao = QLabel()
+        self.pet_descricao.setObjectName("descricao")
+        self.pet_descricao.setWordWrap(True)
+        top_layout.addWidget(self.pet_descricao)
+        self._mostrar_descricao()
         self.pet_aviso = QLabel("Vale na próxima vez que abrir. Cada personagem tem a própria memória.")
         self.pet_aviso.setObjectName("hint")
         self.pet_aviso.setWordWrap(True)
@@ -296,7 +306,14 @@ class SettingsDialog(QDialog):
     def _trocar_pet(self, _indice):
         """Só grava a escolha: o pet que está na tela continua até reabrir (a memória dele é outra)."""
         self._set("pet", self.pet_combo.currentData())
+        self._mostrar_descricao()
         self._atualizar_resumo()
+
+    def _mostrar_descricao(self):
+        """Como é o personagem escolhido (o "descricao" do pets/<id>.json); sem texto, some."""
+        texto = self.pet_descricoes.get(self.pet_combo.currentData(), "")
+        self.pet_descricao.setText(texto)
+        self.pet_descricao.setVisible(bool(texto))
 
     def _set(self, key, value):
         """Grava uma permissão e avisa o app só dessa mudança."""

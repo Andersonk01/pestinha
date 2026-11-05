@@ -51,6 +51,14 @@ def test_todo_temperamento_mexe_em_uma_ligacao_que_existe():
         assert chaves <= validas, (pet, chaves - validas)
 
 
+def test_todo_pet_tem_descricao():
+    """A descrição aparece em Configurações e no Hub do Ryoku: cada personagem diz como é."""
+    for pet in config.list_pets(PATHS):
+        descricao = config.load_pet(PATHS, pet)["descricao"]
+        assert 80 <= len(descricao) <= config.DESCRICAO_MAXIMA, (pet, len(descricao))
+        assert descricao.endswith("."), pet
+
+
 def test_mesmo_cerebro_outro_temperamento():
     jorge = config.load_pet(PATHS, "jorge")
     com = LIFBrain(seed=jorge["seed"], temperament=jorge["temperamento"])

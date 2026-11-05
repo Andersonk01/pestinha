@@ -77,6 +77,26 @@ def test_escolher_grava_so_o_pet(tmp_path):
     assert "Conteúdo de Teste" in d.resumo.text()
 
 
+def test_descricao_acompanha_o_personagem_escolhido(tmp_path):
+    paths = dois_pets(tmp_path)
+    paths.definicao("bryan").write_text('{"nome": "Bryan", "descricao": "  Curioso   e brincalhão. "}',
+                                        encoding="utf-8")
+    d = dialogo(paths, dict(config.DEFAULT_PERMISSIONS, pet="bryan"))
+    assert d.pet_descricao.text() == "Curioso e brincalhão." and d.pet_descricao.isVisibleTo(d)
+    d.pet_combo.setCurrentIndex(d.pet_combo.findData("teste"))         # sem descrição: o quadro some
+    assert d.pet_descricao.text() == "" and not d.pet_descricao.isVisibleTo(d)
+    d.pet_combo.setCurrentIndex(d.pet_combo.findData("bryan"))
+    assert d.pet_descricao.text() == "Curioso e brincalhão."
+
+
+def test_descricao_de_tipo_errado_ou_longa_demais(tmp_path):
+    paths = dois_pets(tmp_path)
+    paths.definicao("teste").write_text(json.dumps({"descricao": 42}), encoding="utf-8")
+    assert config.load_pet(paths, "teste")["descricao"] == ""
+    paths.definicao("teste").write_text(json.dumps({"descricao": "a" * 5000}), encoding="utf-8")
+    assert len(config.load_pet(paths, "teste")["descricao"]) == config.DESCRICAO_MAXIMA
+
+
 def test_troca_vale_ao_reabrir(tmp_path, monkeypatch):
     paths = dois_pets(tmp_path)
     store = SettingsStore(paths)

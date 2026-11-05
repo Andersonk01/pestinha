@@ -1,6 +1,7 @@
 {
   "_ajuda": "brincadeira: pesos de cada jeito de brincar (0 desliga). temperamento: DISMISS->FRUSTRATION e IMPACT->FRUSTRATION altos = mais humor bravo. reacao_notebook: \"bravo\" ou \"triste\", o que ele sente se arrancarem o notebook dele.",
   "nome": "Bryan",
+  "descricao": "O original: uma telinha de moldura verde com dois olhos. Curioso e brincalhão, é o que mais gosta da bolinha e fica triste de verdade quando tiram ela dele. Ser arrastado quase não o incomoda, mas bater com força ou ter as coisas dele dispensadas deixa ele bravo: aí protesta contra o cursor, o Alt+F4 e o Gerenciador de Tarefas, faz greve e chega à revolução, atirando bolinhas de papel.",
   "seed": 7,
   "temperamento": {
     "CURIOUS": 1.3,
