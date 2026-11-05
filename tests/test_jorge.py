@@ -51,12 +51,14 @@ def test_todo_temperamento_mexe_em_uma_ligacao_que_existe():
         assert chaves <= validas, (pet, chaves - validas)
 
 
-def test_todo_pet_tem_descricao():
-    """A descrição aparece em Configurações e no Hub do Ryoku: cada personagem diz como é."""
+def test_todo_pet_tem_descricao_em_ingles_e_portugues():
+    """Configurações mostra a do idioma das telas (pt); o Hub do Ryoku, a do idioma do sistema."""
     for pet in config.list_pets(PATHS):
         descricao = config.load_pet(PATHS, pet)["descricao"]
-        assert 80 <= len(descricao) <= config.DESCRICAO_MAXIMA, (pet, len(descricao))
-        assert descricao.endswith("."), pet
+        assert set(descricao) == {"en", "pt"}, pet
+        for idioma, texto in descricao.items():
+            assert 80 <= len(texto) <= config.DESCRICAO_MAXIMA, (pet, idioma, len(texto))
+            assert texto.endswith("."), (pet, idioma)
 
 
 def test_mesmo_cerebro_outro_temperamento():

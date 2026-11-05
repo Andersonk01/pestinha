@@ -38,8 +38,9 @@ Matrix e Âmbar. Os acessórios continuam os do personagem.
 | **Cypher** | Hacker de cibersegurança, de capuz e headset, com a tela em ciano, chuva de código e glitch. É o mais focado: quando você digita ou programa, senta no notebook dele e trabalha junto. Coisa nova, a web e uma cutucada o deixam curioso, e a solidão pesa menos nele. Se irrita quando o arrastam ou dispensam as coisas dele; carinho acalma. Entediado, prefere colar post-its de segurança ("2FA. ATIVE. AGORA.") a brincar de bola. Tem o próprio notebook cheio de adesivos e uma voz digital. É brincadeira: não invade nem testa nada. |
 | **Jorge** | Coach de finanças e IA, trambiqueiro e confiante, de moldura dourada e gravata vermelha. Ignorado, insiste: o tédio vira curiosidade e brincadeira. Com atenção, se anima muito. Quase nunca fica triste, mas se desespera quando recusam ou dispensam as coisas dele. Os mesmos estágios viram prospecção, marketing agressivo, "assinatura premium" (só no cartaz) e colapso financeiro; ele atira panfletos de mentoria. Personagem de sátira: não é referência a nenhum coach, empresa ou pessoa real, e não vende, cobra nem bloqueia nada. Tem cinco memes felizes, contentes, curiosos e bravos próprios; as outras emoções ainda não têm. |
 
-Um resumo de cada um fica no campo `descricao` do `pets/<pet>.json` e aparece em **Configurações**, embaixo
-da escolha do personagem (e, no Ryoku, em Hub > Desktop > Pestinha, que lista todos).
+Um resumo de cada um fica no campo `descricao` do `pets/<pet>.json`, em inglês e em português. Aparece em
+**Configurações**, embaixo da escolha do personagem, e, no Ryoku, em Hub > Desktop > Pestinha, que lista todos
+no idioma do sistema.
 
 ## O que o pet faz
 

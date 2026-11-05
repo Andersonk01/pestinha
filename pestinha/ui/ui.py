@@ -138,7 +138,7 @@ class SettingsDialog(QDialog):
         for pet_id in config.list_pets(self.paths):            # só pets/<id>.json; memória antiga não conta
             pet_def = config.load_pet(self.paths, pet_id)
             self.pet_combo.addItem(pet_def["nome"], pet_id)
-            self.pet_descricoes[pet_id] = pet_def["descricao"]
+            self.pet_descricoes[pet_id] = config.descricao_em(pet_def)     # no idioma destas telas
         atual = config.escolher_pet(self.paths, perms["pet"])
         self.pet_combo.setCurrentIndex(max(0, self.pet_combo.findData(atual)))
         self.pet_combo.currentIndexChanged.connect(self._trocar_pet)

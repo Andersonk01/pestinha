@@ -91,10 +91,27 @@ def test_descricao_acompanha_o_personagem_escolhido(tmp_path):
 
 def test_descricao_de_tipo_errado_ou_longa_demais(tmp_path):
     paths = dois_pets(tmp_path)
-    paths.definicao("teste").write_text(json.dumps({"descricao": 42}), encoding="utf-8")
-    assert config.load_pet(paths, "teste")["descricao"] == ""
+    for ruim in (42, ["a"], {"en": 5}, {"EN": "x"}, {"pt-BR": "x"}, {"en": "   "}):
+        paths.definicao("teste").write_text(json.dumps({"descricao": ruim}), encoding="utf-8")
+        assert config.load_pet(paths, "teste")["descricao"] == {}, ruim
+        assert config.descricao_em(config.load_pet(paths, "teste")) == ""
     paths.definicao("teste").write_text(json.dumps({"descricao": "a" * 5000}), encoding="utf-8")
-    assert len(config.load_pet(paths, "teste")["descricao"]) == config.DESCRICAO_MAXIMA
+    assert len(config.load_pet(paths, "teste")["descricao"]["pt"]) == config.DESCRICAO_MAXIMA
+
+
+def test_descricao_por_idioma(tmp_path):
+    """Um texto só é do idioma das telas (pt); um objeto tem um por idioma, com o inglês de reserva."""
+    paths = dois_pets(tmp_path)
+    paths.definicao("teste").write_text(json.dumps({"descricao": {"en": "In English.", "pt": "Em português.",
+                                                                  "pt_BR": "Do Brasil."}}), encoding="utf-8")
+    pet = config.load_pet(paths, "teste")
+    assert config.descricao_em(pet) == "Em português."                  # o padrão: o idioma das telas
+    assert config.descricao_em(pet, "en") == "In English."
+    assert config.descricao_em(pet, "pt_BR") == "Do Brasil."
+    assert config.descricao_em(pet, "pt_PT") == "Em português."          # sem o regional, a base
+    assert config.descricao_em(pet, "fr") == "In English."               # sem o idioma, o inglês
+    paths.definicao("teste").write_text(json.dumps({"descricao": {"de": "Auf Deutsch."}}), encoding="utf-8")
+    assert config.descricao_em(config.load_pet(paths, "teste"), "en") == "Auf Deutsch."   # a que houver
 
 
 def test_troca_vale_ao_reabrir(tmp_path, monkeypatch):

@@ -6,6 +6,7 @@ e é gravado a CADA mudança (se o programa cair, a escolha não se perde).
 """
 
 import random
+import re
 
 from .paths import pet_id_valido
 from .store import read_json, read_lines, write_json
@@ -240,13 +241,15 @@ def profile(perms):
 # PETS
 # ============================================================
 
+IDIOMA = "pt"                      # o das telas do pet; uma descrição sem idioma é deste
 DESCRICAO_MAXIMA = 600             # caracteres; o resto do texto é cortado
+_CODIGO_IDIOMA = re.compile(r"[a-z]{2,3}(_[A-Z]{2})?")     # en, pt, pt_BR (os códigos do Ryoku)
 APP_NOME = "Pestinha"             # o programa; cada personagem tem o próprio nome (pets/<pet>.json)
 PET_PADRAO = "bryan"
 
 DEFAULT_PET = {
     "nome": None,                       # sem nome no .json: o id com inicial maiúscula
-    "descricao": "",                    # como ele é, em poucas frases: aparece em Configurações e no Hub
+    "descricao": {},                    # {idioma: texto}: como ele é, em Configurações e no Hub do Ryoku
     "seed": 7,
     "brincadeira": {"bola": 1.0, "arremesso": 0.6, "postit": 0.5},   # pesos: 0 desliga
     "temperamento": {},
@@ -281,8 +284,14 @@ def _pet_valido(saved):
     out = {}
     if isinstance(saved.get("nome"), str) and saved["nome"].strip():
         out["nome"] = saved["nome"]
-    if isinstance(saved.get("descricao"), str):
-        out["descricao"] = " ".join(saved["descricao"].split())[:DESCRICAO_MAXIMA]
+    descricao = saved.get("descricao")
+    if isinstance(descricao, str):
+        descricao = {IDIOMA: descricao}
+    if isinstance(descricao, dict):
+        textos = {k: " ".join(v.split())[:DESCRICAO_MAXIMA] for k, v in descricao.items()
+                  if isinstance(k, str) and _CODIGO_IDIOMA.fullmatch(k) and isinstance(v, str) and v.strip()}
+        if textos:
+            out["descricao"] = textos
     if type(saved.get("seed")) is int and saved["seed"] >= 0:
         out["seed"] = saved["seed"]
     brinc = saved.get("brincadeira")
@@ -296,6 +305,15 @@ def _pet_valido(saved):
     if isinstance(saved.get("aparencia"), dict):
         out["aparencia"] = dict(saved["aparencia"])    # cores e acessórios: validados em body/desenho_rosto.py
     return out
+
+
+def descricao_em(pet, idioma=IDIOMA):
+    """A descrição no idioma pedido: o exato (pt_BR), a base dele (pt), o inglês, a do pet ou a que houver."""
+    textos = pet.get("descricao") or {}
+    for codigo in (idioma, idioma.split("_")[0], "en", IDIOMA):
+        if textos.get(codigo):
+            return textos[codigo]
+    return next(iter(textos.values()), "")
 
 
 def load_pet(paths, name):

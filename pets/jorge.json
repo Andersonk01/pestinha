@@ -1,7 +1,10 @@
 {
   "_ajuda": "Jorge: coach de finanças e IA, trambiqueiro e confiante. Mesma rede do Bryan, outra semente e outro temperamento. Ignorado, insiste (tédio vira curiosidade e brincadeira); com atenção, se anima muito (cutucada e carinho viram alegria); quando dispensam as coisas dele, se desespera (dispensa e recusa viram frustração). Quase não fica triste: perder a bolinha vira raiva, não desânimo. aparencia: cores #rrggbb (moldura, casca, tela, olho, brilho) e acessórios (oculos, gravata) com a cor de cada um.",
   "nome": "Jorge",
-  "descricao": "Coach de finanças e IA, trambiqueiro e confiante, de moldura dourada e gravata vermelha. Ignorado, insiste: o tédio vira curiosidade e brincadeira. Com atenção, se anima muito, porque cutucada e carinho viram alegria. Quase nunca fica triste, mas se desespera quando recusam ou dispensam as coisas dele, cola post-its e atira panfletos de mentoria. É sátira: não é referência a nenhum coach, empresa ou pessoa real, e não vende, cobra nem pede nada.",
+  "descricao": {
+    "en": "A finance and AI coach, smooth and overconfident, with a gold frame and a red tie. Ignored, he insists: boredom turns into curiosity and play. Attention thrills him, since pokes and petting turn into joy. He is almost never sad, but despairs when you refuse or dismiss his things, sticks notes and throws mentoring flyers. It is satire: he is not a reference to any real coach, company or person, and he sells, charges or asks for nothing.",
+    "pt": "Coach de finanças e IA, trambiqueiro e confiante, de moldura dourada e gravata vermelha. Ignorado, insiste: o tédio vira curiosidade e brincadeira. Com atenção, se anima muito, porque cutucada e carinho viram alegria. Quase nunca fica triste, mas se desespera quando recusam ou dispensam as coisas dele, cola post-its e atira panfletos de mentoria. É sátira: não é referência a nenhum coach, empresa ou pessoa real, e não vende, cobra nem pede nada."
+  },
   "seed": 1729,
   "temperamento": {
     "BOREDOM->CURIOUS": 1.5,

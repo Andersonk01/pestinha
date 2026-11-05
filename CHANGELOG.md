@@ -4,7 +4,10 @@
 
 - Cada `pets/<pet>.json` ganha o campo `descricao`, que diz como o personagem é. Aparece em Configurações,
   embaixo da escolha do personagem, e no Hub do Ryoku (Desktop > Pestinha), que lista todos.
-- Bryan, Jorge e Cypher têm a sua, e o README e o `pets/README.md` contam a personalidade de cada um.
+- A descrição vem num texto por idioma (`{"en": ..., "pt": ...}`): Configurações mostra a em português, o
+  idioma das telas do pet, e o Hub do Ryoku a do idioma do sistema, com o inglês de reserva.
+- Bryan, Jorge e Cypher têm a sua em inglês e em português, e o README e o `pets/README.md` contam a
+  personalidade de cada um.
 
 ## Estilos, o Cypher e sons
 
