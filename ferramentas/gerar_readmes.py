@@ -16,7 +16,7 @@ CAMADAS = [
     ("core", "Cérebro e regras puras: rede neural, emoção, homeostase, memória, condicionamento, física e protesto. "
              "Sem Qt e sem API do sistema, para ser testável em qualquer lugar.", "módulos compartilhados"),
     ("plataforma", "Tudo que depende do sistema operacional: programa em primeiro plano, tempo ocioso, janelas, "
-                   "tela cheia, foco e o atalho de pânico. Um módulo por sistema (Windows, macOS, Linux). "
+                   "tela cheia, foco e o atalho de pânico. Um módulo por sistema (Windows, macOS, Linux com X11 e Linux com Hyprland). "
                    "Só nome de programa e geometria; nunca conteúdo nem título de janela.", "nada (só o sistema)"),
     ("sense", "Sentidos: o que as leituras da plataforma significam (atividade, tela cheia, janela para pousar) "
               "e registro da rotina. Nunca conteúdo nem título de janela.", "core, plataforma"),

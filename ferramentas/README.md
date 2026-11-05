@@ -20,3 +20,4 @@ python ferramentas/gerar_doc_rede.py
 | `gerar_panfleto.py` | Desenha pets/jorge/bolinha_papel.png: um panfleto de mentoria amassado, que o Jorge atira na revolução. |
 | `gerar_readmes.py` | Gera pestinha/README.md e o README de cada camada a partir das docstrings dos módulos. |
 | `medir_cartazes.py` | Mede se cada frase do cartazes.txt de cada pet cabe na placa em que aparece, com as fontes de verdade. |
+| `pestinha_ctl.py` | Fala com o Pestinha que está rodando, pelo controle local (pestinha/controle/remoto.py). |

@@ -53,6 +53,7 @@ from .body.pet import PetWindow, cursor_pos
 from .body.pet_state import PetState
 from .body.toy import ToyTracker, bounce_off, push_from_cursor
 from .controle.interacao import InteracaoMixin
+from .controle.remoto import ControleLocal
 from .controle.sessao import SessaoMixin
 from .core.conditioning import Conditioning
 from .core.emotion import PRIORITY, EmotionState
@@ -202,6 +203,8 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         self.tray.quit.connect(self.quit)
         self.hotkey = PanicHotkey()
         self.hotkey.pressed.connect(self.panic)
+        # o atalho do Hyprland e o painel do sistema falam com o pet por aqui
+        self.controle = ControleLocal(self) if plataforma.TEM_CONTROLE_LOCAL else None
         self.wiping = False         # True depois de "apagar tudo": não grava mais nada ao sair
         self.paused = False
         self._pausado_em = None         # quando a pausa começou (para descontar do tempo dos episódios)
@@ -227,7 +230,8 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         if not pasta_gravavel(self.paths.memory):
             problems.append(f"sem permissão para gravar em {self.paths.memory}: o que ele aprender será perdido ao fechar")
         if not self.hotkey.ok:
-            problems.append(f"atalho de pânico {config.PANIC_HOTKEY_TEXT} já está em uso por outro programa")
+            problems.append(plataforma.AVISO_SEM_ATALHO
+                            or f"atalho de pânico {config.PANIC_HOTKEY_TEXT} já está em uso por outro programa")
         if problems:
             self.tray.icon.showMessage(config.APP_NOME,"\n".join(problems), QSystemTrayIcon.Warning, 6000)
         if self.perms["ativo"]:
@@ -252,8 +256,17 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
 
     def screen_bounds(self):
         """Áreas úteis de todos os monitores, em coordenadas lógicas globais do Qt."""
-        return [(g.x(), g.y(), g.x() + g.width(), g.y() + g.height())
-                for g in (screen.availableGeometry() for screen in QGuiApplication.screens())]
+        nativas = plataforma.areas_uteis()      # no Hyprland o Qt (pelo XWayland) não sabe da barra nem do dock
+        areas = []
+        for screen in QGuiApplication.screens():
+            g = screen.availableGeometry()
+            area = nativas.get(screen.name()) if nativas else None
+            if area is not None:
+                dpr = screen.devicePixelRatio() or 1.0
+                areas.append(tuple(v / dpr for v in area))
+            else:
+                areas.append((g.x(), g.y(), g.x() + g.width(), g.y() + g.height()))
+        return areas
 
     def screen_geometries(self):
         """Geometria física das telas, na mesma ordem de screen_bounds()."""
@@ -282,8 +295,9 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
     def _telas(self):
         """Telas para converter pixels físicos: [(x, y, largura, altura, dpr)], a principal primeiro."""
         principal = QGuiApplication.primaryScreen()
-        # só o Windows entrega pixels físicos e conserva o canto de cada tela no Qt (ver nativo_para_logico)
-        outras = [s for s in QGuiApplication.screens() if s != principal] if plataforma.NOME_DO_SISTEMA == "Windows" else []
+        # só o Windows (e o Hyprland, pelo XWayland) entrega pixels físicos e conserva o canto de cada tela
+        # no Qt (ver nativo_para_logico)
+        outras = [s for s in QGuiApplication.screens() if s != principal] if plataforma.TODAS_AS_TELAS else []
         return [(s.geometry().x(), s.geometry().y(), s.geometry().width(), s.geometry().height(), s.devicePixelRatio())
                 for s in [principal, *outras]]
 

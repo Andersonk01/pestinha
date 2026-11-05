@@ -17,7 +17,11 @@ ACTIVITY_APPS = {
                     "claude", "codex", "cursor", "windsurf", "zed", "windowsterminal", "wt",
                     "idea64", "idea", "webstorm64", "rider64", "clion64", "goland64", "phpstorm64",
                     "sublime_text", "notepad++", "antigravity", "kiro", "trae", "studio64",
-                    "android studio"},
+                    "android studio",
+                    # Linux: terminais (é neles que roda o claude, o nvim...) e editores
+                    "kitty", "ghostty", "alacritty", "foot", "wezterm-gui", "konsole",
+                    "gnome-terminal-server", "xfce4-terminal", "tilix", "nvim", "code-oss", "codium",
+                    "vscodium", "jetbrains-idea", "kate", "gnome-text-editor"},
     "DESIGNING": {"fusion360", "fusion", "blender", "figma", "photoshop", "adobe photoshop", "illustrator",
                   "adobe illustrator", "afterfx", "adobe after effects", "adobe premiere pro", "resolve",
                   "davinci resolve", "capcut", "krita", "inkscape", "bambu-studio", "bambustudio",
@@ -28,8 +32,12 @@ ACTIVITY_APPS = {
                "r5apex_dx12", "dota2", "dota 2", "rocketleague", "rocket league", "overwatch", "gta5",
                "eldenring", "chiaki", "chiaki-ng"},
     "BROWSING": {"chrome", "google chrome", "chromium", "firefox", "msedge", "microsoft edge", "opera",
-                 "brave", "brave browser", "safari"},
-    "SOCIAL": {"discord", "teams", "microsoft teams", "whatsapp"},
+                 "brave", "brave browser", "safari",
+                 # Linux: o nome do processo de alguns navegadores leva "-bin"
+                 "zen", "zen-bin", "firefox-bin", "librewolf", "vivaldi-bin", "brave-bin", "chromium-browser",
+                 "google-chrome", "microsoft-edge", "floorp", "epiphany", "qutebrowser"},
+    "SOCIAL": {"discord", "teams", "microsoft teams", "whatsapp", "vesktop", "telegram-desktop",
+               "signal-desktop", "slack", "element"},
     "MUSIC": {"spotify"},
 }
 

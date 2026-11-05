@@ -208,5 +208,7 @@ class SessaoMixin:
         except Exception as error:
             log(f"[app] erro ao fechar: {error}")
         finally:
+            if getattr(self, "controle", None) is not None:
+                self.controle.fechar()
             self.tray.icon.hide()
             QApplication.quit()

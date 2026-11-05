@@ -11,7 +11,7 @@ import random
 import time
 
 from PySide6.QtCore import QRect, QRectF, Qt, Signal
-from PySide6.QtGui import QCursor, QFont, QPainter
+from PySide6.QtGui import QCursor, QFont, QGuiApplication, QPainter
 from PySide6.QtWidgets import QWidget
 
 from ..config import EMOTION_NAMES
@@ -39,6 +39,9 @@ CX, CY = WIN / 2, WIN / 2 - 6   # centro do corpo dentro da janela
 
 def set_no_activate(widget):
     """Garante que clicar/mostrar a janela não rouba o foco do programa atual (onde o sistema permite)."""
+    if plataforma.TITULO_DAS_JANELAS:
+        # no Hyprland, quem tira o foco e a moldura são as regras de janela, que acham as do pet pelo título
+        widget.setWindowTitle(plataforma.TITULO_DAS_JANELAS)
     try:
         plataforma.sem_foco_nativo(int(widget.winId()))
     except Exception:
@@ -269,5 +272,10 @@ class PetWindow(QWidget):
 
 def cursor_pos():
     """Posição atual do cursor em pixels (x, y)."""
+    nativo = plataforma.posicao_cursor()
+    if nativo is not None:
+        # o sistema sabe onde o cursor está mesmo fora das janelas do pet (no Hyprland, o Qt não sabe)
+        dpr = QGuiApplication.primaryScreen().devicePixelRatio() or 1.0
+        return nativo[0] / dpr, nativo[1] / dpr
     p = QCursor.pos()
     return p.x(), p.y()

@@ -6,6 +6,7 @@ Rodar:
     python main.py --configurar abre a tela de permissões antes de começar
     python main.py --direto     usa as permissões salvas, mesmo com o pânico ligado
     python main.py --sair-em N  fecha sozinho depois de N segundos (para testes)
+    python main.py --pet jorge  troca o personagem antes de abrir (vale para as próximas vezes)
 
 Dependências em requirements.txt. Pânico: Ctrl + Alt + Shift + B (desliga tudo e continua desligado).
 """
@@ -17,7 +18,7 @@ import sys
 from PySide6.QtCore import QDir, QLockFile, QTimer
 from PySide6.QtWidgets import QApplication, QDialog, QMessageBox
 
-from pestinha import config, store
+from pestinha import config, plataforma, store
 from pestinha import log as log_module
 from pestinha.paths import Paths
 from pestinha.settings_store import SettingsStore
@@ -58,9 +59,13 @@ def main():
     parser.add_argument("--direto", action="store_true", help="pula a tela de permissões")
     parser.add_argument("--configurar", action="store_true", help="mostra a tela de permissões")
     parser.add_argument("--sair-em", type=float, default=0.0, help="fecha sozinho após N segundos (teste)")
+    parser.add_argument("--pet", default="", help="personagem (o id em pets/, ex.: bryan ou jorge)")
     args = parser.parse_args()
 
+    plataforma.preparar_qt()                        # no Hyprland: XWayland, onde as janelas podem andar
     app = QApplication(sys.argv)
+    if plataforma.CLASSE_DAS_JANELAS:
+        app.setApplicationName(plataforma.CLASSE_DAS_JANELAS)
     app.setQuitOnLastWindowClosed(False)
     app.setWindowIcon(face_icon())
 
@@ -73,6 +78,11 @@ def main():
         return 0
 
     store = SettingsStore(paths)
+    if args.pet:
+        if args.pet in config.list_pets(paths):
+            store.update({"pet": args.pet})
+        else:
+            print(f"[pet] não existe o personagem {args.pet!r}; ficou o {store.perms['pet']}")
     perms = store.perms
     first_time = not paths.permissions.exists()
     if deve_mostrar_tela(args, perms, first_time):

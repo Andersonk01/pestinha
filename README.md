@@ -51,7 +51,7 @@ fica salvo localmente e muda o jeito dele com o tempo.
 
 ## Requisitos
 
-- Windows 10 ou 11, macOS (Quartz/pyobjc) ou Linux com X11.
+- Windows 10 ou 11, macOS (Quartz/pyobjc), Linux com X11 ou Linux com Hyprland (Wayland, ver abaixo).
 - Python 3.11 ou mais novo.
 - No Linux, para as janelas e o tempo ocioso: `xdotool`, `wmctrl` e `xprintidle`. Sem eles, o pet continua
   andando, mas não enxerga as janelas.
@@ -76,6 +76,36 @@ python main.py --configurar
 
 Com o programa aberto, as opções também ficam em **Configurações**, no ícone da bandeja. No Windows, é lá que
 se marca **Abrir o Pestinha ao entrar no Windows**. Só uma cópia abre por vez.
+
+### Linux com Hyprland
+
+No Wayland, um programa não pode posicionar as próprias janelas e os comandos do X11 não enxergam as outras.
+Dentro de uma sessão do Hyprland, o Pestinha usa um backend próprio (`pestinha/plataforma/hyprland.py`):
+
+- As janelas do pet rodam pelo **XWayland**, onde podem andar pela tela. Elas levam o título
+  `pestinha:janela`, para as regras de janela do Hyprland as acharem.
+- Janelas, janela ativa, tela cheia, cursor e a área livre das barras vêm do **socket do Hyprland** (o mesmo
+  do `hyprctl`). O título das outras janelas vem junto e é descartado, como no X11.
+- O tempo ocioso vem do protocolo **ext-idle-notify** do Wayland, que só diz "parou" e "voltou".
+- O Hyprland não deixa um programa ouvir o teclado dos outros (o pynput não funciona lá): o pânico é um bind
+  do próprio Hyprland que chama o **controle local**, um socket em `$XDG_RUNTIME_DIR/pestinha.sock`
+  que só o seu usuário alcança. O `ferramentas/pestinha_ctl.py` fala com ele (status, perms, panico,
+  religar, configuracoes, pausar, esconder, sair).
+- `PESTINHA_PLATAFORMA=x11` volta ao backend do X11; `PESTINHA_QPA=wayland` tira o XWayland (o pet não anda).
+
+Na config do Hyprland (Lua; no hyprlang é o mesmo com `windowrule`):
+
+```lua
+hl.window_rule({
+    name  = "pestinha-janelas",
+    match = { class = "^pestinha$", title = "^pestinha:janela$" },
+    float = true, pin = true, no_focus = true, no_initial_focus = true,
+    border_size = 0, rounding = 0, no_shadow = true, no_blur = true, no_anim = true, no_dim = true,
+})
+hl.bind("CTRL + ALT + SHIFT + B", hl.dsp.exec_cmd("python3 /caminho/do/pestinha/ferramentas/pestinha_ctl.py panico"))
+```
+
+`python main.py --pet jorge` troca o personagem antes de abrir.
 
 ### Como interagir
 
@@ -224,7 +254,10 @@ As imagens e os textos de `assets/` não estão cobertos por esta licença
 - macOS e Linux ainda não foram testados numa máquina real: a parte de leitura das janelas e do teclado foi
   escrita e testada só nas partes de texto (ver `tests/test_plataforma.py`).
 - No macOS, o pet precisa da permissão de Acessibilidade para o atalho Ctrl+Alt+Shift+B funcionar.
-- No Linux com Wayland, o pet não enxerga janelas nem o tempo ocioso, e o atalho global não funciona.
+- No Linux com Wayland fora do Hyprland, o pet não enxerga janelas nem o tempo ocioso, e o atalho global
+  não funciona.
+- No Hyprland, com escala ou vários monitores, a conversão de coordenadas para o XWayland segue a regra do
+  Hyprland, mas ainda não foi testada numa máquina real.
 - Pouco testado com escala de tela acima de 100% e com vários monitores. A tela cheia num monitor esconde o
   pet em todos.
 - Jogos em janela sem borda podem não ser detectados como tela cheia.
