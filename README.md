@@ -82,8 +82,9 @@ se marca **Abrir o Pestinha ao entrar no Windows**. Só uma cópia abre por vez.
 No Wayland, um programa não pode posicionar as próprias janelas e os comandos do X11 não enxergam as outras.
 Dentro de uma sessão do Hyprland, o Pestinha usa um backend próprio (`pestinha/plataforma/hyprland.py`):
 
-- As janelas do pet rodam pelo **XWayland**, onde podem andar pela tela. Elas levam o título
-  `pestinha:janela`, para as regras de janela do Hyprland as acharem.
+- As janelas do pet rodam pelo **XWayland**, onde podem andar pela tela. Os títulos delas começam com
+  `pestinha:janela` (`pestinha:janela:notebook`...), para as regras de janela do Hyprland as acharem; o
+  notebook é posto na frente do pet pelo próprio Hyprland, porque o raise do X11 não muda a ordem lá.
 - Janelas, janela ativa, tela cheia, cursor e a área livre das barras vêm do **socket do Hyprland** (o mesmo
   do `hyprctl`). O título das outras janelas vem junto e é descartado, como no X11.
 - O tempo ocioso vem do protocolo **ext-idle-notify** do Wayland, que só diz "parou" e "voltou".
@@ -98,7 +99,7 @@ Na config do Hyprland (Lua; no hyprlang é o mesmo com `windowrule`):
 ```lua
 hl.window_rule({
     name  = "pestinha-janelas",
-    match = { class = "^pestinha$", title = "^pestinha:janela$" },
+    match = { class = "^pestinha$", title = "^pestinha:janela(:.*)?$" },
     float = true, pin = true, no_focus = true, no_initial_focus = true,
     border_size = 0, rounding = 0, no_shadow = true, no_blur = true, no_anim = true, no_dim = true,
 })

@@ -37,6 +37,7 @@ class SessaoMixin:
         st.show_label = self.perms["modo_teste"] and self.perms["mostrar_emocao"]
         st.allow_drag = self.perms["arrastar"]
         st.allow_poke = self.perms["cutucar"]
+        self.mesa.permitir(self.perms["notebook"])
         self._atualizar_parada()
         self.update_visibility()
 

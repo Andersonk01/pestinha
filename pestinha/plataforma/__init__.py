@@ -19,7 +19,8 @@ Opcionais (quem não tem fica com o padrão do Qt):
     posicao_cursor()             cursor em pixels físicos, ou None para usar o do Qt
     areas_uteis()                {nome da tela: (l, t, r, b)} sem as barras, ou {} para usar o do Qt
     CLASSE_DAS_JANELAS           nome do programa para o sistema (WM_CLASS), ou ""
-    TITULO_DAS_JANELAS           título das janelinhas do pet, para as regras do compositor, ou ""
+    TITULO_DAS_JANELAS           começo do título das janelinhas do pet (regras do compositor), ou ""
+    trazer_para_frente(titulo)   põe a janela por cima quando o raise() do Qt não basta
     TODAS_AS_TELAS               as coordenadas valem em todos os monitores (não só no principal)
     TEM_CONTROLE_LOCAL           liga o controle local (controle/remoto.py)
     AVISO_SEM_ATALHO             o aviso quando o atalho de pânico não registrou
@@ -60,6 +61,7 @@ posicao_cursor = getattr(_backend, "posicao_cursor", lambda: None)
 areas_uteis = getattr(_backend, "areas_uteis", dict)
 CLASSE_DAS_JANELAS = getattr(_backend, "CLASSE_DAS_JANELAS", "")
 TITULO_DAS_JANELAS = getattr(_backend, "TITULO_DAS_JANELAS", "")
+trazer_para_frente = getattr(_backend, "trazer_para_frente", lambda titulo: False)
 TODAS_AS_TELAS = getattr(_backend, "TODAS_AS_TELAS", sys.platform == "win32")
 TEM_CONTROLE_LOCAL = getattr(_backend, "TEM_CONTROLE_LOCAL", False)
 AVISO_SEM_ATALHO = getattr(_backend, "AVISO_SEM_ATALHO", "")

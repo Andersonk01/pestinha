@@ -80,6 +80,7 @@ class MesaController:
         self.recusou = False                    # ele recusou o último pedido
         self.visivel = False                    # o pet está na tela
         self.escondido = False                  # você escondeu o notebook pelo menu
+        self.proibido = False                   # a permissão "notebook" está desligada
 
     @property
     def sentado(self):
@@ -118,7 +119,7 @@ class MesaController:
 
     def tick(self, now, rates, sentar_hz, pode_sentar, brincadeira):
         """Atualiza a decisão a partir do disparo de SENTAR. Devolve a mudança (antes, depois) ou None."""
-        pode = pode_sentar and not self.escondido
+        pode = pode_sentar and not self.escondido and not self.proibido
         mudanca = self.decisao.tick(now, sentar_hz, pode)
         if self.em_pedido:
             self.pode_no_pedido = self.pode_no_pedido or pode
@@ -174,15 +175,27 @@ class MesaController:
     def alternar_notebook(self):
         """Esconde ou mostra o notebook pelo menu. Escondido, ele não senta."""
         self.escondido = not self.escondido
-        if self.escondido and self.sentado:          # sem notebook não dá para trabalhar: levanta na hora
+        if self.escondido:
+            self._levantar_ja()
+        self._aplicar_visibilidade()
+
+    def permitir(self, ligado):
+        """A permissão "notebook": desligada, o notebook some e ele não senta (vale até você religar)."""
+        self.proibido = not ligado
+        if self.proibido:
+            self._levantar_ja()
+        self._aplicar_visibilidade()
+
+    def _levantar_ja(self):
+        """Sem notebook não dá para trabalhar: levanta na hora."""
+        if self.sentado:
             self.decisao.at_desk = False
             self.ancora = None
             self.caderno.set_working(False)
-        self._aplicar_visibilidade()
 
     def _aplicar_visibilidade(self):
         """Aplica a visibilidade do notebook (ele só aparece se o pet estiver visível e o notebook não estiver escondido)."""
-        self.caderno.setVisible(self.visivel and not self.escondido)
+        self.caderno.setVisible(self.visivel and not self.escondido and not self.proibido)
 
     def fechar(self):
         """Fecha a janela do notebook ao sair."""

@@ -49,6 +49,7 @@ DEFAULT_PERMISSIONS = {
     "modo_teste": False,       # desligado por padrão: o modo teste é só para desenvolvimento
     "mostrar_emocao": False,   # só vale com modo_teste ligado
     "bolinha": True,           # a bolinha para ele brincar
+    "notebook": True,          # o notebook dele, onde ele senta para trabalhar quando você programa
     "fogos": True,             # fogo de artifício quando ele fica feliz de verdade (rede)
 }
 
@@ -80,6 +81,8 @@ PERMISSION_GROUPS = [
     ("Brincadeira", [
         ("fogos", "Fogos de artifício", "Quando ele fica muito feliz, a alegria da rede pode soltar um fogo."),
         ("bolinha", "Bolinha", "Uma bolinha para ele brincar. Se você levar para longe, ele reage (pode ficar triste, bravo ou ir atrás)."),
+        ("notebook", "Notebook", "Ele senta no notebook dele para trabalhar quando você programa. Desligado, "
+         "o notebook some e ele não senta."),
     ]),
     ("Teste", [
         ("modo_teste", "Modo teste", "Tempos curtos: travessuras e emoções acontecem em segundos."),

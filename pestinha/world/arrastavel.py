@@ -12,6 +12,7 @@ from PySide6.QtCore import Qt, QRect
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QWidget
 
+from .. import plataforma
 from ..body.pet import set_no_activate
 from ..mathutil import valor_real
 from ..store import read_json, write_json
@@ -70,6 +71,12 @@ class FloatingWidget(QWidget):
         """Ao aparecer, não rouba o foco do programa que você está usando."""
         super().showEvent(event)
         set_no_activate(self)
+
+    def raise_(self):
+        """Por cima das outras janelas do pet (no Hyprland o raise do Qt não muda a ordem: pede a ele)."""
+        super().raise_()
+        if plataforma.TITULO_DAS_JANELAS:
+            plataforma.trazer_para_frente(self.windowTitle())
 
     def mousePressEvent(self, event):
         """Começa a arrastar o painel pelo clique."""

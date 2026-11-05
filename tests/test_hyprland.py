@@ -211,6 +211,30 @@ def test_preparar_qt_escolhe_o_xwayland():
     assert amb["QT_QPA_PLATFORM"] == "wayland"
 
 
+def test_por_cima_nas_duas_configs_do_hyprland(monkeypatch):
+    lua, antigo = hyprland.comandos_para_frente("pestinha:janela:notebook")
+    assert lua == ("dispatch hl.dsp.window.alter_zorder({ mode = 'top', "
+                   "window = 'title:^pestinha:janela:notebook$' })")
+    assert antigo == "dispatch alterzorder top,title:^pestinha:janela:notebook$"
+    assert "\\'" in hyprland.comandos_para_frente("a'b")[0]                    # aspas escapadas no Lua
+
+    enviados = []
+    monkeypatch.setattr(hyprland, "conversar", lambda msg: enviados.append(msg) or
+                        ("ok" if msg.startswith("dispatch alterzorder") else "error: lua"))
+    monkeypatch.setattr(hyprland, "_ultimo_para_frente", {})
+    monkeypatch.setattr(hyprland, "_comando_que_vale", None)
+    agora = [10.0]
+    assert hyprland.trazer_para_frente("pestinha:janela:notebook", relogio=lambda: agora[0])
+    assert [m.split()[1] for m in enviados] == ["hl.dsp.window.alter_zorder({", "alterzorder"]
+    agora[0] += 0.5
+    assert hyprland.trazer_para_frente("pestinha:janela:notebook", relogio=lambda: agora[0])
+    assert len(enviados) == 2                                               # menos de 1 s: não pede de novo
+    agora[0] += 1.0
+    hyprland.trazer_para_frente("pestinha:janela:notebook", relogio=lambda: agora[0])
+    assert enviados[-1].startswith("dispatch alterzorder") and len(enviados) == 3   # já sabe qual vale
+    assert not hyprland.trazer_para_frente("")
+
+
 def test_mesmas_funcoes_dos_outros_sistemas():
     for nome in ["ocioso_segundos", "processo_ativo", "retangulo_ativo", "tela_cheia",
                  "janelas_visiveis", "sem_foco_nativo", "iniciar_atalho"]:

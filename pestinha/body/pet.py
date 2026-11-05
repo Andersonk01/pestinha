@@ -40,8 +40,9 @@ CX, CY = WIN / 2, WIN / 2 - 6   # centro do corpo dentro da janela
 def set_no_activate(widget):
     """Garante que clicar/mostrar a janela não rouba o foco do programa atual (onde o sistema permite)."""
     if plataforma.TITULO_DAS_JANELAS:
-        # no Hyprland, quem tira o foco e a moldura são as regras de janela, que acham as do pet pelo título
-        widget.setWindowTitle(plataforma.TITULO_DAS_JANELAS)
+        # no Hyprland, quem tira o foco e a moldura são as regras de janela, que acham as do pet pelo título;
+        # o tipo no fim (pestinha:janela:notebook) deixa pôr uma delas por cima (ver trazer_para_frente)
+        widget.setWindowTitle(f"{plataforma.TITULO_DAS_JANELAS}:{type(widget).__name__.lower()}")
     try:
         plataforma.sem_foco_nativo(int(widget.winId()))
     except Exception:

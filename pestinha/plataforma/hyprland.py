@@ -6,9 +6,10 @@ No Wayland, os comandos do X11 (xdotool, wmctrl, xprintidle) só enxergam as jan
 programa não pode posicionar as próprias janelas. Por isso o pet roda pelo XWayland (preparar_qt), onde o
 move() vale, e este módulo traduz as coordenadas do Hyprland para as do XWayland.
 
-As janelinhas do pet (o pet, a bolinha, os fogos, os cartazes) levam o título TITULO_DAS_JANELAS, e as
-regras de janela do Hyprland (em todos os workspaces, sem borda, sombra, animação nem foco) as acham por
-ele. O Hyprland não deixa um programa ouvir o teclado dos outros: o atalho de pânico é um bind do próprio
+As janelinhas do pet (o pet, a bolinha, os fogos, os cartazes, o notebook) levam títulos que começam com
+TITULO_DAS_JANELAS (pestinha:janela:notebook...), e as regras de janela do Hyprland (em todos os
+workspaces, sem borda, sombra, animação nem foco) as acham por ele. O título também serve para pôr uma
+delas por cima (trazer_para_frente: o notebook na frente do pet). O Hyprland não deixa um programa ouvir o teclado dos outros: o atalho de pânico é um bind do próprio
 Hyprland que chama o controle local (controle/remoto.py, ferramentas/pestinha_ctl.py).
 
 O Hyprland manda o título das outras janelas junto com a geometria; ele é descartado aqui, como no wmctrl.
@@ -16,6 +17,7 @@ O Hyprland manda o título das outras janelas junto com a geometria; ele é desc
 
 import json
 import os
+import re
 import socket
 import time
 from collections import namedtuple
@@ -27,7 +29,7 @@ from ._ocioso_wayland import OciosoWayland
 
 LARGURA_MINIMA, ALTURA_MINIMA = 120, 60
 CLASSE_DAS_JANELAS = "pestinha"             # WM_CLASS (o applicationName do Qt): o que as regras do Hyprland casam
-TITULO_DAS_JANELAS = "pestinha:janela"      # título das janelinhas do pet; a tela de configurações tem outro
+TITULO_DAS_JANELAS = "pestinha:janela"      # começo do título das janelinhas do pet; a tela de configurações tem outro
 TODAS_AS_TELAS = True                       # as coordenadas valem em todos os monitores (ver para_xwayland)
 TEM_CONTROLE_LOCAL = True                   # o atalho e o painel do sistema falam com o pet por um socket local
 TECLAS_DO_ATALHO = "CTRL + ALT + SHIFT + B"
@@ -62,8 +64,8 @@ def disponivel(ambiente=None):
     return caminho is not None and os.path.exists(caminho)
 
 
-def pedir_sem_cache(comando, tempo=0.5, caminho=None):
-    """Resposta em JSON do Hyprland para `comando` (ex.: "clients"), ou None se não deu."""
+def conversar(mensagem, tempo=0.5, caminho=None):
+    """Manda uma mensagem ao socket do Hyprland e devolve a resposta em texto, ou None se não deu."""
     caminho = caminho or socket_de_controle()
     if not caminho:
         return None
@@ -72,7 +74,7 @@ def pedir_sem_cache(comando, tempo=0.5, caminho=None):
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM | socket.SOCK_CLOEXEC) as sock:
             sock.settimeout(tempo)
             sock.connect(caminho)
-            sock.sendall(f"j/{comando}".encode("utf-8"))
+            sock.sendall(mensagem.encode("utf-8"))
             while True:
                 bloco = sock.recv(65536)
                 if not bloco:
@@ -80,8 +82,16 @@ def pedir_sem_cache(comando, tempo=0.5, caminho=None):
                 partes.append(bloco)
     except OSError:
         return None
+    return b"".join(partes).decode("utf-8", "replace")
+
+
+def pedir_sem_cache(comando, tempo=0.5, caminho=None):
+    """Resposta em JSON do Hyprland para `comando` (ex.: "clients"), ou None se não deu."""
+    texto = conversar(f"j/{comando}", tempo, caminho)
+    if texto is None:
+        return None
     try:
-        return json.loads(b"".join(partes).decode("utf-8", "replace"))
+        return json.loads(texto)
     except ValueError:
         return None
 
@@ -358,6 +368,48 @@ def areas_uteis():
 
 def sem_foco_nativo(janela_id):
     """Quem tira o foco é a regra de janela do Hyprland (no_focus), achada pelo título."""
+
+
+def _texto_lua(texto):
+    """Uma string literal do Lua."""
+    return "'" + texto.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n") + "'"
+
+
+def comandos_para_frente(titulo):
+    """
+    O pedido de pôr a janela de título `titulo` por cima, nas duas configs do Hyprland: a em Lua
+    (o dispatch recebe uma expressão) e a antiga, do hyprlang.
+    """
+    alvo = "title:^" + re.escape(titulo) + "$"
+    return [
+        f"dispatch hl.dsp.window.alter_zorder({{ mode = 'top', window = {_texto_lua(alvo)} }})",
+        f"dispatch alterzorder top,{alvo}",
+    ]
+
+
+_ultimo_para_frente = {}
+_comando_que_vale = None        # 0 = Lua, 1 = hyprlang, descoberto no primeiro pedido que deu certo
+
+
+def trazer_para_frente(titulo, relogio=time.monotonic):
+    """
+    O raise() do X11 não muda a ordem das janelas no Hyprland: pede direto a ele. Uma vez por segundo
+    no máximo, por janela (nada no Hyprland põe outra janela do pet na frente sozinho, sem foco).
+    """
+    global _comando_que_vale
+    if not titulo:
+        return False
+    agora = relogio()
+    if agora - _ultimo_para_frente.get(titulo, -1e9) < 1.0:
+        return True
+    _ultimo_para_frente[titulo] = agora
+    comandos = comandos_para_frente(titulo)
+    ordem = [_comando_que_vale] if _comando_que_vale is not None else range(len(comandos))
+    for indice in ordem:
+        if (conversar(comandos[indice]) or "").strip() == "ok":
+            _comando_que_vale = indice
+            return True
+    return False
 
 
 def atalho_configurado(binds=None):

@@ -78,3 +78,17 @@ def test_esconder_e_mostrar_o_notebook(mesa):
     assert mesa.caderno.isHidden()
     mesa.alternar_notebook()
     assert not mesa.caderno.isHidden()
+
+
+def test_permissao_do_notebook_desligada_tira_o_notebook_e_levanta(mesa):
+    mesa.set_visible(True)
+    mesa.tick(1.0, {}, QUER, True, Brincadeira())
+    assert mesa.sentado
+    mesa.permitir(False)
+    assert not mesa.sentado and mesa.caderno.isHidden()
+    mesa.tick(2.0, {}, QUER, True, Brincadeira())
+    assert not mesa.sentado                       # proibido: não senta nem querendo
+    mesa.permitir(True)
+    assert not mesa.caderno.isHidden()
+    mesa.tick(3.0, {}, QUER, True, Brincadeira())
+    assert mesa.sentado
