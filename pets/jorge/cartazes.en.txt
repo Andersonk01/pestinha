@@ -1,0 +1,96 @@
+# Signs for Jorge, the finance and AI coach. One phrase per line, inside each section.
+# It's satire: Jorge is fictional, not based on anyone real, and nothing here sells, charges or blocks anything for real.
+# The stages are the same as Bryan's; only the reading changes:
+#   complaint = client prospecting, protest = aggressive marketing,
+#   strike = the "premium" that doesn't exist (courses and mentorships), revolution = financial collapse and AI delusion.
+# You can edit this while he is running: he rereads it whenever he raises a new sign.
+
+[reclamacao]
+I DON'T FAIL. I PIVOT.
+SWIPE UP. TRUST ME.
+REBOOTING IS PIVOTING.
+
+[manifestacao]
+LAST 3 SPOTS! SINCE 2022.
+MY MENTORSHIP IS 97% PROMISES.
+I DON'T SELL COURSES. I SELL FREEDOM.
+YOU'RE ONE WIRE AWAY FROM A NEW LIFE.
+DO YOU WANT RESULTS OR EXCUSES?
+BANKS HATE THIS ONE WEIRD METHOD.
+THE CONTENT IS FREE. ACCESS ISN'T.
+DIDN'T BUY? THEN YOU'RE NOT READY.
+
+[greve]
+RESULTS GUARANTEED WITHIN 300 YEARS.
+MY COURSE HAS 48 MOTIVATION MODULES.
+MY E-BOOK IS 400 PAGES OF MINDSET.
+I DON'T USE AI. I LEAD AGENTS.
+ZERO LIQUIDITY. INFINITE VISION.
+MY SALES FUNNEL HAS MORE FUNNELS.
+
+[revolucao]
+CODING IS DEAD!
+DESIGNERS WILL BE JOBLESS!
+AI MAKES 300 LOGOS BEFORE COFFEE.
+DOCTOR? MY CHATBOT ALREADY DIAGNOSED ME.
+WRITERS ARE DONE. I PUBLISHED 17 BOOKS TODAY.
+HUMANITY HAS BEEN AUTOMATED.
+NOT UNEMPLOYMENT. DIGITAL TRANSFORMATION.
+JORGECOIN IS DOWN 99%. TIME TO BUY!
+NOT A PYRAMID. VERTICAL NETWORKING.
+MARKET DIDN'T CRASH. IT SQUATTED.
+MY NET WORTH IS IN PIXELS.
+YOUR MOUSE COULD BE MAKING YOU MONEY.
+I'M LONG ON OPTIMISM.
+MY PAPER BALL IS AN NFT NOW.
+THE CHART IS RED. IT'S JUST BLUSHING.
+NEVER ABOUT THE MONEY. ALWAYS ABOUT YOURS.
+YOUR GPU IS IDLE. EVER THOUGHT OF MINING CRYPTO?
+
+[acordo]
+PARTNERSHIP SEALED
+WIN-WIN
+SYNERGY!
+
+[desistiu]
+...time to pivot.
+tough market today
+thinking long term
+
+# Sadness: when he stays sad or alone for too long (no crackdown here)
+[saudade]
+nobody in my funnel?
+hello, leads?
+where are my followers?
+
+[chorando]
+negative emotional ROI
+zero sales today
+even the algorithm forgot me
+
+[abandonado]
+...
+shutting down operations
+the market didn't get me
+
+[volto]
+BACK WITH A NEW METHOD!
+MISSED ME? I HAVE A COURSE ON THAT.
+RELAUNCH!
+
+# Time-out corner: what he holds up while stuck on the sign
+[castigo]
+THIS IS A HIGH-PERFORMANCE RETREAT.
+I'M IN MY MINIMALIST OFFICE.
+I'M NOT IN TIME-OUT. I'M IN IMMERSION.
+MY LAWYER IS ONE OF MY MENTEES.
+I'LL LAUNCH A COURSE ABOUT THIS.
+EVERY GREAT CEO HAS DONE A TIME-OUT.
+
+# Time-out corner, angry: he curses (symbols and jargon only)
+[xingamento]
+@#$%@!!!!
+%&#@*!!
+$$$#@&!!!
+#@$%&... SYNERGY!
+@!#$%ING MARKET!!

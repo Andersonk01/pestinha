@@ -31,7 +31,8 @@ CAMADAS = [
     ("controle", "Mixins de `PestinhaApp`: sessão (permissões, visibilidade, pausa, pânico, salvar, sair, apagar) e "
                  "interação (cutucar, arrastar, menus, notebook).", "todas as anteriores"),
 ]
-COMPARTILHADOS = ["ajustes.py", "config.py", "paths.py", "store.py", "log.py", "mathutil.py", "settings_store.py"]
+COMPARTILHADOS = ["ajustes.py", "config.py", "paths.py", "store.py", "log.py", "mathutil.py", "settings_store.py",
+                  "idioma.py", "idioma_en.py"]
 
 
 def descricao(arquivo):
@@ -116,7 +117,10 @@ python ferramentas/gerar_doc_rede.py
 
 - `fuzz_pestinha.py` roda o app com ações aleatórias e checa invariantes:
   `python -B ferramentas/fuzz_pestinha.py 150 80` (rodadas, ações por rodada).
-- `medir_cartazes.py` confere se cada frase cabe na placa (rode no Windows, com as fontes reais)."""),
+- `medir_cartazes.py` confere se cada frase cabe na placa (rode no Windows, com as fontes reais);
+  `PESTINHA_IDIOMA=en` mede os cartazes em inglês (`cartazes.en.txt`).
+- `gerar_sons.py` sintetiza os sons (`assets/comum/sons/` e `pets/cypher/sons/`), sempre iguais;
+  `gerar_notebook_cypher.py` desenha `pets/cypher/notebook.png`."""),
 ]
 
 

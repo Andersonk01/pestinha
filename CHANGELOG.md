@@ -1,5 +1,19 @@
 # Histórico de versões
 
+## Idioma do sistema (português ou inglês)
+
+- O pet fala o idioma do sistema: português num sistema em português, inglês em qualquer outro.
+  `PESTINHA_IDIOMA=pt|en` escolhe na mão.
+- Traduzidos: Configurações, as boas-vindas, a bandeja, o menu do pet, os avisos, o monitor neural, o painel
+  de protesto, o cantinho do castigo, o notebook, o controle local e o `ferramentas/pestinha_ctl.py`
+  (mensagens e ajuda).
+- Bryan, Jorge e Cypher ganham recadinhos, bilhetes tristes e cartazes em inglês (`*.en.txt`), com as
+  mesmas seções dos originais. Um personagem pode ter memes em inglês em `memes.en/`; sem eles, valem os
+  originais, que têm o texto em português na imagem.
+- A descrição do personagem em Configurações agora segue o idioma do sistema, como no Hub do Ryoku.
+- `tests/test_idioma.py`: todo texto marcado tem tradução, com os mesmos campos, e as telas em inglês não
+  mostram português.
+
 ## Descrição dos personagens
 
 - Cada `pets/<pet>.json` ganha o campo `descricao`, que diz como o personagem é. Aparece em Configurações,

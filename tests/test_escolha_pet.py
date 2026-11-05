@@ -100,12 +100,12 @@ def test_descricao_de_tipo_errado_ou_longa_demais(tmp_path):
 
 
 def test_descricao_por_idioma(tmp_path):
-    """Um texto só é do idioma das telas (pt); um objeto tem um por idioma, com o inglês de reserva."""
+    """Um texto só é do idioma original (pt); um objeto tem um por idioma, com o inglês de reserva."""
     paths = dois_pets(tmp_path)
     paths.definicao("teste").write_text(json.dumps({"descricao": {"en": "In English.", "pt": "Em português.",
                                                                   "pt_BR": "Do Brasil."}}), encoding="utf-8")
     pet = config.load_pet(paths, "teste")
-    assert config.descricao_em(pet) == "Em português."                  # o padrão: o idioma das telas
+    assert config.descricao_em(pet) == "Em português."                  # o padrão: o idioma do pet (pt nos testes)
     assert config.descricao_em(pet, "en") == "In English."
     assert config.descricao_em(pet, "pt_BR") == "Do Brasil."
     assert config.descricao_em(pet, "pt_PT") == "Em português."          # sem o regional, a base

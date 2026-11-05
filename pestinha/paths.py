@@ -21,6 +21,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from . import idioma
+
 # Rodando como executável (PyInstaller): assets, pets e memory ficam ao lado do .exe,
 # para você poder editar as pastas sem reempacotar.
 ROOT = (Path(sys.executable).resolve().parent if getattr(sys, "frozen", False)
@@ -105,21 +107,41 @@ class PetPaths:
                 self.sad_protest, self.conditioning, self.castigo]
 
 
+def no_idioma(nome, codigo=None):
+    """Os nomes a procurar para `nome` no idioma (o atual, sem `codigo`): o traduzido e o original.
+
+    O código entra no primeiro pedaço do caminho: 'cartazes.txt' -> 'cartazes.en.txt',
+    'memes/trabalhando' -> 'memes.en/trabalhando'. No idioma original, só o próprio nome.
+    """
+    codigo = codigo or idioma.atual()
+    if codigo == idioma.ORIGINAL:
+        return [nome]
+    primeiro, _, resto = nome.partition("/")
+    base, ponto, extensao = primeiro.rpartition(".")
+    traduzido = f"{base}.{codigo}.{extensao}" if ponto else f"{primeiro}.{codigo}"
+    return ["/".join(filter(None, (traduzido, resto))), nome]
+
+
 @dataclass(frozen=True)
 class ConteudoPaths:
     """
     Conteúdo de um personagem. Cada item é procurado em `proprio` (pets/<pet>/) e depois em
     `comum` (assets/comum/). Se não existir em nenhum, o caminho devolvido é o do próprio pet,
     que não existe: quem lê trata como "sem conteúdo". Nunca procura na pasta de outro pet.
+
+    Num idioma que não é o original, vem antes a versão dele, com o código depois do nome:
+    cartazes.en.txt antes de cartazes.txt, memes.en/ antes de memes/. Sem ela, vale a original.
     """
     proprio: Path
     comum: Path
 
     def resolver(self, nome):
-        """Caminho do item `nome`: primeiro no pet, depois no comum; se nenhum tiver, o do pet (inexistente)."""
-        for base in (self.proprio, self.comum):
-            if (base / nome).exists():
-                return base / nome
+        """Caminho do item `nome`: a versão do idioma e depois a original, cada uma no pet e depois no comum;
+        se nenhuma existir, o do pet (inexistente)."""
+        for candidato in no_idioma(nome):
+            for base in (self.proprio, self.comum):
+                if (base / candidato).exists():
+                    return base / candidato
         return self.proprio / nome
 
     def pastas(self, nome):

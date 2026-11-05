@@ -17,6 +17,7 @@ import random
 from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import QColor, QFont, QFontMetrics, QGuiApplication, QPainter, QPen
 
+from ..idioma import N_, tr
 from ..core.protesto import load_signs
 from ..ajustes import CARGA_FUGA_HZ_S, GANHO_CARTAZ, LIMIAR_FUGA_HZ
 from ..log import log
@@ -25,7 +26,7 @@ from ..store import read_json, write_json
 from ..world.arrastavel import FloatingWidget
 from ..world.cartazes import SignThing
 
-TEXTO_PLAQUINHA = "CANTINHO\nDO CASTIGO"
+TEXTO_PLAQUINHA = N_("CANTINHO\nDO CASTIGO")
 PLAQUINHA_W, PLAQUINHA_H = 190, 150     # placa com as pernas
 CONTORNO = QColor("#222222")
 TEMPO_FUGA = 30.0             # s até a fuga virar "tentativa que não deu certo"
@@ -60,7 +61,7 @@ class PlaquinhaCanto(FloatingWidget):
         """Placa 'CANTINHO DO CASTIGO' no canto da tela; começa no canto inferior esquerdo e pode ser arrastada."""
         screen = QGuiApplication.primaryScreen().availableGeometry()
         padrao = (screen.x() + 10, screen.bottom() - PLAQUINHA_H + 1)
-        super().__init__(app, "castigo", "Cantinho do castigo", (PLAQUINHA_W, PLAQUINHA_H),
+        super().__init__(app, "castigo", tr("Cantinho do castigo"), (PLAQUINHA_W, PLAQUINHA_H),
                          (PLAQUINHA_W, PLAQUINHA_H), padrao)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setAttribute(Qt.WA_ShowWithoutActivating)
@@ -82,10 +83,10 @@ class PlaquinhaCanto(FloatingWidget):
         area = placa.adjusted(8, 6, -8, -6)
         tamanho = 16
         while tamanho > 7 and QFontMetrics(QFont("Arial Black", tamanho)).boundingRect(
-                area.toRect(), Qt.AlignCenter | Qt.TextWordWrap, TEXTO_PLAQUINHA).height() > area.height():
+                area.toRect(), Qt.AlignCenter | Qt.TextWordWrap, tr(TEXTO_PLAQUINHA)).height() > area.height():
             tamanho -= 1
         p.setFont(QFont("Arial Black", tamanho))
-        p.drawText(area, Qt.AlignCenter | Qt.TextWordWrap, TEXTO_PLAQUINHA)
+        p.drawText(area, Qt.AlignCenter | Qt.TextWordWrap, tr(TEXTO_PLAQUINHA))
         p.end()
 
 

@@ -3,7 +3,7 @@ Regra de camadas do pacote `pestinha`: cada camada só importa das que estão ab
 
     core  <  sense  <  body  <  world  <  mind  <  ui  <  controle  <  app
 
-Módulos compartilhados (ajustes, config, store, log, mathutil, paths, settings_store) podem ser
+Módulos compartilhados (ajustes, config, idioma, store, log, mathutil, paths, settings_store) podem ser
 usados por todas. `core/` é puro: sem Qt e sem Windows, para ser testável em qualquer lugar.
 """
 import ast
@@ -12,7 +12,7 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent / "pestinha"
 ORDEM = ["core", "sense", "body", "world", "mind", "ui", "controle", "app"]
 COMPARTILHADOS = {"ajustes", "config", "store", "log", "mathutil", "paths", "settings_store", "__init__",
-                  "plataforma"}
+                  "plataforma", "idioma", "idioma_en"}
 
 
 def camada_de(partes):

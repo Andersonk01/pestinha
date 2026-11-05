@@ -39,8 +39,8 @@ Matrix e Âmbar. Os acessórios continuam os do personagem.
 | **Jorge** | Coach de finanças e IA, trambiqueiro e confiante, de moldura dourada e gravata vermelha. Ignorado, insiste: o tédio vira curiosidade e brincadeira. Com atenção, se anima muito. Quase nunca fica triste, mas se desespera quando recusam ou dispensam as coisas dele. Os mesmos estágios viram prospecção, marketing agressivo, "assinatura premium" (só no cartaz) e colapso financeiro; ele atira panfletos de mentoria. Personagem de sátira: não é referência a nenhum coach, empresa ou pessoa real, e não vende, cobra nem bloqueia nada. Tem cinco memes felizes, contentes, curiosos e bravos próprios; as outras emoções ainda não têm. |
 
 Um resumo de cada um fica no campo `descricao` do `pets/<pet>.json`, em inglês e em português. Aparece em
-**Configurações**, embaixo da escolha do personagem, e, no Ryoku, em Hub > Desktop > Pestinha, que lista todos
-no idioma do sistema.
+**Configurações**, embaixo da escolha do personagem, e, no Ryoku, em Hub > Desktop > Pestinha, que lista todos;
+os dois no idioma do sistema.
 
 ## O que o pet faz
 
@@ -148,6 +148,19 @@ plano, o tempo sem usar teclado e mouse, a posição do cursor e a geometria das
 conteúdo nem título de janela. Tudo o que ele grava fica na pasta de dados e pode ser apagado pela tela de
 configurações: `memory/`, rodando pelo código, ou `%LOCALAPPDATA%\Pestinha`, no executável do Windows.
 Detalhes em [PRIVACIDADE.md](PRIVACIDADE.md).
+
+## Idioma
+
+O pet fala o idioma do sistema: português num sistema em português, inglês em qualquer outro. Vale para as
+telas, a bandeja, o menu, os avisos, o comando `ferramentas/pestinha_ctl.py` e o que ele põe na tela
+(recadinhos, cartazes, plaquinhas). Para escolher na mão, abra com `PESTINHA_IDIOMA=pt` ou `PESTINHA_IDIOMA=en`.
+
+- Os textos do programa são escritos em português e traduzidos em `pestinha/idioma_en.py`.
+- As frases de cada personagem têm a versão em inglês ao lado da original (`recadinhos.en.txt`,
+  `cartazes.en.txt`...), explicada em [pets/README.md](pets/README.md).
+- Os memes têm o texto dentro da imagem e continuam em português. Uma pasta `memes.en/` no personagem vale
+  no lugar deles; sem ela, ficam os originais (ou desligue os memes em Configurações).
+- PRIVACIDADE.md e a documentação só existem em português.
 
 ## Personalizar
 

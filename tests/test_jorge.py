@@ -52,7 +52,7 @@ def test_todo_temperamento_mexe_em_uma_ligacao_que_existe():
 
 
 def test_todo_pet_tem_descricao_em_ingles_e_portugues():
-    """Configurações mostra a do idioma das telas (pt); o Hub do Ryoku, a do idioma do sistema."""
+    """Configurações e o Hub do Ryoku mostram a do idioma do sistema."""
     for pet in config.list_pets(PATHS):
         descricao = config.load_pet(PATHS, pet)["descricao"]
         assert set(descricao) == {"en", "pt"}, pet

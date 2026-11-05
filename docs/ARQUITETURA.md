@@ -35,7 +35,7 @@ core  <  sense  <  body  <  world  <  mind  <  ui  <  controle  <  app.py
 ```
 
 Cada camada só importa das que estão à esquerda dela, além dos módulos compartilhados
-(`ajustes`, `config`, `paths`, `store`, `log`, `mathutil`, `settings_store`). Isso é verificado por
+(`ajustes`, `config`, `paths`, `store`, `log`, `mathutil`, `settings_store`, `idioma`, `idioma_en`). Isso é verificado por
 `tests/test_arquitetura.py`, que também garante que `core/` não usa Qt nem API do sistema.
 
 | Camada | Responsabilidade | Qt | Depende do sistema |
@@ -105,6 +105,20 @@ e as travessuras que dependem de memes ou post-its não são oferecidas. Nenhum 
 outro pet. Os cartazes do cantinho do castigo são as seções `[castigo]` e `[xingamento]` do mesmo
 `cartazes.txt`, relidas a cada cartaz.
 
+## Idioma
+
+`idioma.py` decide o idioma uma vez, quando o programa abre (`main.py`, logo depois do `QApplication`):
+`PESTINHA_IDIOMA`, senão `LC_ALL`, `LC_MESSAGES` ou `LANG`, senão o que o Qt informa (Windows e macOS). O
+que não for português vira inglês. Os textos são escritos em português e passam por `tr()`, que em inglês
+busca a tradução em `idioma_en.TEXTOS` (a chave é o próprio texto em português). Um texto guardado numa
+constante é marcado com `N_()` onde nasce e passa por `tr()` onde aparece, porque na importação o idioma
+ainda não foi decidido. Comparações usam sempre o texto original, nunca o traduzido.
+
+O conteúdo dos personagens tem uma versão por idioma ao lado da original: `paths.no_idioma` transforma
+`cartazes.txt` em `cartazes.en.txt` e `memes/` em `memes.en/`, e `ConteudoPaths` tenta essa versão antes da
+original. `tests/test_idioma.py` confere que todo texto marcado tem tradução com os mesmos `{campos}`, que
+nenhuma sobra, que nenhum `tr()` roda na importação e que as telas em inglês não mostram português.
+
 ## Persistência
 
 Todos os arquivos ficam na pasta de dados (veja [PRIVACIDADE.md](../PRIVACIDADE.md)): `memory/` ao lado do
@@ -138,8 +152,10 @@ Toda leitura e escrita passa por `store.py`:
 3. **Objeto novo na tela:** em `world/`, usando `overlay_flags()` e `set_no_activate()` para não
    roubar o foco.
 4. **Números de ajuste:** em `ajustes.py`, com o intervalo válido em `_LIMITES`.
-5. **Testes:** um teste para o comportamento e, se houver estado salvo, um para dados inválidos.
-6. **Documentação:** rode `python ferramentas/gerar_readmes.py` e `python ferramentas/gerar_doc_rede.py`.
+5. **Texto na tela:** escreva em português dentro de `tr("...")` (ou `N_("...")` numa constante) e
+   ponha a tradução em `pestinha/idioma_en.py`; `tests/test_idioma.py` acusa o que faltar.
+6. **Testes:** um teste para o comportamento e, se houver estado salvo, um para dados inválidos.
+7. **Documentação:** rode `python ferramentas/gerar_readmes.py` e `python ferramentas/gerar_doc_rede.py`.
 
 ## Regras do projeto
 

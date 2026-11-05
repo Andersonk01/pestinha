@@ -15,6 +15,7 @@ from PySide6.QtGui import QCursor, QFont, QGuiApplication, QPainter
 from PySide6.QtWidgets import QWidget
 
 from ..config import EMOTION_NAMES
+from ..idioma import tr
 from ..core.emotion import EYE_SHAPES
 from ..core.physics import Body
 from .. import plataforma
@@ -169,7 +170,7 @@ class PetWindow(QWidget):
         if st.show_label:
             p.setPen(self.aparencia.olho)
             p.setFont(QFont("Consolas", 9, QFont.Bold))
-            p.drawText(QRectF(0, WIN - 22, WIN, 20), Qt.AlignCenter, EMOTION_NAMES.get(st.emotion, st.emotion))
+            p.drawText(QRectF(0, WIN - 22, WIN, 20), Qt.AlignCenter, tr(EMOTION_NAMES.get(st.emotion, st.emotion)))
         p.end()
 
     # ---------------- mouse ----------------

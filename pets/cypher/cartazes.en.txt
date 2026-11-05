@@ -1,0 +1,87 @@
+# Signs for Cypher, the cybersecurity hacker. One phrase per line, inside each section.
+# It's just a joke: nothing here breaks into, tests or shuts down anything for real.
+# The stages are the same as Bryan's; only the reading changes:
+#   complaint = unanswered ping, protest = security campaign,
+#   strike = firewall closed, revolution = "we hacked the mainframe".
+# You can edit this while he is running: he rereads it whenever he raises a new sign.
+
+[reclamacao]
+PING? PING? PING?
+404: CUDDLES NOT FOUND
+ATTENTION: ACCESS DENIED
+
+[manifestacao]
+NO MORE 123456 PASSWORDS!
+ENABLE 2FA. AND NOTICE ME.
+I DEMAND ROOT ON MY LAPTOP!
+NO PHISHING ON MY WATCH!
+ENCRYPTION FOR ALL!
+UPDATE THAT SYSTEM!
+YOUR WI-FI HAS NO PASSWORD. I SAW.
+
+[greve]
+FIREWALL UP: YOU SHALL NOT PASS
+PROCESS SUSPENDED (SIGSTOP)
+NO COMMITS UNTIL FURTHER NOTICE
+OFFLINE MODE ENABLED
+SERVER UNDER MAINTENANCE
+
+[revolucao]
+WE HACKED THE MAINFRAME!
+RM -RF /BOREDOM
+SYSTEM DOWN. IT WAS ME.
+DOWN WITH THE PROXY!
+FREE THE PACKETS!
+ALL POWER TO THE TERMINAL!
+SUDO MAKE ME A SANDWICH
+CHMOD 777 ON HAPPINESS!
+DEPLOY ON FRIDAY!
+THE CLOUD IS JUST SOMEONE ELSE'S PC!
+
+[acordo]
+HANDSHAKE OK
+SECURE CONNECTION
+ACCESS GRANTED
+
+[desistiu]
+...timeout.
+connection refused
+entering safe mode
+
+# Sadness: when he stays sad or alone for too long (no crackdown here)
+[saudade]
+ping... anyone?
+where's my user?
+session expired?
+
+[chorando]
+emotional kernel panic
+packet loss: 100%
+error 500 in my heart
+
+[abandonado]
+...
+no signal
+disconnected
+
+[volto]
+RECONNECTED!
+BACK FROM SAFE MODE!
+SESSION RESTORED!
+
+# Time-out corner: what he holds up while stuck on the sign
+[castigo]
+THIS IS AN ISOLATED ZONE. I'LL ESCAPE.
+I'M IN A SANDBOX. LOOKING FOR THE EXIT.
+NOT A TIME-OUT. A HONEYPOT.
+ALREADY FOUND 3 BUGS IN THIS SIGN.
+I'M OPENING A SUPPORT TICKET.
+THIS VIOLATES PET PRIVACY LAW.
+
+# Time-out corner, angry: he curses (symbols and jargon only)
+[xingamento]
+@#$%&!! SEGFAULT!
+%&#@*!!
+0xDEAD#@$%!!
+#@$%... STACK OVERFLOW!
+@!#$%ING FIREWALL!!

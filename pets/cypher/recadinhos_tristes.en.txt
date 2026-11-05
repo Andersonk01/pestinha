@@ -1,0 +1,11 @@
+# Cypher's notes when he is sad. Lines starting with # are ignored.
+connection lost.
+nobody answered my ping.
+my session expired.
+i lost 100% of my packets.
+the firewall blocked me from you.
+i tried reconnecting three times.
+kernel panic. from missing you.
+everything went read-only.
+my terminal is empty.
+even the server timed me out.

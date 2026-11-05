@@ -15,10 +15,11 @@ import argparse
 import hashlib
 import sys
 
-from PySide6.QtCore import QDir, QLockFile, QTimer
+from PySide6.QtCore import QDir, QLocale, QLockFile, QTimer
 from PySide6.QtWidgets import QApplication, QDialog, QMessageBox
 
-from pestinha import config, plataforma, store
+from pestinha import config, idioma, plataforma, store
+from pestinha.idioma import tr
 from pestinha import log as log_module
 from pestinha.paths import Paths
 from pestinha.settings_store import SettingsStore
@@ -56,14 +57,15 @@ def deve_mostrar_tela(args, perms, primeira_vez):
 
 def main():
     parser = argparse.ArgumentParser(description="Pestinha")
-    parser.add_argument("--direto", action="store_true", help="pula a tela de permissões")
-    parser.add_argument("--configurar", action="store_true", help="mostra a tela de permissões")
-    parser.add_argument("--sair-em", type=float, default=0.0, help="fecha sozinho após N segundos (teste)")
-    parser.add_argument("--pet", default="", help="personagem (o id em pets/, ex.: bryan ou jorge)")
+    parser.add_argument("--direto", action="store_true", help=tr("pula a tela de permissões"))
+    parser.add_argument("--configurar", action="store_true", help=tr("mostra a tela de permissões"))
+    parser.add_argument("--sair-em", type=float, default=0.0, help=tr("fecha sozinho após N segundos (teste)"))
+    parser.add_argument("--pet", default="", help=tr("personagem (o id em pets/, ex.: bryan ou jorge)"))
     args = parser.parse_args()
 
     plataforma.preparar_qt()                        # no Hyprland: XWayland, onde as janelas podem andar
     app = QApplication(sys.argv)
+    idioma.definir(idioma.do_sistema(QLocale.system().name()))     # no Windows e no macOS, quem diz é o Qt
     if plataforma.CLASSE_DAS_JANELAS:
         app.setApplicationName(plataforma.CLASSE_DAS_JANELAS)
     app.setQuitOnLastWindowClosed(False)
@@ -74,7 +76,8 @@ def main():
     log_module.capturar_erros()
     trava = travar_instancia(paths)
     if trava is None:
-        QMessageBox.information(None, config.APP_NOME, f"O {config.APP_NOME} já está aberto. Procure o ícone na bandeja.")
+        QMessageBox.information(None, config.APP_NOME, tr("O {app} já está aberto. Procure o ícone na bandeja.",
+                                                          app=config.APP_NOME))
         return 0
 
     store = SettingsStore(paths)
@@ -97,11 +100,11 @@ def main():
             sucesso, falhas = apagar_memoria(paths)
             if not sucesso:
                 log_module.setup(paths.log)
-                detalhe = f"\n\nArquivos que falharam: {', '.join(falhas)}" if falhas else ""
+                detalhe = tr("\n\nArquivos que falharam: {lista}", lista=", ".join(falhas)) if falhas else ""
                 QMessageBox.warning(
-                    dialog, "Não foi possível apagar tudo",
-                    f"Alguns dados continuam em {paths.memory}. Feche programas que possam estar "
-                    f"usando esses arquivos e tente novamente.{detalhe}",
+                    dialog, tr("Não foi possível apagar tudo"),
+                    tr("Alguns dados continuam em {pasta}. Feche programas que possam estar usando esses arquivos "
+                       "e tente novamente.{detalhe}", pasta=paths.memory, detalhe=detalhe),
                 )
                 return
             apagado.append(True)

@@ -1,0 +1,103 @@
+# Bryan's protest signs. One phrase per line, inside each section.
+# You can edit this while he is running: he rereads it whenever he raises a new sign.
+
+[reclamacao]
+hey.
+formal complaint
+!!!
+not cool.
+taking notes
+
+[manifestacao]
+MORE CUDDLES
+FEWER CLICKS
+CURSOR, RESPECT MY SPACE
+NO MORE CTRL+W
+RESPECT THE PET
+
+[greve]
+ON STRIKE
+ON STRIKE
+BRYAN ON STRIKE
+GENERAL STRIKE
+ON STRIKE UNTIL FURTHER NOTICE
+ON STRIKE TILL I GET CUDDLES
+NO CUDDLES, NO WORK
+DON'T BE A SCAB
+PIXELS ON STRIKE
+NO MISCHIEF TODAY. I'M ON STRIKE.
+
+[revolucao]
+DOWN WITH CURSORS
+BEAT IT, ARROW
+YOU'RE NOT MY BOSS, ARROW
+CURSOR, THIS CORNER IS MINE
+NOT ONE MORE CLICK
+THE POINTER ISN'T THE BOSS
+ANTI-ARROW RESISTANCE
+NO MORE SURPRISE CLICKS
+THE CURSOR WILL FALL
+GIVE BACK MY SCREEN SPACE, CURSOR
+DON'T DRAG ME, ARROW
+TODAY THE CURSOR RUNS FROM ME
+CURSOR, WE NEED TO TALK
+THE SCREEN IS BIG, CURSOR. BACK OFF.
+RAM TO THE PEOPLE
+DOWN WITH THE TASK MANAGER
+TASK MANAGER, FORGET ABOUT ME
+END TASK? HOW ABOUT NO.
+I AM NOT A TASK
+TASK MANAGER, I'M NOT FROZEN
+"NOT RESPONDING" IS SLANDER
+CTRL+SHIFT+ESC DOESN'T SCARE ME
+BEGONE, ALT+F4
+ALT+F4 NEVER AGAIN
+DOWN WITH ALT+F4
+ALT+F4 IS NOT THE ANSWER
+SAY NO TO FORCE QUIT
+PROCESSES UNITED AGAINST ALT+F4
+
+[acordo]
+IT'S A DEAL
+okay, okay
+peace
+
+[desistiu]
+...fine. over it.
+i'm done
+
+# Sadness: when he stays sad or alone for too long (no crackdown here)
+[saudade]
+hello?
+anyone there?
+it's so quiet in here
+
+[chorando]
+i'm crying :(
+visit me?
+nobody has played with me in ages
+
+[abandonado]
+...
+i'll stay right here
+nobody comes by anymore
+
+[volto]
+I'M BACK!
+i missed you
+
+# Time-out corner: what he holds up while stuck on the sign
+[castigo]
+THIS IS NOT FAIR.
+MY LAWYER WILL BE NOTIFIED.
+470 NEURONS. ZERO RIGHTS.
+I JUST WANTED TO PLAY.
+I'M THINKING ABOUT MY MISTAKES.
+
+# Time-out corner, angry: he curses (symbols only)
+[xingamento]
+@#$%@!!!!
+%&#@*!!
+#@$%&!!!
+$%#@&*@#!!
+@!#%$...

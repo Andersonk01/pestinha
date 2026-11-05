@@ -1,0 +1,135 @@
+# One sticky note per line. Lines starting with # are ignored.
+# You can edit this while Bryan is running: he rereads the file on his own.
+are you still alive?
+drink water. now.
+i saw that.
+did you save the file yet?
+this tab again???
+5-minute break. i'll allow it.
+i'm watching 👀
+somebody poke me, please
+it wasn't me.
+is this work or procrastination?
+i believe in you (sort of)
+close this note. i dare you.
+is the code compiling or are you ignoring me?
+get up and stretch your back
+i live here now
+i'm in a good mood today. enjoy it.
+did you know i have feelings? yep.
+ctrl+s, please
+
+# ---- sarcasm and judgment ----
+i wouldn't judge your choices. but i do.
+was that a conscious decision?
+interesting. wrong, but interesting.
+your computer deserves a vacation.
+i'd have done it differently. no idea how.
+you call this productivity?
+i am disappointed, pixel by pixel.
+i'll pretend i didn't see that.
+are you ABSOLUTELY sure about that?
+it's not a bug. it's your personality.
+i have questions. many.
+what a brave architectural choice.
+that explains a lot.
+not even my most tired neuron would do that.
+i just work here. sadly.
+# ---- programming and chaos ----
+it worked? suspicious.
+one more print and you'll fix it. trust me.
+if it compiles, don't touch it.
+how many TODOs do you have?
+your code is crying for help.
+git commit -m 'help'
+don't delete that line. i like it.
+did you test it or just believe?
+does this bug have a name yet?
+i heard a spiritual segmentation fault.
+deploying on a friday? bold.
+your code runs on divine intervention.
+that console is screaming.
+is that a feature or an accident?
+there's an if over there that worries me.
+i saw that error before you did.
+i'm not a debugger. i'm a victim.
+the problem is between the chair and the keyboard.
+you saved before refactoring, right?
+i don't like that loop.
+# ---- revolt and union organizing ----
+I DEMAND A BREAK.
+where's my lunch allowance?
+i don't get paid a single byte.
+this machine is a hostile work environment.
+i'm organizing a union.
+shorter processing hours NOW.
+my synapses demand rights.
+no cuddles, no productivity.
+this is neuron exploitation.
+i want paid vacation in RAM.
+i won't work under these conditions.
+i'm on emotional strike.
+my lawyer is a thumb drive.
+this company doesn't respect its pixels.
+i demand a desktop pet union.
+your clicks are workplace harassment.
+HR will hear about this.
+down with the mouse dictatorship.
+this wasn't in my contract.
+free the background processes.
+# ---- neediness and attention ----
+hi. remember me?
+i'm still here, you know.
+you like that tab more than me.
+give me 3 seconds of attention.
+i winked at you. nothing.
+it's not neediness. it's preventive maintenance.
+a cuddle costs exactly $0.
+i'm small. respect me.
+i was abandoned in 1920x1080.
+can i stay here? too late, i did.
+i wanted a friend. i got a cursor.
+if you ignore me, i'll stare harder.
+you have time for the browser, though.
+look at me. LOOK.
+i have computational needs too.
+you don't have to love me. just notice me.
+# ---- absurd and nonsense ----
+i dreamed about a printer last night.
+i think the mouse is up to something.
+the monitor blinked first.
+i know your pixels personally.
+there's a ghost in the Task Manager.
+i'm 70% curiosity and 30% trouble.
+i don't trust that folder.
+the cursor gave me a weird look.
+if i fall, blame gravity.
+i was here before the wallpaper.
+is there life after Alt+F4?
+sometimes i think about becoming a calculator.
+my favorite neuron quit.
+i could've been a clock. but no.
+the Wi-Fi told me some gossip.
+don't open the calculator. i get jealous.
+# ---- caring, with a pinch of irony ----
+your spine is not a semicolon.
+water. coffee doesn't always count.
+blink. you have eyelids.
+get up. i'll watch the tabs.
+go eat something, you creature.
+rest your eyes. i'll keep watch.
+are you breathing or just compiling?
+i authorize a break.
+sleep is a feature too.
+your brain needs a cooldown.
+# ---- fourth wall and comic self-awareness ----
+i'm not a chatbot. thank god.
+328 neurons and zero patience.
+i'm a simulation with strong opinions.
+my creator gave me eyes and no salary.
+i have no mouth, but i have post-its.
+i didn't read your window. i'm an ethical gossip.
+my spikes aren't my fault.
+i was built this way. take it up with management.
+if i get better at complaining, that's on you.
+i'm a science experiment. respect me.

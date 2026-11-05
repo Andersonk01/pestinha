@@ -24,6 +24,7 @@ from collections import namedtuple
 
 import psutil
 
+from ..idioma import N_
 from ..log import log
 from ._ocioso_wayland import OciosoWayland
 
@@ -33,8 +34,8 @@ TITULO_DAS_JANELAS = "pestinha:janela"      # começo do título das janelinhas 
 TODAS_AS_TELAS = True                       # as coordenadas valem em todos os monitores (ver para_xwayland)
 TEM_CONTROLE_LOCAL = True                   # o atalho e o painel do sistema falam com o pet por um socket local
 TECLAS_DO_ATALHO = "CTRL + ALT + SHIFT + B"
-AVISO_SEM_ATALHO = ("o Hyprland não tem o atalho de pânico: adicione um bind de "
-                    f"{TECLAS_DO_ATALHO} que rode `ferramentas/pestinha_ctl.py panico`")
+AVISO_SEM_ATALHO = N_("o Hyprland não tem o atalho de pânico: adicione um bind de {teclas} que rode "
+                      "`ferramentas/pestinha_ctl.py panico`")        # {teclas}: o atalho, no app
 
 # modmask do Hyprland: SHIFT=1, CAPS=2, CTRL=4, ALT=8, MOD2=16, MOD3=32, SUPER=64, MOD5=128
 _MODS_DO_ATALHO = 1 | 4 | 8

@@ -8,21 +8,23 @@ e é gravado a CADA mudança (se o programa cair, a escolha não se perde).
 import random
 import re
 
+from . import idioma
+from .idioma import N_, tr
 from .paths import pet_id_valido
 from .store import read_json, read_lines, write_json
 
 EMOTIONS = ["feliz", "contente", "observando", "curioso", "bravo", "triste", "assustado", "dramatico"]
 
-EMOTION_NAMES = {
-    "feliz": "FELIZ",
-    "contente": "CONTENTE",
-    "observando": "OBSERVANDO",
-    "curioso": "CURIOSO",
-    "bravo": "BRAVO",
-    "triste": "TRISTE",
-    "assustado": "ASSUSTADO",
-    "dramatico": "DRAMÁTICO",
-    "dormindo": "DORMINDO",
+EMOTION_NAMES = {                    # o nome de cada emoção na tela, traduzido com tr() onde aparece
+    "feliz": N_("FELIZ"),
+    "contente": N_("CONTENTE"),
+    "observando": N_("OBSERVANDO"),
+    "curioso": N_("CURIOSO"),
+    "bravo": N_("BRAVO"),
+    "triste": N_("TRISTE"),
+    "assustado": N_("ASSUSTADO"),
+    "dramatico": N_("DRAMÁTICO"),
+    "dormindo": N_("DORMINDO"),
 }
 
 IMAGE_EXT = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp"}
@@ -32,11 +34,11 @@ PANIC_HOTKEY_TEXT = "Ctrl + Alt + Shift + B"
 # Estilo: as cores (e os efeitos de tela) que valem por cima das do personagem. "original" deixa as do
 # pets/<pet>.json; as paletas ficam em body/estilos.py. Vale na hora, sem reabrir.
 ESTILOS = ("original", "rosa", "cyber", "matrix", "ambar")
-ESTILO_NOMES = {"original": "Original do personagem", "rosa": "Rosa", "cyber": "Cyber",
-                "matrix": "Matrix", "ambar": "Âmbar"}
+ESTILO_NOMES = {"original": N_("Original do personagem"), "rosa": N_("Rosa"), "cyber": N_("Cyber"),
+                "matrix": N_("Matrix"), "ambar": N_("Âmbar")}
 # Volume dos sons (o ganho de cada nível fica em body/voz.py)
 VOLUMES = ("baixo", "medio", "alto")
-VOLUME_NOMES = {"baixo": "Baixo", "medio": "Médio", "alto": "Alto"}
+VOLUME_NOMES = {"baixo": N_("Baixo"), "medio": N_("Médio"), "alto": N_("Alto")}
 # permissões que são uma escolha entre opções, e não liga/desliga
 ESCOLHAS = {"estilo": ESTILOS, "volume": VOLUMES}
 
@@ -69,46 +71,47 @@ DEFAULT_PERMISSIONS = {
     "volume": "medio",         # um de VOLUMES
 }
 
-# (chave, rótulo, descrição) na ordem da tela inicial
+# (chave, rótulo, descrição) na ordem da tela inicial; os textos passam por tr() na tela
 PERMISSION_GROUPS = [
-    ("Travessuras", [
-        ("travessuras", "Travessuras", "Interruptor geral: sem ele, nada de memes, fotos ou bilhetes."),
-        ("memes", "Trazer memes", "Imagens de pets/<pet>/memes/<emoção>/."),
-        ("fotos", "Trazer fotos", "Imagens de assets/comum/fotos/."),
-        ("bilhetes", "Deixar bilhetes", "Post-its com frases de pets/<pet>/recadinhos.txt."),
+    (N_("Travessuras"), [
+        ("travessuras", N_("Travessuras"), N_("Interruptor geral: sem ele, nada de memes, fotos ou bilhetes.")),
+        ("memes", N_("Trazer memes"), N_("Imagens de pets/<pet>/memes/<emoção>/.")),
+        ("fotos", N_("Trazer fotos"), N_("Imagens de assets/comum/fotos/.")),
+        ("bilhetes", N_("Deixar bilhetes"), N_("Post-its com frases de pets/<pet>/recadinhos.txt.")),
     ]),
-    ("Interação", [
-        ("cutucar", "Cutucar", "Clicar nele é uma cutucada, e ele reage."),
-        ("carinho", "Carinho e aprendizado",
-         "Passar o mouse para lá e para cá em cima dele é carinho. Ele aprende a gostar "
-         "do que estava acontecendo quando ganhou carinho (e a desgostar de ser dispensado)."),
-        ("arrastar", "Arrastar e arremessar", "Segurar, girar com a rodinha e jogar longe."),
-        ("pousar_janelas", "Pousar em janelas", "Solto no ar, ele pode cair em cima da barra de título."),
+    (N_("Interação"), [
+        ("cutucar", N_("Cutucar"), N_("Clicar nele é uma cutucada, e ele reage.")),
+        ("carinho", N_("Carinho e aprendizado"),
+         N_("Passar o mouse para lá e para cá em cima dele é carinho. Ele aprende a gostar "
+            "do que estava acontecendo quando ganhou carinho (e a desgostar de ser dispensado).")),
+        ("arrastar", N_("Arrastar e arremessar"), N_("Segurar, girar com a rodinha e jogar longe.")),
+        ("pousar_janelas", N_("Pousar em janelas"), N_("Solto no ar, ele pode cair em cima da barra de título.")),
     ]),
-    ("Contexto", [
-        ("tela_cheia", "Aparecer em tela cheia (experimental)",
-         "Por padrão ele some em jogos, vídeos e apresentações."),
+    (N_("Contexto"), [
+        ("tela_cheia", N_("Aparecer em tela cheia (experimental)"),
+         N_("Por padrão ele some em jogos, vídeos e apresentações.")),
     ]),
-    ("Rotina", [
-        ("rotina", "Registrar minha rotina",
-         "Grava 1 linha por minuto em timeline.csv, na pasta de dados: hora, categoria de atividade, "
-         "trocas de programa, ocioso. Nunca títulos, sites ou conteúdo. O pet ainda não usa esse histórico."),
+    (N_("Rotina"), [
+        ("rotina", N_("Registrar minha rotina"),
+         N_("Grava 1 linha por minuto em timeline.csv, na pasta de dados: hora, categoria de atividade, "
+            "trocas de programa, ocioso. Nunca títulos, sites ou conteúdo. O pet ainda não usa esse histórico.")),
     ]),
-    ("Brincadeira", [
-        ("fogos", "Fogos de artifício", "Quando ele fica muito feliz, a alegria da rede pode soltar um fogo."),
-        ("bolinha", "Bolinha", "Uma bolinha para ele brincar. Se você levar para longe, ele reage (pode ficar triste, bravo ou ir atrás)."),
-        ("notebook", "Notebook", "Ele senta no notebook dele para trabalhar quando você programa. Desligado, "
-         "o notebook some e ele não senta."),
+    (N_("Brincadeira"), [
+        ("fogos", N_("Fogos de artifício"), N_("Quando ele fica muito feliz, a alegria da rede pode soltar um fogo.")),
+        ("bolinha", N_("Bolinha"), N_("Uma bolinha para ele brincar. Se você levar para longe, ele reage (pode "
+                                      "ficar triste, bravo ou ir atrás).")),
+        ("notebook", N_("Notebook"), N_("Ele senta no notebook dele para trabalhar quando você programa. "
+                                        "Desligado, o notebook some e ele não senta.")),
     ]),
-    ("Sons", [
-        ("sons", "Sons", "Bipes quando você cutuca, faz carinho, ele se assusta, bate, fica bravo ou triste. "
-         "Sem nada gravado: os sons são sintetizados (assets/comum/sons/)."),
-        ("digitacao", "Digitação no notebook", "Enquanto ele trabalha sentado no notebook, dá para ouvir ele "
-         "digitando, de vez em quando."),
+    (N_("Sons"), [
+        ("sons", N_("Sons"), N_("Bipes quando você cutuca, faz carinho, ele se assusta, bate, fica bravo ou "
+                                "triste. Sem nada gravado: os sons são sintetizados (assets/comum/sons/).")),
+        ("digitacao", N_("Digitação no notebook"), N_("Enquanto ele trabalha sentado no notebook, dá para ouvir "
+                                                      "ele digitando, de vez em quando.")),
     ]),
-    ("Teste", [
-        ("modo_teste", "Modo teste", "Tempos curtos: travessuras e emoções acontecem em segundos."),
-        ("mostrar_emocao", "Mostrar nome da emoção", "Texto pequeno embaixo dele (só no modo teste)."),
+    (N_("Teste"), [
+        ("modo_teste", N_("Modo teste"), N_("Tempos curtos: travessuras e emoções acontecem em segundos.")),
+        ("mostrar_emocao", N_("Mostrar nome da emoção"), N_("Texto pequeno embaixo dele (só no modo teste).")),
     ]),
 ]
 
@@ -217,13 +220,13 @@ def check_assets(conteudo):
     warnings = []
     pasta = _relativo(conteudo.proprio)
     if not conteudo.memes.exists():
-        warnings.append(f"sem pasta memes/ em {pasta} nem em assets/comum/: sem memes")
+        warnings.append(tr("sem pasta memes/ em {pasta} nem em assets/comum/: sem memes", pasta=pasta))
     elif not any(list_images(conteudo.memes / e) for e in EMOTIONS):
-        warnings.append(f"a pasta {_relativo(conteudo.memes)} está vazia: sem memes")
+        warnings.append(tr("a pasta {pasta} está vazia: sem memes", pasta=_relativo(conteudo.memes)))
     if not conteudo.notes.exists():
-        warnings.append(f"sem recadinhos.txt em {pasta}: sem post-its")
+        warnings.append(tr("sem recadinhos.txt em {pasta}: sem post-its", pasta=pasta))
     if not conteudo.signs.exists():
-        warnings.append(f"sem cartazes.txt em {pasta}: usando frases neutras")
+        warnings.append(tr("sem cartazes.txt em {pasta}: usando frases neutras", pasta=pasta))
     return warnings
 
 
@@ -241,7 +244,7 @@ def profile(perms):
 # PETS
 # ============================================================
 
-IDIOMA = "pt"                      # o das telas do pet; uma descrição sem idioma é deste
+IDIOMA = idioma.ORIGINAL           # uma descrição sem idioma (um texto só) é deste
 DESCRICAO_MAXIMA = 600             # caracteres; o resto do texto é cortado
 _CODIGO_IDIOMA = re.compile(r"[a-z]{2,3}(_[A-Z]{2})?")     # en, pt, pt_BR (os códigos do Ryoku)
 APP_NOME = "Pestinha"             # o programa; cada personagem tem o próprio nome (pets/<pet>.json)
@@ -307,12 +310,14 @@ def _pet_valido(saved):
     return out
 
 
-def descricao_em(pet, idioma=IDIOMA):
-    """A descrição no idioma pedido: o exato (pt_BR), a base dele (pt), o inglês, a do pet ou a que houver."""
+def descricao_em(pet, codigo=None):
+    """A descrição no idioma pedido (sem pedido, o do pet): o exato (pt_BR), a base dele (pt), o inglês,
+    a original ou a que houver."""
+    codigo = codigo or idioma.atual()
     textos = pet.get("descricao") or {}
-    for codigo in (idioma, idioma.split("_")[0], "en", IDIOMA):
-        if textos.get(codigo):
-            return textos[codigo]
+    for tentativa in (codigo, codigo.split("_")[0], "en", IDIOMA):
+        if textos.get(tentativa):
+            return textos[tentativa]
     return next(iter(textos.values()), "")
 
 

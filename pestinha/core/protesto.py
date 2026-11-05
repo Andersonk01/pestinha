@@ -16,29 +16,31 @@ from ..ajustes import (
     LIMITES_ESTAGIO as STAGE_UP,
     REPRESSAO as REPRESSION,
 )
+from ..idioma import N_, tr
 from ..mathutil import valor_real
 from ..store import read_json, write_json
 
 
 
-STAGE_NAMES = {0: "em paz", 1: "reclamação", 2: "manifestação", 3: "greve", 4: "revolução"}
+STAGE_NAMES = {0: N_("em paz"), 1: N_("reclamação"), 2: N_("manifestação"), 3: N_("greve"), 4: N_("revolução")}
 
 # Neutros de propósito: valem para qualquer pet que não tenha o próprio cartazes.txt (ou uma seção dele).
 # A personalidade de cada um (a revolta do pet contra o cursor, por exemplo) fica em pets/<pet>/cartazes.txt.
+# As frases passam por tr() em load_signs: em inglês, o neutro também é em inglês.
 DEFAULT_SIGNS = {
-    "reclamacao": ["ei.", "reclamação formal", "!!!"],
-    "manifestacao": ["MAIS CARINHO", "MENOS CLIQUES"],
-    "greve": ["EM GREVE", "SEM CARINHO, SEM TRABALHO"],
-    "revolucao": ["CHEGA!", "!!!!"],
-    "castigo": ["ISSO NÃO É JUSTO.", "EU SÓ QUERIA BRINCAR."],      # no cantinho do castigo
-    "xingamento": ["@#$%@!!!!", "%&#@*!!", "#@$%&!!!"],              # no cantinho, com raiva
-    "acordo": ["ACORDO FECHADO"],
-    "desistiu": ["...tá. passou."],
+    "reclamacao": [N_("ei."), N_("reclamação formal"), "!!!"],
+    "manifestacao": [N_("MAIS CARINHO"), N_("MENOS CLIQUES")],
+    "greve": [N_("EM GREVE"), N_("SEM CARINHO, SEM TRABALHO")],
+    "revolucao": [N_("CHEGA!"), "!!!!"],
+    "castigo": [N_("ISSO NÃO É JUSTO."), N_("EU SÓ QUERIA BRINCAR.")],      # no cantinho do castigo
+    "xingamento": ["@#$%@!!!!", "%&#@*!!", "#@$%&!!!"],                      # no cantinho, com raiva
+    "acordo": [N_("ACORDO FECHADO")],
+    "desistiu": [N_("...tá. passou.")],
     # tristeza (a versão "greve" do sentimento triste)
-    "saudade": ["alô?", "tem alguém aí?"],
-    "chorando": ["tô chorando :(", "me visita?"],
-    "abandonado": ["...", "não vou sair daqui"],
-    "volto": ["VOLTEI!", "saudade de você"],
+    "saudade": [N_("alô?"), N_("tem alguém aí?")],
+    "chorando": [N_("tô chorando :("), N_("me visita?")],
+    "abandonado": ["...", N_("não vou sair daqui")],
+    "volto": [N_("VOLTEI!"), N_("saudade de você")],
 }
 STAGE_SECTION = {1: "reclamacao", 2: "manifestacao", 3: "greve", 4: "revolucao"}
 SAD_SECTION = {1: "saudade", 2: "chorando", 3: "abandonado"}
@@ -48,7 +50,7 @@ SAD_STYLE = {1: "sad", 2: "sad", 3: "sad"}     # azul e sem vermelho: não se co
 
 def load_signs(path):
     """cartazes.txt: seções [nome] com uma frase por linha; # é comentário."""
-    signs = {k: list(v) for k, v in DEFAULT_SIGNS.items()}
+    signs = {k: [tr(frase) for frase in v] for k, v in DEFAULT_SIGNS.items()}
     try:
         with open(path, "r", encoding="utf-8") as f:
             section, found = None, {}

@@ -30,6 +30,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QSystemTrayIcon
 
 from . import config
+from .idioma import tr
 from . import log as log_module
 from . import migracao
 from . import plataforma
@@ -105,8 +106,8 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         else:
             # pendência na migração: usa os arquivos antigos, como antes, e avisa (nada é perdido)
             self.pet_paths = self.paths.pet_legado(pet_id)
-            self.aviso_migracao = ("A memória ainda está no formato antigo (migração pendente: "
-                                   f"{migracao_feita.resumo()}). Nada foi apagado; veja memory/logs.")
+            self.aviso_migracao = tr("A memória ainda está no formato antigo (migração pendente: {resumo}). "
+                                     "Nada foi apagado; veja memory/logs.", resumo=migracao_feita.resumo())
             log(f"[migração] {pet_id} em modo compatível: {migracao_feita.resumo()}")
 
         # ----- cérebro e estado interno -----
@@ -236,15 +237,18 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         if self.aviso_migracao:
             problems.append(self.aviso_migracao)
         if not pasta_gravavel(self.paths.memory):
-            problems.append(f"sem permissão para gravar em {self.paths.memory}: o que ele aprender será perdido ao fechar")
+            problems.append(tr("sem permissão para gravar em {pasta}: o que ele aprender será perdido ao fechar",
+                               pasta=self.paths.memory))
         if not self.hotkey.ok:
-            problems.append(plataforma.AVISO_SEM_ATALHO
-                            or f"atalho de pânico {config.PANIC_HOTKEY_TEXT} já está em uso por outro programa")
+            problems.append(tr(plataforma.AVISO_SEM_ATALHO, teclas=config.PANIC_HOTKEY_TEXT)
+                            if plataforma.AVISO_SEM_ATALHO
+                            else tr("atalho de pânico {atalho} já está em uso por outro programa",
+                                    atalho=config.PANIC_HOTKEY_TEXT))
         if problems:
             self.tray.icon.showMessage(config.APP_NOME,"\n".join(problems), QSystemTrayIcon.Warning, 6000)
         if self.perms["ativo"]:
             self.tray.icon.showMessage(
-                self.nome, f"Estou aqui. Pânico: {config.PANIC_HOTKEY_TEXT}",
+                self.nome, tr("Estou aqui. Pânico: {atalho}", atalho=config.PANIC_HOTKEY_TEXT),
                 QSystemTrayIcon.Information, 3000,
             )
             QTimer.singleShot(700, self, self._som_de_chegada)     # preso ao app: some junto com ele

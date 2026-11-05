@@ -11,7 +11,7 @@ Um pet são duas coisas com o mesmo nome:
 | Campo | Para que serve |
 |---|---|
 | `nome` | Nome que aparece nos textos. |
-| `descricao` | Como ele é, em poucas frases, um texto por idioma: `{"en": "...", "pt": "..."}` (códigos como os do Ryoku: `en`, `pt`, `pt_BR`...). Configurações mostra a `pt`, o idioma das telas do pet; o Hub do Ryoku (Desktop > Pestinha) mostra a do idioma do sistema e, se não houver, a `en`. Um texto só, sem objeto, conta como `pt`. Espaços e quebras de linha viram um espaço só, e passa de 600 caracteres é cortado. Sem o campo, não aparece nada. |
+| `descricao` | Como ele é, em poucas frases, um texto por idioma: `{"en": "...", "pt": "..."}` (códigos como os do Ryoku: `en`, `pt`, `pt_BR`...). Configurações e o Hub do Ryoku (Desktop > Pestinha) mostram a do idioma do sistema e, se não houver, a `en`. Um texto só, sem objeto, conta como `pt`. Espaços e quebras de linha viram um espaço só, e passa de 600 caracteres é cortado. Sem o campo, não aparece nada. |
 | `seed` | Semente da rede (inteiro ≥ 0): outra semente é outro "indivíduo" com a mesma estrutura. |
 | `brincadeira` | Pesos de cada jeito de brincar: `bola` (chuta), `arremesso` (joga no cursor), `postit` (cola post-its). Peso 0 desliga. |
 | `temperamento` | Ganhos que multiplicam estímulos antes de chegarem aos interneurônios. Ex.: `"DISMISS->FRUSTRATION": 1.3` deixa o pet mais irritado quando você dispensa coisas. Os nomes estão em [docs/REDE_NEURAL.md](../docs/REDE_NEURAL.md). |
@@ -37,6 +37,14 @@ Pode editar com ele aberto: ele relê os textos e procura imagens novas sozinho.
 O que faltar na pasta do pet é procurado em `assets/comum/`. Se também não estiver lá, ele usa frases
 neutras (cartazes) ou simplesmente não faz aquela travessura (memes, post-its). **Nunca** usa o conteúdo
 de outro pet.
+
+### Em inglês
+
+Num sistema que não está em português, o pet procura primeiro a versão em inglês de cada item, ao lado da
+original: `recadinhos.en.txt`, `recadinhos_tristes.en.txt`, `cartazes.en.txt` (com as mesmas seções do
+`cartazes.txt`) e `memes.en/<emoção>/` (também `memes.en/trabalhando/`). O que não tiver versão em inglês usa
+a original, da pasta do pet e depois de `assets/comum/`. Para conferir os cartazes em inglês nas placas:
+`PESTINHA_IDIOMA=en python ferramentas/medir_cartazes.py <pet>`.
 
 ## Personagens que já existem
 

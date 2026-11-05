@@ -24,6 +24,7 @@ from PySide6.QtWidgets import (
 )
 
 from .. import config
+from ..idioma import tr
 from ..sense import timeline
 from ..core.emotion import EYE_SHAPES
 from ..body.pet import draw_face
@@ -103,42 +104,44 @@ class SettingsDialog(QDialog):
         root.addWidget(title)
         if first_run:
             welcome = QLabel(
-                f"Bem-vindo! O {config.APP_NOME} vê só o nome dos programas, o tempo sem usar o teclado e "
-                "as janelas para pousar. Nunca lê o conteúdo de nada. Detalhes em PRIVACIDADE.md.\n"
-                "Escolha abaixo o que ele pode fazer e clique em Começar. Tudo pode ser mudado depois.")
+                tr("Bem-vindo! O {app} vê só o nome dos programas, o tempo sem usar o teclado e "
+                   "as janelas para pousar. Nunca lê o conteúdo de nada. Detalhes em PRIVACIDADE.md.\n"
+                   "Escolha abaixo o que ele pode fazer e clique em Começar. Tudo pode ser mudado depois.",
+                   app=config.APP_NOME))
             welcome.setObjectName("hint")
             welcome.setWordWrap(True)
             root.addWidget(welcome)
-        hint = QLabel("Escolha o que o pet pode fazer nesta sessão. Fica salvo para a próxima.")
+        hint = QLabel(tr("Escolha o que o pet pode fazer nesta sessão. Fica salvo para a próxima."))
         hint.setObjectName("hint")
         hint.setWordWrap(True)
         root.addWidget(hint)
 
         top = QGroupBox(config.APP_NOME)
         top_layout = QVBoxLayout(top)
-        self.active_box = QCheckBox(f"{config.APP_NOME} ligado")
+        self.active_box = QCheckBox(tr("{app} ligado", app=config.APP_NOME))
         self.active_box.setChecked(perms["ativo"])
         self.active_box.toggled.connect(lambda on: self._set("ativo", on))
         top_layout.addWidget(self.active_box)
         if plataforma.TEM_INICIO_AUTOMATICO:
-            self.inicio_box = QCheckBox(f"Abrir o {config.APP_NOME} ao entrar no {plataforma.NOME_DO_SISTEMA}")
+            self.inicio_box = QCheckBox(tr("Abrir o {app} ao entrar no {sistema}", app=config.APP_NOME,
+                                           sistema=plataforma.NOME_DO_SISTEMA))
             self.inicio_box.setChecked(plataforma.inicia_com_sistema())
             self.inicio_box.toggled.connect(self._definir_inicio)
             top_layout.addWidget(self.inicio_box)
         if not perms["ativo"]:
-            warn = QLabel(f"O pânico desligou o {config.APP_NOME} na última vez. Marque acima para religar.")
+            warn = QLabel(tr("O pânico desligou o {app} na última vez. Marque acima para religar.", app=config.APP_NOME))
             warn.setObjectName("hint")
             warn.setWordWrap(True)
             top_layout.addWidget(warn)
 
         pet_row = QHBoxLayout()
-        pet_row.addWidget(QLabel("Personagem:"))
+        pet_row.addWidget(QLabel(tr("Personagem:")))
         self.pet_combo = QComboBox()
         self.pet_descricoes = {}
         for pet_id in config.list_pets(self.paths):            # só pets/<id>.json; memória antiga não conta
             pet_def = config.load_pet(self.paths, pet_id)
             self.pet_combo.addItem(pet_def["nome"], pet_id)
-            self.pet_descricoes[pet_id] = config.descricao_em(pet_def)     # no idioma destas telas
+            self.pet_descricoes[pet_id] = config.descricao_em(pet_def)
         atual = config.escolher_pet(self.paths, perms["pet"])
         self.pet_combo.setCurrentIndex(max(0, self.pet_combo.findData(atual)))
         self.pet_combo.currentIndexChanged.connect(self._trocar_pet)
@@ -149,31 +152,31 @@ class SettingsDialog(QDialog):
         self.pet_descricao.setWordWrap(True)
         top_layout.addWidget(self.pet_descricao)
         self._mostrar_descricao()
-        self.pet_aviso = QLabel("Vale na próxima vez que abrir. Cada personagem tem a própria memória.")
+        self.pet_aviso = QLabel(tr("Vale na próxima vez que abrir. Cada personagem tem a própria memória."))
         self.pet_aviso.setObjectName("hint")
         self.pet_aviso.setWordWrap(True)
         self.pet_aviso.setVisible(not first_run)
         top_layout.addWidget(self.pet_aviso)
 
         estilo_row = QHBoxLayout()
-        estilo_row.addWidget(QLabel("Estilo:"))
+        estilo_row.addWidget(QLabel(tr("Estilo:")))
         self.estilo_combo = self._combo(config.ESTILOS, config.ESTILO_NOMES, perms["estilo"], "estilo")
-        self.estilo_combo.setToolTip("As cores dele (e os efeitos da tela). Vale na hora.")
+        self.estilo_combo.setToolTip(tr("As cores dele (e os efeitos da tela). Vale na hora."))
         estilo_row.addWidget(self.estilo_combo, 1)
         top_layout.addLayout(estilo_row)
         root.addWidget(top)
 
         for group_title, items in config.PERMISSION_GROUPS:
-            group = QGroupBox(group_title)
+            group = QGroupBox(tr(group_title))
             layout = QVBoxLayout(group)
             for key, label, description in items:
-                box = QCheckBox(label)
+                box = QCheckBox(tr(label))
                 box.setChecked(bool(perms[key]))
-                box.setToolTip(description)
+                box.setToolTip(tr(description))
                 box.toggled.connect(lambda on, k=key: self._set(k, on))
                 self.boxes[key] = box
                 layout.addWidget(box)
-                desc = QLabel(description)
+                desc = QLabel(tr(description))
                 desc.setObjectName("hint")
                 desc.setWordWrap(True)
                 desc.setContentsMargins(26, 0, 0, 4)
@@ -183,7 +186,7 @@ class SettingsDialog(QDialog):
                 layout.addWidget(self.resumo)
             if group_title == "Sons":
                 volume_row = QHBoxLayout()
-                volume_row.addWidget(QLabel("Volume:"))
+                volume_row.addWidget(QLabel(tr("Volume:")))
                 self.volume_combo = self._combo(config.VOLUMES, config.VOLUME_NOMES, perms["volume"], "volume")
                 volume_row.addWidget(self.volume_combo, 1)
                 layout.addLayout(volume_row)
@@ -192,35 +195,35 @@ class SettingsDialog(QDialog):
                 self.history_label = QLabel()
                 self.history_label.setObjectName("hint")
                 row.addWidget(self.history_label, 1)
-                wipe = QPushButton("Apagar histórico")
+                wipe = QPushButton(tr("Apagar histórico"))
                 wipe.clicked.connect(self._wipe_history)
                 row.addWidget(wipe)
                 layout.addLayout(row)
-                everything = QPushButton(f"Apagar todos os dados do {config.APP_NOME}")
+                everything = QPushButton(tr("Apagar todos os dados do {app}", app=config.APP_NOME))
                 everything.clicked.connect(self._wipe_everything)
                 layout.addWidget(everything)
-                pasta = QLabel(f"Pasta de dados: {self.paths.memory}")
+                pasta = QLabel(tr("Pasta de dados: {pasta}", pasta=self.paths.memory))
                 pasta.setObjectName("hint")
                 pasta.setWordWrap(True)
                 layout.addWidget(pasta)
                 self._update_history_label()
             root.addWidget(group)
 
-        panic = QLabel(f"Pânico (desliga tudo e fica desligado): {config.PANIC_HOTKEY_TEXT}")
+        panic = QLabel(tr("Pânico (desliga tudo e fica desligado): {atalho}", atalho=config.PANIC_HOTKEY_TEXT))
         panic.setObjectName("hint")
         root.addWidget(panic)
 
         buttons = QHBoxLayout()
         buttons.addStretch(1)
         if first_run:
-            leave = QPushButton("Sair")
+            leave = QPushButton(tr("Sair"))
             leave.clicked.connect(self.reject)
             buttons.addWidget(leave)
-            go = QPushButton("Começar")
+            go = QPushButton(tr("Começar"))
             go.setObjectName("start")
             go.clicked.connect(self.accept)
         else:
-            go = QPushButton("Fechar")
+            go = QPushButton(tr("Fechar"))
             go.setObjectName("start")
             go.clicked.connect(self.accept)
         buttons.addWidget(go)
@@ -251,35 +254,38 @@ class SettingsDialog(QDialog):
         tristes = config.Notes(conteudo.notes_sad)
         tristes._reload()
         nome = config.load_pet(self.paths, pet)["nome"]
-        self.resumo.setText(f"Conteúdo de {nome}: {memes} memes de emoção, {trabalho} de trabalho, {photos} fotos, "
-                            f"{len(notes.lines)} recadinhos e {len(tristes.lines)} bilhetes tristes.")
+        self.resumo.setText(tr("Conteúdo de {nome}: {memes} memes de emoção, {trabalho} de trabalho, {fotos} fotos, "
+                               "{recados} recadinhos e {tristes} bilhetes tristes.", nome=nome, memes=memes,
+                               trabalho=trabalho, fotos=photos, recados=len(notes.lines),
+                               tristes=len(tristes.lines)))
 
     def _update_history_label(self):
         """Mostra quantos minutos de rotina estão gravados."""
         minutes = timeline.count_rows(self.paths.timeline)
-        self.history_label.setText(f"Histórico: {minutes} minutos ({minutes / 60:.1f} h) gravados.")
+        self.history_label.setText(tr("Histórico: {minutos} minutos ({horas:.1f} h) gravados.", minutos=minutes,
+                                         horas=minutes / 60))
 
     def _wipe_history(self):
         """Apaga a rotina (timeline.csv) depois de pedir confirmação."""
         answer = QMessageBox.question(
-            self, "Apagar histórico",
-            f"Apagar todo o histórico da sua rotina ({self.paths.timeline})? Não dá para desfazer.",
+            self, tr("Apagar histórico"),
+            tr("Apagar todo o histórico da sua rotina ({arquivo})? Não dá para desfazer.", arquivo=self.paths.timeline),
         )
         if answer == QMessageBox.Yes:
             try:
                 self.paths.timeline.unlink(missing_ok=True)
             except OSError as error:
-                QMessageBox.warning(self, "Apagar histórico", f"Não deu para apagar: {error}")
+                QMessageBox.warning(self, tr("Apagar histórico"), tr("Não deu para apagar: {erro}", erro=error))
             self.history_wiped.emit()             # o app descarta também o minuto que ainda está em RAM
             self._update_history_label()
 
     def _wipe_everything(self):
         """Apaga todos os dados do app depois de pedir confirmação; o app fecha em seguida."""
         answer = QMessageBox.question(
-            self, "Apagar todos os dados",
-            f"Apagar tudo que o {config.APP_NOME} guardou ({self.paths.memory}: a memória de todos os "
-            f"personagens, histórico, painéis, permissões)? O {config.APP_NOME} vai fechar e deixa de abrir "
-            "sozinho com o sistema. Não dá para desfazer.",
+            self, tr("Apagar todos os dados"),
+            tr("Apagar tudo que o {app} guardou ({pasta}: a memória de todos os personagens, histórico, painéis, "
+               "permissões)? O {app} vai fechar e deixa de abrir sozinho com o sistema. Não dá para desfazer.",
+               app=config.APP_NOME, pasta=self.paths.memory),
         )
         if answer == QMessageBox.Yes:
             plataforma.definir_inicio_com_sistema(False)
@@ -292,13 +298,13 @@ class SettingsDialog(QDialog):
         self.inicio_box.blockSignals(True)
         self.inicio_box.setChecked(not ligado)
         self.inicio_box.blockSignals(False)
-        QMessageBox.warning(self, config.APP_NOME, "O sistema não permitiu mudar essa opção.")
+        QMessageBox.warning(self, config.APP_NOME, tr("O sistema não permitiu mudar essa opção."))
 
     def _combo(self, opcoes, nomes, atual, chave):
         """Uma lista de opções (estilo, volume) que grava a escolha na hora."""
         combo = QComboBox()
         for opcao in opcoes:
-            combo.addItem(nomes.get(opcao, opcao), opcao)
+            combo.addItem(tr(nomes.get(opcao, opcao)), opcao)
         combo.setCurrentIndex(max(0, combo.findData(atual)))
         combo.currentIndexChanged.connect(lambda _i, c=combo, k=chave: self._set(k, c.currentData()))
         return combo
@@ -359,15 +365,15 @@ class Tray(QObject):
         menu = QMenu()
         self.actions = {}
         for key, text, signal in [
-            ("settings", "Configurações...", self.open_settings),
-            ("monitor", "Monitor neural", self.open_monitor),
-            ("panel", "Painel de protesto", self.open_panel),
-            ("floating", "Esconder painéis de teste", self.toggle_floating),
-            ("pause", "Pausar", self.toggle_pause),
-            ("hide", "Esconder", self.toggle_hidden),
-            ("clear", "Limpar travessuras", self.clear_things),
-            ("panic", f"Pânico ({config.PANIC_HOTKEY_TEXT})", self.panic),
-            ("quit", "Sair", self.quit),
+            ("settings", tr("Configurações..."), self.open_settings),
+            ("monitor", tr("Monitor neural"), self.open_monitor),
+            ("panel", tr("Painel de protesto"), self.open_panel),
+            ("floating", tr("Esconder painéis de teste"), self.toggle_floating),
+            ("pause", tr("Pausar"), self.toggle_pause),
+            ("hide", tr("Esconder"), self.toggle_hidden),
+            ("clear", tr("Limpar travessuras"), self.clear_things),
+            ("panic", tr("Pânico ({atalho})", atalho=config.PANIC_HOTKEY_TEXT), self.panic),
+            ("quit", tr("Sair"), self.quit),
         ]:
             action = QAction(text, menu)
             action.triggered.connect(signal.emit)
@@ -384,9 +390,9 @@ class Tray(QObject):
 
     def set_state(self, paused, hidden, test_mode):
         """Atualiza os textos do menu e a dica do ícone conforme o estado (pausado, escondido, modo de teste)."""
-        self.actions["pause"].setText("Continuar" if paused else "Pausar")
-        self.actions["hide"].setText("Mostrar" if hidden else "Esconder")
-        self.icon.setToolTip(self.titulo + ("  [MODO TESTE]" if test_mode else ""))
+        self.actions["pause"].setText(tr("Continuar") if paused else tr("Pausar"))
+        self.actions["hide"].setText(tr("Mostrar") if hidden else tr("Esconder"))
+        self.icon.setToolTip(self.titulo + (tr("  [MODO TESTE]") if test_mode else ""))
 
 
 # ============================================================

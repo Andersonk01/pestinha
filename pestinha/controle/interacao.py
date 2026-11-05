@@ -7,6 +7,7 @@ Pausado ou desligado, as interações não mexem no estado (ver SessaoMixin._con
 Mixin de PestinhaApp: usa os atributos criados em PestinhaApp.__init__.
 """
 
+from ..idioma import tr
 from ..log import log
 import time
 from PySide6.QtWidgets import QMenu
@@ -117,25 +118,25 @@ class InteracaoMixin:
             act.setEnabled(enabled)
             act.triggered.connect(fn)
 
-        item("Cutucar", self.menu_poke, perms["cutucar"])
-        item("Dar carinho", self.menu_caress, perms["carinho"])
+        item(tr("Cutucar"), self.menu_poke, perms["cutucar"])
+        item(tr("Dar carinho"), self.menu_caress, perms["carinho"])
         menu.addSeparator()
-        item("Jogar a bolinha perto dele", self.menu_place_ball, perms["bolinha"])
-        item("Guardar a bolinha", self.menu_store_ball, perms["bolinha"] and not self.ball_stored)
+        item(tr("Jogar a bolinha perto dele"), self.menu_place_ball, perms["bolinha"])
+        item(tr("Guardar a bolinha"), self.menu_store_ball, perms["bolinha"] and not self.ball_stored)
         menu.addSeparator()
-        item("Pedir para dormir", self.menu_sleep, not self.asleep)
-        item("Pedir para trabalhar", self.menu_pedir_trabalho)
-        item("Mostrar o notebook" if self.mesa.escondido else "Esconder o notebook",
+        item(tr("Pedir para dormir"), self.menu_sleep, not self.asleep)
+        item(tr("Pedir para trabalhar"), self.menu_pedir_trabalho)
+        item(tr("Mostrar o notebook") if self.mesa.escondido else tr("Esconder o notebook"),
              self.menu_alternar_notebook)
-        item("Fazer uma travessura agora", self.menu_mischief, perms["travessuras"])
+        item(tr("Fazer uma travessura agora"), self.menu_mischief, perms["travessuras"])
         menu.addSeparator()
-        item("Cantinho do castigo", lambda: self.castigo.toggle(self.bounds()))
-        item("Painel de protesto", lambda: self.floats.toggle("greve"))
-        item("Monitor neural", lambda: self.floats.toggle("neural"))
-        item("Configurações...", self.open_settings)
+        item(tr("Cantinho do castigo"), lambda: self.castigo.toggle(self.bounds()))
+        item(tr("Painel de protesto"), lambda: self.floats.toggle("greve"))
+        item(tr("Monitor neural"), lambda: self.floats.toggle("neural"))
+        item(tr("Configurações..."), self.open_settings)
         menu.addSeparator()
-        item("Esconder (volta pela bandeja)", self.toggle_hidden)
-        item("Fechar", self.menu_close)
+        item(tr("Esconder (volta pela bandeja)"), self.toggle_hidden)
+        item(tr("Fechar"), self.menu_close)
         menu.exec(pos)
 
     def menu_poke(self):

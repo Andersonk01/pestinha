@@ -14,6 +14,7 @@ from PySide6.QtGui import QColor, QFont, QPainter, QPen
 from ..world.arrastavel import FloatingWidget
 
 from ..core.protesto import MAX_GRIEVANCE, STAGE_NAMES, STAGE_UP
+from ..idioma import tr
 
 BG = QColor("#0d110f")
 PANEL = QColor("#141b16")
@@ -28,7 +29,7 @@ RED = QColor("#e0474c")
 def fmt_time(seconds):
     """Formata um tempo em segundos para o painel, ou 'não está subindo' se não há tempo."""
     if seconds is None or math.isinf(seconds):
-        return "não está subindo"
+        return tr("não está subindo")
     if seconds < 60:
         return f"~{seconds:.0f} s"
     minutes = seconds / 60
@@ -52,7 +53,7 @@ class StrikePanel(FloatingWidget):
     """Painel de protesto: mostra a insatisfação, o estágio e quanto tempo falta para a próxima subida."""
     def __init__(self, app, default_pos):
         """Cria o painel e um relógio para atualizar os números."""
-        super().__init__(app, "greve", f"{app.nome} · Painel de protesto", (560, 330), (460, 300), default_pos)
+        super().__init__(app, "greve", tr("{nome} · Painel de protesto", nome=app.nome), (560, 330), (460, 300), default_pos)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
         self.timer.start(250)
@@ -70,16 +71,16 @@ class StrikePanel(FloatingWidget):
 
         p.setPen(MUTED)
         p.setFont(QFont("Consolas", 8, QFont.Bold))
-        p.drawText(int(x0), 26, "PAINEL DE PROTESTO")
+        p.drawText(int(x0), 26, tr("PAINEL DE PROTESTO"))
 
         # estágio atual, grande
         p.setPen(GOOD if pr.stage < 3 else RED)
         p.setFont(QFont("Consolas", 18, QFont.Bold))
-        p.drawText(QRectF(x0, 40, x1 - x0, 32), Qt.AlignLeft, STAGE_NAMES[pr.stage].upper())
+        p.drawText(QRectF(x0, 40, x1 - x0, 32), Qt.AlignLeft, tr(STAGE_NAMES[pr.stage]).upper())
         p.setPen(MUTED)
         p.setFont(QFont("Consolas", 9))
         p.drawText(QRectF(x0, 40, x1 - x0, 32), Qt.AlignRight | Qt.AlignVCenter,
-                   f"revoluções: {pr.revolutions}")
+                   tr("revoluções: {n}", n=pr.revolutions))
 
         # barra de insatisfação com as marcas dos estágios
         bar = QRectF(x0, 110, x1 - x0, 28)
@@ -96,7 +97,7 @@ class StrikePanel(FloatingWidget):
 
         # marcas e nomes dos estágios
         p.setFont(QFont("Consolas", 8))
-        names = ["reclamação", "manifestação", "greve", "revolução"]
+        names = [tr("reclamação"), tr("manifestação"), tr("greve"), tr("revolução")]
         for level, name in zip(up, names):
             mx = bar.left() + bar.width() * level / MAX_GRIEVANCE
             strong = level == strike_at
@@ -111,11 +112,11 @@ class StrikePanel(FloatingWidget):
         p.setPen(TEXT)
         p.setFont(QFont("Consolas", 22, QFont.Bold))
         p.drawText(QRectF(x0, 175, 200, 40), Qt.AlignLeft | Qt.AlignVCenter,
-                   f"{pct:.0f}%" if pr.stage < 3 else "EM GREVE")
+                   f"{pct:.0f}%" if pr.stage < 3 else tr("EM GREVE"))
         p.setFont(QFont("Consolas", 10))
         p.setPen(MUTED)
         p.drawText(QRectF(x0 + 150, 178, x1 - x0 - 150, 36), Qt.AlignLeft | Qt.AlignVCenter,
-                   "até a greve" if pr.stage < 3 else "")
+                   tr("até a greve") if pr.stage < 3 else "")
 
         # estimativa com a raiva atual
         anger = tone.r["ANGRY"] + 0.5 * tone.r["SAD"]
@@ -123,13 +124,14 @@ class StrikePanel(FloatingWidget):
         p.setPen(TEXT)
         p.setFont(QFont("Consolas", 10))
         if pr.stage >= 3:
-            line = "greve ativa"
+            line = tr("greve ativa")
         else:
-            line = f"tempo estimado com a raiva atual: {fmt_time(eta)}"
+            line = tr("tempo estimado com a raiva atual: {tempo}", tempo=fmt_time(eta))
         p.drawText(QRectF(x0, 224, x1 - x0, 20), Qt.AlignLeft, line)
         p.setPen(MUTED)
         p.setFont(QFont("Consolas", 9))
         p.drawText(QRectF(x0, 248, x1 - x0, 40), Qt.AlignLeft | Qt.AlignTop,
-                   f"raiva da rede {anger:.2f}  ·  insatisfação {pr.grievance:.2f}  ·  "
-                   f"sobe com dispensas, arremessos e batidas; cai com carinho e com o tempo.")
+                   tr("raiva da rede {raiva:.2f}  ·  insatisfação {insatisfacao:.2f}  ·  "
+                      "sobe com dispensas, arremessos e batidas; cai com carinho e com o tempo.",
+                      raiva=anger, insatisfacao=pr.grievance))
         p.end()

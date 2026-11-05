@@ -12,6 +12,7 @@ from PySide6.QtGui import QColor, QFont, QPainter, QPixmap
 from PySide6.QtWidgets import QWidget
 
 from ..body.pet import overlay_flags, set_no_activate
+from ..idioma import tr
 from ..ajustes import GRAVIDADE as GRAVITY
 
 NOTE_SIZE = (180, 150)
@@ -28,7 +29,7 @@ class Thing(QWidget):
         self.setAttribute(Qt.WA_ShowWithoutActivating)
         self.setFixedSize(w, h)
         self.setCursor(Qt.PointingHandCursor)
-        self.setToolTip("clique para fechar")
+        self.setToolTip(tr("clique para fechar"))
         self.born = time.monotonic()
         self.x = self.y = 0.0     # centro
         self.vy = 0.0

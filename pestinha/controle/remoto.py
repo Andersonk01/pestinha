@@ -23,6 +23,7 @@ from PySide6.QtCore import QObject, QTimer
 from PySide6.QtNetwork import QLocalServer
 
 from .. import config
+from ..idioma import tr
 from ..log import log
 
 # o pânico e a troca de personagem têm comandos próprios (a troca vale na próxima abertura)
@@ -56,14 +57,14 @@ def estado(app):
 def executar(app, pedido):
     """Aplica um pedido já lido e devolve a resposta (dict)."""
     if not isinstance(pedido, dict):
-        return {"ok": False, "erro": "o pedido precisa ser um objeto JSON"}
+        return {"ok": False, "erro": tr("o pedido precisa ser um objeto JSON")}
     cmd = pedido.get("cmd")
     if cmd == "status":
         return estado(app)
     if cmd == "perms":
         valores = pedido.get("valores")
         if not isinstance(valores, dict):
-            return {"ok": False, "erro": "faltou 'valores'"}
+            return {"ok": False, "erro": tr("faltou 'valores'")}
         novos = {k: v for k, v in config.permissoes_validas(valores).items() if k not in FORA_DE_PERMS}
         ignorados = sorted(set(valores) - set(novos))
         if novos:
@@ -94,7 +95,7 @@ def executar(app, pedido):
     if cmd == "sair":
         QTimer.singleShot(0, app.quit)          # responde antes de fechar
         return {"ok": True, "saindo": True}
-    return {"ok": False, "erro": f"comando desconhecido: {cmd!r}"}
+    return {"ok": False, "erro": tr("comando desconhecido: {comando!r}", comando=cmd)}
 
 
 class ControleLocal(QObject):
@@ -138,7 +139,7 @@ class ControleLocal(QObject):
         try:
             pedido = json.loads(linha.decode("utf-8"))
         except (UnicodeDecodeError, ValueError):
-            resposta = {"ok": False, "erro": "o pedido não é JSON"}
+            resposta = {"ok": False, "erro": tr("o pedido não é JSON")}
         else:
             try:
                 resposta = executar(self.app, pedido)

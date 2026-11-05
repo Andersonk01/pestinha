@@ -12,5 +12,5 @@ Janelas de interface: tela de permissões, bandeja, passo a passo, monitor neura
 | `monitor.py` | O que a rede está fazendo agora, sincronizado com o corpo. |
 | `onboarding.py` | Passo a passo da primeira vez, com aviso de projeto em desenvolvimento. |
 | `panel.py` | Medidor de protesto: quanto falta para ele entrar em greve. |
-| `rotulos.py` | Os nomes que aparecem na tela, em português. |
+| `rotulos.py` | Os nomes que aparecem na tela, no idioma do pet. |
 | `ui.py` | Tela inicial de permissões, ícone na bandeja e atalho de pânico. |

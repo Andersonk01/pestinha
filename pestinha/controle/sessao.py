@@ -12,6 +12,7 @@ from ..log import log
 import time
 from PySide6.QtWidgets import QApplication, QMessageBox, QSystemTrayIcon
 from .. import config, store
+from ..idioma import tr
 from ..body.estilos import com_estilo
 from ..ui.ui import SettingsDialog
 
@@ -157,7 +158,7 @@ class SessaoMixin:
             self.settings.set_active(False)
         self.update_visibility()
         self.tray.icon.showMessage(
-            config.APP_NOME, f"Pânico: {config.APP_NOME} desligado. Religue em Configurações.",
+            config.APP_NOME, tr("Pânico: {app} desligado. Religue em Configurações.", app=config.APP_NOME),
             QSystemTrayIcon.Warning, 4000,
         )
 
@@ -170,9 +171,10 @@ class SessaoMixin:
             print(f"[dados] não consegui apagar tudo: {falhas or self.paths.memory}")
             lista = "\n".join(falhas[:5]) or str(self.paths.memory)
             QMessageBox.warning(
-                self.settings, "Não foi possível apagar tudo",
-                f"Alguns dados continuam em {self.paths.memory}. O programa vai fechar; feche o que possa "
-                f"estar usando esses arquivos e tente de novo.\n\nArquivos que falharam:\n{lista}",
+                self.settings, tr("Não foi possível apagar tudo"),
+                tr("Alguns dados continuam em {pasta}. O programa vai fechar; feche o que possa estar usando "
+                   "esses arquivos e tente de novo.\n\nArquivos que falharam:\n{lista}",
+                   pasta=self.paths.memory, lista=lista),
             )
         else:
             print("[dados] tudo apagado pelo usuário")

@@ -1,7 +1,22 @@
 #!/usr/bin/env python3
 """
 Fala com o Pestinha que está rodando, pelo controle local (pestinha/controle/remoto.py).
-Só usa a biblioteca padrão: roda com o Python do sistema, sem o venv e sem o Qt.
+Só usa a biblioteca padrão (e o pestinha/idioma.py, que também só usa ela): roda com o Python do
+sistema, sem o venv e sem o Qt. O uso está em USO, que `-h` mostra no idioma do sistema.
+"""
+
+import json
+import os
+import re
+import socket
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from pestinha.idioma import N_, tr  # noqa: E402
+
+USO = N_("""\
+Fala com o Pestinha que está rodando, pelo controle local.
 
     pestinha_ctl.py status                    estado e permissões (JSON)
     pestinha_ctl.py perms bolinha=off fogos=on muda permissões (as da tela de configurações)
@@ -13,14 +28,7 @@ Só usa a biblioteca padrão: roda com o Python do sistema, sem o venv e sem o Q
     pestinha_ctl.py sair                      salva e fecha
 
 Saída: a resposta em JSON. Código de saída 0 se deu certo, 1 se o pet não está rodando, 2 se o pedido
-foi recusado.
-"""
-
-import json
-import os
-import re
-import socket
-import sys
+foi recusado.""")
 
 SIMPLES = {"status", "panico", "religar", "configuracoes", "pausar", "esconder", "sair"}
 VERDADE = {"1", "true", "on", "sim", "yes"}
@@ -39,33 +47,33 @@ def caminho_do_socket(ambiente=None):
 def montar_pedido(args):
     """O pedido em dict a partir dos argumentos; ValueError se não fizer sentido."""
     if not args:
-        raise ValueError("faltou o comando")
+        raise ValueError(tr("faltou o comando"))
     cmd, resto = args[0], args[1:]
     if cmd in SIMPLES:
         if resto:
-            raise ValueError(f"{cmd} não recebe argumentos")
+            raise ValueError(tr("{comando} não recebe argumentos", comando=cmd))
         return {"cmd": cmd}
     if cmd == "perms":
         valores = {}
         for item in resto:
             chave, sep, valor = item.partition("=")
             if not sep or not chave:
-                raise ValueError(f"use chave=valor: {item!r}")
+                raise ValueError(tr("use chave=valor: {item!r}", item=item))
             texto = valor.strip().lower()
             if chave in ESCOLHAS:
                 if not OPCAO.fullmatch(texto):
-                    raise ValueError(f"opção inválida para {chave}: {valor!r}")
+                    raise ValueError(tr("opção inválida para {chave}: {valor!r}", chave=chave, valor=valor))
                 valores[chave] = texto              # quem confere se a opção existe é o pet
             elif texto in VERDADE:
                 valores[chave] = True
             elif texto in MENTIRA:
                 valores[chave] = False
             else:
-                raise ValueError(f"valor de {chave} precisa ser on/off: {valor!r}")
+                raise ValueError(tr("valor de {chave} precisa ser on/off: {valor!r}", chave=chave, valor=valor))
         if not valores:
-            raise ValueError("perms precisa de pelo menos um chave=valor")
+            raise ValueError(tr("perms precisa de pelo menos um chave=valor"))
         return {"cmd": "perms", "valores": valores}
-    raise ValueError(f"comando desconhecido: {cmd!r}")
+    raise ValueError(tr("comando desconhecido: {comando!r}", comando=cmd))
 
 
 def enviar(pedido, caminho=None, tempo=3.0):
@@ -91,14 +99,14 @@ def enviar(pedido, caminho=None, tempo=3.0):
     try:
         return json.loads(b"".join(partes).decode("utf-8"))
     except ValueError:
-        return {"ok": False, "erro": "resposta inválida"}
+        return {"ok": False, "erro": tr("resposta inválida")}
 
 
 def main(argv=None):
     """Linha de comando."""
     args = sys.argv[1:] if argv is None else argv
     if not args or args[0] in ("-h", "--help"):
-        print(__doc__.strip())
+        print(tr(USO))
         return 0
     try:
         pedido = montar_pedido(args)

@@ -8,6 +8,7 @@ pestinha/mind/mesa.py; aqui só mostramos se ele está trabalhando (borda acesa)
 
 from PySide6.QtCore import QRectF, Qt
 from PySide6.QtGui import QColor, QGuiApplication, QLinearGradient, QPainter, QPen, QPixmap
+from ..idioma import tr
 from .arrastavel import FloatingWidget
 
 NOTEBOOK_W, NOTEBOOK_H = 110, 70     # tamanho do desenho de reserva
@@ -39,7 +40,7 @@ class Notebook(FloatingWidget):
         """Carrega a imagem do notebook (ou usa o desenho de reserva) e o põe na tela."""
         self.sprite = load_notebook_sprite(app.conteudo.notebook)
         size = (self.sprite.width(), self.sprite.height()) if self.sprite else (NOTEBOOK_W, NOTEBOOK_H)
-        super().__init__(app, "notebook", f"Notebook do {app.nome}", size, size, _default_position(size))
+        super().__init__(app, "notebook", tr("Notebook do {nome}", nome=app.nome), size, size, _default_position(size))
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setAttribute(Qt.WA_ShowWithoutActivating)
         self.working = False

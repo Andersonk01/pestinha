@@ -17,30 +17,32 @@ from PySide6.QtWidgets import (
 )
 
 from ..config import APP_NOME
+from ..idioma import N_, tr
 from .ui import STYLE, face_icon
 
-DEV_NOTICE = (
+DEV_NOTICE = N_(
     "Este é um projeto em desenvolvimento. Algumas coisas podem não funcionar direito, "
     "ainda há bugs a corrigir e o comportamento pode mudar bastante entre versões. "
     "Obrigado por testar!"
 )
 
+# (título, texto) de cada tela; passam por tr() ao montar
 PAGES = [
-    ("Projeto em desenvolvimento",
+    (N_("Projeto em desenvolvimento"),
      DEV_NOTICE),
-    ("Oi, eu sou o {nome}",
-     "Sou uma telinha com dois olhinhos que mora no seu monitor principal. Eu caio, quico, "
-     "pouso nas janelas, fico tristinho, brinco com a bolinha e, às vezes, apronto com "
-     "post-its e memes.\n\nVocê pode me cutucar, me dar carinho, me jogar e abrir meu menu "
-     "com o botão direito."),
-    ("O que eu vejo (e o que não vejo)",
-     "Eu vejo o nome do programa em primeiro plano, o tempo sem usar o teclado ou o mouse, "
-     "e a posição das janelas para pousar nelas.\n\nNunca leio o conteúdo de nenhuma janela, "
-     "página, documento ou conversa. Os detalhes estão em PRIVACIDADE.md."),
-    ("Agora você escolhe",
-     "Na próxima tela você decide o que eu posso fazer: travessuras, bolinha, carinho e "
-     "mais. Tudo pode ser mudado depois, pelo menu da bandeja ou pelo botão direito em mim.\n\n"
-     "Atalho de pânico: Ctrl + Alt + Shift + B desliga tudo na hora."),
+    (N_("Oi, eu sou o {nome}"),
+     N_("Sou uma telinha com dois olhinhos que mora no seu monitor principal. Eu caio, quico, "
+        "pouso nas janelas, fico tristinho, brinco com a bolinha e, às vezes, apronto com "
+        "post-its e memes.\n\nVocê pode me cutucar, me dar carinho, me jogar e abrir meu menu "
+        "com o botão direito.")),
+    (N_("O que eu vejo (e o que não vejo)"),
+     N_("Eu vejo o nome do programa em primeiro plano, o tempo sem usar o teclado ou o mouse, "
+        "e a posição das janelas para pousar nelas.\n\nNunca leio o conteúdo de nenhuma janela, "
+        "página, documento ou conversa. Os detalhes estão em PRIVACIDADE.md.")),
+    (N_("Agora você escolhe"),
+     N_("Na próxima tela você decide o que eu posso fazer: travessuras, bolinha, carinho e "
+        "mais. Tudo pode ser mudado depois, pelo menu da bandeja ou pelo botão direito em mim.\n\n"
+        "Atalho de pânico: Ctrl + Alt + Shift + B desliga tudo na hora.")),
 ]
 
 
@@ -49,7 +51,7 @@ class Onboarding(QDialog):
     def __init__(self, nome):
         """Monta as telas com o nome do personagem escolhido."""
         super().__init__()
-        self.setWindowTitle(f"{APP_NOME} · primeira vez")
+        self.setWindowTitle(tr("{app} · primeira vez", app=APP_NOME))
         self.setWindowIcon(face_icon())
         self.setStyleSheet(STYLE)
         self.setMinimumWidth(480)
@@ -58,7 +60,8 @@ class Onboarding(QDialog):
         root = QVBoxLayout(self)
         self.stack = QStackedWidget()
         for title, body in PAGES:
-            title = title.format(nome=nome)     # quem se apresenta é o pet escolhido
+            title = tr(title, nome=nome)        # quem se apresenta é o pet escolhido
+            body = tr(body)
             page = QLabel(
                 f"<h3 style='color:#63e56f'>{title}</h3>"
                 f"<p style='font-size:13px'>{body.replace(chr(10), '<br>')}</p>"
@@ -74,11 +77,11 @@ class Onboarding(QDialog):
         root.addWidget(self.counter)
 
         buttons = QHBoxLayout()
-        self.skip = QPushButton("Pular")
+        self.skip = QPushButton(tr("Pular"))
         self.skip.clicked.connect(self.accept)
-        self.back = QPushButton("Voltar")
+        self.back = QPushButton(tr("Voltar"))
         self.back.clicked.connect(self.previous)
-        self.next = QPushButton("Próximo")
+        self.next = QPushButton(tr("Próximo"))
         self.next.setObjectName("start")
         self.next.clicked.connect(self.advance)
         buttons.addWidget(self.skip)
@@ -94,8 +97,8 @@ class Onboarding(QDialog):
         last = self.index == len(PAGES) - 1
         self.stack.setCurrentIndex(self.index)
         self.back.setEnabled(self.index > 0)
-        self.next.setText("Começar" if last else "Próximo")
-        self.counter.setText(f"{self.index + 1} de {len(PAGES)}")
+        self.next.setText(tr("Começar") if last else tr("Próximo"))
+        self.counter.setText(tr("{atual} de {total}", atual=self.index + 1, total=len(PAGES)))
 
     def advance(self):
         """Vai para a próxima tela, ou termina na última."""
