@@ -23,6 +23,7 @@ Quem faz o quê:
 """
 
 import math
+import random
 import time
 
 from PySide6.QtCore import QObject, QTimer
@@ -148,7 +149,8 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
 
         # ----- corpo e travessuras -----
         left, top, right, _bottom = self.bounds()
-        self.pet = PetWindow(right - 220, top + 120, self.pet_state)
+        inicio = random.uniform(left + 220, right - 220) if right - left > 440 else (left + right) / 2
+        self.pet = PetWindow(inicio, top + 120, self.pet_state)     # cai num ponto qualquer da tela
         self.aparencia_base = aparencia_de(pet_def.get("aparencia"))     # a do personagem; o estilo vem por cima
         self.pet.aparencia = com_estilo(self.aparencia_base, self.perms["estilo"])
         if self.aparencia_base.forma == "bola":                         # o pelo vem de pets/<pet>/corpo.png
@@ -277,22 +279,26 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
 
     def screen_bounds(self):
         """Áreas úteis de todos os monitores, em coordenadas lógicas globais do Qt."""
-        nativas = plataforma.areas_uteis()      # no Hyprland o Qt (pelo XWayland) não sabe da barra nem do dock
-        areas = []
-        for screen in QGuiApplication.screens():
-            g = screen.availableGeometry()
-            area = nativas.get(screen.name()) if nativas else None
-            if area is not None:
-                dpr = screen.devicePixelRatio() or 1.0
-                areas.append(tuple(v / dpr for v in area))
-            else:
-                areas.append((g.x(), g.y(), g.x() + g.width(), g.y() + g.height()))
-        return areas
+        # no Hyprland o Qt (pelo XWayland) não sabe da barra nem do dock, nem onde as telas estão
+        return self._retangulos_das_telas(plataforma.areas_uteis(), lambda screen: screen.availableGeometry())
 
     def screen_geometries(self):
         """Geometria física das telas, na mesma ordem de screen_bounds()."""
-        return [(g.x(), g.y(), g.x() + g.width(), g.y() + g.height())
-                for g in (screen.geometry() for screen in QGuiApplication.screens())]
+        return self._retangulos_das_telas(plataforma.geometrias(), lambda screen: screen.geometry())
+
+    @staticmethod
+    def _retangulos_das_telas(nativos, do_qt):
+        """(l, t, r, b) de cada tela: o que o sistema informou (em pixels físicos), senão o do Qt."""
+        retangulos = []
+        for screen in QGuiApplication.screens():
+            nativo = nativos.get(screen.name()) if nativos else None
+            if nativo is not None:
+                dpr = screen.devicePixelRatio() or 1.0
+                retangulos.append(tuple(v / dpr for v in nativo))
+            else:
+                g = do_qt(screen)
+                retangulos.append((g.x(), g.y(), g.x() + g.width(), g.y() + g.height()))
+        return retangulos
 
     def _bounds_at(self, areas, x, y):
         """Área útil do monitor que contém o ponto, inclusive sobre barras reservadas pelo sistema."""
@@ -319,8 +325,18 @@ class PestinhaApp(SessaoMixin, InteracaoMixin, QObject):
         # só o Windows (e o Hyprland, pelo XWayland) entrega pixels físicos e conserva o canto de cada tela
         # no Qt (ver nativo_para_logico)
         outras = [s for s in QGuiApplication.screens() if s != principal] if plataforma.TODAS_AS_TELAS else []
-        return [(s.geometry().x(), s.geometry().y(), s.geometry().width(), s.geometry().height(), s.devicePixelRatio())
-                for s in [principal, *outras]]
+        nativas = plataforma.geometrias()        # no Hyprland, onde as telas estão para as janelas do pet
+        telas = []
+        for s in [principal, *outras]:
+            dpr = s.devicePixelRatio() or 1.0
+            nativa = nativas.get(s.name()) if nativas else None
+            if nativa is not None:
+                l, top, r, b = nativa
+                telas.append((l, top, (r - l) / dpr, (b - top) / dpr, dpr))
+            else:
+                g = s.geometry()
+                telas.append((g.x(), g.y(), g.width(), g.height(), dpr))
+        return telas
 
     def scan_windows(self):
         """Barras de título onde ele pode pousar, em todos os monitores, em coordenadas lógicas do Qt."""

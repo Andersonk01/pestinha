@@ -24,7 +24,7 @@ from collections import namedtuple
 
 import psutil
 
-from ..idioma import N_
+from ..idioma import N_, tr
 from ..log import log
 from ._ocioso_wayland import OciosoWayland
 
@@ -116,16 +116,24 @@ def pedir(comando, validade=0.05, relogio=time.monotonic):
 # ============================================================
 
 
-def montar_telas(monitores, zero_scaling):
+def montar_telas(monitores, zero_scaling, todas_no_primeiro=False):
     """
-    Telas na ordem do Hyprland, com o canto de cada uma no XWayland.
+    Telas na ordem do Hyprland, com o canto de cada uma nas coordenadas do XWayland.
 
     O Hyprland põe os monitores do XWayland lado a lado, a partir de (0, 0), na ordem da lista. Com
     `xwayland:force_zero_scaling`, cada um ocupa o tamanho em pixels e as distâncias são multiplicadas
     pela escala; sem ele, o tamanho lógico e escala 1. Com um monitor só, sem escala, nada muda.
+
+    Até o 0.53 é isso que vale para a posição de uma janela: o ponto é traduzido pelo monitor do
+    XWayland em que ele cai. Do 0.56 em diante, a posição de uma janela é traduzida pelo monitor dela
+    (o que tinha o foco quando ela abriu), qualquer que seja o ponto: um HDMI à esquerda do notebook
+    fica à direita dele no XWayland, mas uma janela do notebook que vai para lá some da tela.
+    `todas_no_primeiro`: todas as janelinhas do pet estão no primeiro monitor (garantir_monitor_das_janelas),
+    então todas usam o referencial dele e as telas ficam onde estão de verdade.
     """
     telas = []
     deslocamento = 0.0
+    base = None                         # (x, y, fator) do primeiro monitor, o referencial das janelas
     for m in monitores or []:
         if not isinstance(m, dict) or m.get("disabled"):
             continue
@@ -137,9 +145,15 @@ def montar_telas(monitores, zero_scaling):
             reservado = tuple(float(v) for v in (m.get("reserved") or (0, 0, 0, 0))[:4])
             if len(reservado) != 4:
                 reservado = (0.0, 0.0, 0.0, 0.0)
-            tela = Tela(str(m.get("name", "")), float(m["x"]), float(m["y"]),
-                        px_largura / escala, px_altura / escala, px_largura, px_altura,
-                        deslocamento, 0.0, escala if zero_scaling else 1.0, reservado)
+            x, y = float(m["x"]), float(m["y"])
+            fator = escala if zero_scaling else 1.0
+            if todas_no_primeiro:
+                base = base or (x, y, fator)
+                xx, xy, fator = (x - base[0]) * base[2], (y - base[1]) * base[2], base[2]
+            else:
+                xx, xy = deslocamento, 0.0
+            tela = Tela(str(m.get("name", "")), x, y, px_largura / escala, px_altura / escala,
+                        px_largura, px_altura, xx, xy, fator, reservado)
         except (KeyError, TypeError, ValueError):
             continue
         telas.append(tela)
@@ -194,8 +208,44 @@ def _monitores():
 
 
 def _telas():
-    """Telas do Hyprland com o canto no XWayland."""
-    return montar_telas(_monitores(), _zero_scaling())
+    """Telas do Hyprland com o canto nas coordenadas das janelas do pet."""
+    monitores = _monitores()
+    return montar_telas(monitores, _zero_scaling(), garantir_monitor_das_janelas(monitores))
+
+
+REGRA_DO_MONITOR = "pestinha-monitor"
+RENOVAR_REGRA_S = 10.0          # recarregar a config do Hyprland apaga a regra: ela é pedida de novo
+_regra = {"monitor": None, "quando": None, "vale": False}
+
+
+def comando_do_monitor(nome):
+    """O pedido (config em Lua) da regra que abre as janelinhas do pet no monitor `nome`, sem mudar o foco."""
+    match = ("{ class = " + _texto_lua("^" + CLASSE_DAS_JANELAS + "$")
+             + ", title = " + _texto_lua("^" + TITULO_DAS_JANELAS + "(:.*)?$") + " }")
+    return ("eval hl.window_rule({ name = " + _texto_lua(REGRA_DO_MONITOR) + ", match = " + match
+            + ", monitor = " + _texto_lua(nome + " silent") + " })")
+
+
+def garantir_monitor_das_janelas(monitores, relogio=time.monotonic):
+    """
+    Uma regra de janela põe todas as janelinhas do pet no primeiro monitor da lista, para a posição de
+    todas valer no mesmo referencial (ver montar_telas). Só o config em Lua aceita regra em tempo real
+    (`hyprctl eval`); devolve True se a regra vale.
+    """
+    nome = next((str(m.get("name", "")) for m in monitores or []
+                 if isinstance(m, dict) and not m.get("disabled") and m.get("name")), None)
+    if nome is None:
+        return False
+    agora = relogio()
+    if nome == _regra["monitor"] and _regra["quando"] is not None and agora - _regra["quando"] < RENOVAR_REGRA_S:
+        return _regra["vale"]
+    resposta = conversar(comando_do_monitor(nome))
+    vale = isinstance(resposta, str) and resposta.strip() == "ok"
+    if not vale and _regra["quando"] is None and len(monitores) > 1:
+        log(tr("[hyprland] as janelas do pet não ficaram num monitor só ({resposta}): com mais de um "
+               "monitor, ele pode sumir ao passar de um para o outro", resposta=(resposta or "").strip()[:120]))
+    _regra.update(monitor=nome, quando=agora, vale=vale)
+    return vale
 
 
 def workspaces_visiveis(monitores):
@@ -367,6 +417,16 @@ def areas_uteis():
     return areas
 
 
+def geometrias():
+    """{nome do monitor: (l, t, r, b)} da tela inteira no XWayland, no referencial das janelas do pet."""
+    saida = {}
+    for t in _telas():
+        l, top = para_xwayland(t.x, t.y, [t], t)
+        r, b = para_xwayland(t.x + t.largura, t.y + t.altura, [t], t)
+        saida[t.nome] = (int(round(l)), int(round(top)), int(round(r)), int(round(b)))
+    return saida
+
+
 def sem_foco_nativo(janela_id):
     """Quem tira o foco é a regra de janela do Hyprland (no_focus), achada pelo título."""
 
@@ -440,5 +500,7 @@ def preparar_qt(ambiente=None):
         ambiente["QT_QPA_PLATFORM"] = escolhida
     elif ambiente.get("DISPLAY"):
         ambiente["QT_QPA_PLATFORM"] = "xcb"
+        if disponivel(ambiente):
+            garantir_monitor_das_janelas(_monitores())  # antes da primeira janela abrir
     else:
         log("[hyprland] sem XWayland (DISPLAY vazio): o pet não consegue se mover pela tela")

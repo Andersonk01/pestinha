@@ -484,6 +484,9 @@ TEXTOS = {
     'Alguns dados continuam em {pasta}. O programa vai fechar; feche o que possa estar usando esses arquivos e tente de novo.\n\nArquivos que falharam:\n{lista}':
         'Some data is still in {pasta}. The program will close; close anything that may be using those files and try again.\n\nFiles that failed:\n{lista}',
     # config.py (avisos)
+    '[hyprland] as janelas do pet não ficaram num monitor só ({resposta}): com mais de um monitor, ele pode sumir ao passar de um para o outro':
+        "[hyprland] the pet's windows could not be kept on a single monitor ({resposta}): with more than one "
+        'monitor, it may vanish when crossing from one to the other',
     'sem corpo.png em {pasta}: o pelo é desenhado por código':
         'no corpo.png in {pasta}: the fur is drawn by code',
     'sem pasta memes/ em {pasta} nem em assets/comum/: sem memes':

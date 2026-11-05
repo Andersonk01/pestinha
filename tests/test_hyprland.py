@@ -127,6 +127,86 @@ def test_xwayland_poe_os_monitores_lado_a_lado_com_a_escala():
     assert hyprland.para_xwayland(100, 50, sem_zero) == (100, 50)
 
 
+# o notebook e um HDMI à esquerda dele: no XWayland o HDMI vem depois (à direita), na ordem da lista
+DOIS_MONITORES = [
+    dict(UM_MONITOR[0]),
+    dict(UM_MONITOR[0], id=1, name="HDMI-A-1", x=-1920, activeWorkspace={"id": 2, "name": "2"}),
+]
+
+
+def test_com_as_janelas_no_primeiro_monitor_as_telas_ficam_onde_estao():
+    lado_a_lado = hyprland.montar_telas(DOIS_MONITORES, zero_scaling=True)
+    assert [(t.xx, t.xy) for t in lado_a_lado] == [(0, 0), (1920, 0)]
+    telas = hyprland.montar_telas(DOIS_MONITORES, zero_scaling=True, todas_no_primeiro=True)
+    assert [(t.nome, t.xx, t.xy, t.fator) for t in telas] == [("eDP-1", 0, 0, 1.0), ("HDMI-A-1", -1920, 0, 1.0)]
+    assert hyprland.para_xwayland(-500, 500, telas) == (-500, 500)          # o HDMI à esquerda, de verdade
+    assert hyprland.retangulo_para_xwayland(-1800, 100, 800, 600, telas) == (-1800, 100, -1000, 700)
+
+
+def test_referencial_do_primeiro_monitor_leva_a_escala_dele():
+    monitores = [
+        {"name": "eDP-1", "x": 0, "y": 0, "width": 2880, "height": 1800, "scale": 2, "transform": 0},
+        {"name": "HDMI-A-1", "x": 1440, "y": -200, "width": 1920, "height": 1080, "scale": 1, "transform": 0},
+    ]
+    telas = hyprland.montar_telas(monitores, zero_scaling=True, todas_no_primeiro=True)
+    assert [(t.xx, t.xy, t.fator) for t in telas] == [(0, 0, 2.0), (2880, -400, 2.0)]
+    assert hyprland.para_xwayland(1450, -195, telas) == (2900, -390)
+    sem_zero = hyprland.montar_telas(monitores, zero_scaling=False, todas_no_primeiro=True)
+    assert [(t.xx, t.xy, t.fator) for t in sem_zero] == [(0, 0, 1.0), (1440, -200, 1.0)]
+
+
+def test_areas_e_geometrias_no_referencial_das_janelas(monkeypatch):
+    telas = hyprland.montar_telas(DOIS_MONITORES, True, todas_no_primeiro=True)
+    monkeypatch.setattr(hyprland, "_telas", lambda: telas)
+    assert hyprland.areas_uteis() == {"eDP-1": (0, 36, 1920, 1080), "HDMI-A-1": (-1920, 36, 0, 1080)}
+    assert hyprland.geometrias() == {"eDP-1": (0, 0, 1920, 1080), "HDMI-A-1": (-1920, 0, 0, 1080)}
+
+
+def test_regra_poe_as_janelas_no_primeiro_monitor(monkeypatch):
+    assert hyprland.comando_do_monitor("eDP-1") == (
+        "eval hl.window_rule({ name = 'pestinha-monitor', match = { class = '^pestinha$', "
+        "title = '^pestinha:janela(:.*)?$' }, monitor = 'eDP-1 silent' })")
+    enviados, avisos = [], []
+    resposta = ["ok"]
+    monkeypatch.setattr(hyprland, "conversar", lambda msg: enviados.append(msg) or resposta[0])
+    monkeypatch.setattr(hyprland, "log", avisos.append)
+    monkeypatch.setattr(hyprland, "_regra", {"monitor": None, "quando": None, "vale": False})
+    agora = [100.0]
+    relogio = lambda: agora[0]  # noqa: E731
+
+    assert hyprland.garantir_monitor_das_janelas(DOIS_MONITORES, relogio)
+    assert len(enviados) == 1 and "'eDP-1 silent'" in enviados[0]
+    agora[0] += hyprland.RENOVAR_REGRA_S / 2
+    assert hyprland.garantir_monitor_das_janelas(DOIS_MONITORES, relogio)
+    assert len(enviados) == 1                                   # ainda vale: não pede de novo
+    agora[0] += hyprland.RENOVAR_REGRA_S / 2
+    hyprland.garantir_monitor_das_janelas(DOIS_MONITORES, relogio)
+    assert len(enviados) == 2                                   # a config pode ter sido recarregada
+    hyprland.garantir_monitor_das_janelas(DOIS_MONITORES[::-1], relogio)
+    assert len(enviados) == 3 and "'HDMI-A-1 silent'" in enviados[-1]   # o primeiro monitor mudou
+    assert avisos == []
+    assert not hyprland.garantir_monitor_das_janelas([], relogio)
+
+
+def test_sem_config_em_lua_fica_lado_a_lado_e_avisa(monkeypatch):
+    avisos = []
+    monkeypatch.setattr(hyprland, "conversar", lambda msg: "unknown request")
+    monkeypatch.setattr(hyprland, "log", avisos.append)
+    monkeypatch.setattr(hyprland, "_regra", {"monitor": None, "quando": None, "vale": False})
+    monkeypatch.setattr(hyprland, "_monitores", lambda: DOIS_MONITORES)
+    monkeypatch.setattr(hyprland, "_zero_scaling", lambda: True)
+    assert [t.xx for t in hyprland._telas()] == [0, 1920]
+    assert len(avisos) == 1 and "unknown request" in avisos[0]
+
+
+def test_com_a_regra_as_telas_ficam_onde_estao(monkeypatch):
+    monkeypatch.setattr(hyprland, "conversar", lambda msg: "ok")
+    monkeypatch.setattr(hyprland, "_regra", {"monitor": None, "quando": None, "vale": False})
+    monkeypatch.setattr(hyprland, "_monitores", lambda: DOIS_MONITORES)
+    monkeypatch.setattr(hyprland, "_zero_scaling", lambda: True)
+    assert [t.xx for t in hyprland._telas()] == [0, -1920]
+
+
 def test_monitor_girado_troca_largura_e_altura():
     girado = [{"name": "DP-1", "x": 0, "y": 0, "width": 1920, "height": 1080, "scale": 1, "transform": 1}]
     tela = hyprland.montar_telas(girado, zero_scaling=False)[0]
@@ -199,7 +279,8 @@ def test_atalho_do_hyprland_ignora_caps_e_num_lock():
     assert not hyprland.atalho_configurado([])
 
 
-def test_preparar_qt_escolhe_o_xwayland():
+def test_preparar_qt_escolhe_o_xwayland(monkeypatch):
+    monkeypatch.setattr(hyprland, "conversar", lambda msg: pytest.fail("falou com o Hyprland fora dele"))
     amb = {"DISPLAY": ":0", "QT_QPA_PLATFORM": "wayland;xcb"}
     hyprland.preparar_qt(amb)
     assert amb["QT_QPA_PLATFORM"] == "xcb"

@@ -1,5 +1,17 @@
 # Histórico de versões
 
+## Vários monitores no Hyprland
+
+- Com dois monitores, o pet passa de um para o outro pela borda que os une. Antes, o Qt (pelo XWayland)
+  via os monitores na ordem da lista do Hyprland, não onde eles estão: com um HDMI à esquerda do notebook,
+  a passagem de verdade era uma parede, e indo para a direita ele sumia da tela. Cursor, barras de título
+  e janelinhas do outro monitor também ficavam no lugar errado.
+- O Hyprland traduz a posição de cada janela do XWayland pelo monitor dela (o que tinha o foco quando ela
+  abriu). O pet agora pede uma regra que abre todas as janelinhas dele no primeiro monitor (`hyprctl eval`,
+  no config em Lua), e as contas usam o referencial desse monitor.
+- As telas, as áreas livres e os painéis arrastáveis usam a geometria que o Hyprland informa, não a do Qt.
+- O pet começa num ponto qualquer da tela principal, não sempre perto do canto direito.
+
 ## O Bolota, a bolinha de pelo
 
 - Personagem novo, o Bolota: uma bolinha de pelo marrom, brincalhona e carinhosa. A bolinha, a cutucada e o

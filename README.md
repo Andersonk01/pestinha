@@ -173,6 +173,12 @@ enxergam as outras, então o Pestinha usa um backend próprio (`pestinha/platafo
   notebook é posto na frente do pet pelo próprio Hyprland, porque o raise do X11 não muda a ordem lá.
 - Janelas, janela ativa, tela cheia, cursor e a área livre das barras vêm do **socket do Hyprland** (o mesmo
   do `hyprctl`). O título das outras janelas vem junto e é descartado, como no X11.
+- **Vários monitores:** o Hyprland (do 0.56 em diante) traduz a posição de cada janela do XWayland pelo
+  monitor dela, o que tinha o foco quando ela abriu. Para todas as janelinhas do pet usarem a mesma conta,
+  ele pede ao Hyprland (`hyprctl eval`, só no config em Lua) uma regra que as abre no primeiro monitor da
+  lista, sem mudar o foco; a regra é renovada a cada 10 s, porque recarregar a config a apaga. Assim ele
+  vê os monitores onde eles estão e passa de um para o outro pela borda que os une. No `hyprland.conf`,
+  sem essa regra, ele pode sumir ao passar para o outro monitor (o log avisa).
 - O tempo ocioso vem do protocolo **ext-idle-notify** do Wayland, que só diz "parou" e "voltou".
 - O Hyprland não deixa um programa ouvir o teclado dos outros (o pynput não funciona lá): o pânico é um bind
   do próprio Hyprland que chama o **controle local**, um socket em `$XDG_RUNTIME_DIR/pestinha.sock`
@@ -349,8 +355,10 @@ As imagens e os textos de `assets/` não estão cobertos por esta licença
 - No macOS, o pet precisa da permissão de Acessibilidade para o atalho Ctrl+Alt+Shift+B funcionar.
 - No Linux com Wayland fora do Hyprland, o pet não enxerga janelas nem o tempo ocioso, e o atalho global
   não funciona.
-- No Hyprland, com escala ou vários monitores, a conversão de coordenadas para o XWayland segue a regra do
-  Hyprland, mas ainda não foi testada numa máquina real.
+- No Hyprland, vários monitores foram conferidos no 0.57 (config em Lua), com escala 1. Com escala acima de 1
+  e `force_zero_scaling`, o pet usa a escala do primeiro monitor também nos outros (fica do mesmo tamanho
+  em pixels nos dois). No `hyprland.conf` (0.56 ou mais antigo), com mais de um monitor, ele pode sumir
+  ao passar de um para o outro.
 - Pouco testado com escala de tela acima de 100% e com vários monitores. A tela cheia num monitor esconde o
   pet em todos.
 - Jogos em janela sem borda podem não ser detectados como tela cheia.

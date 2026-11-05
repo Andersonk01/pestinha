@@ -45,3 +45,28 @@ def test_esconder_o_bryan_esconde_o_painel(pet_app):
     pet_app.floats.open("greve")
     pet_app.floats.sync(False, False)
     assert not pet_app.floats.window("greve").isVisible()
+
+
+# ------------------------------------------------------------------ telas que o Qt vê noutro lugar
+
+
+def test_geometria_das_telas_vem_do_sistema_quando_ele_informa(pet_app, monkeypatch):
+    from pestinha import plataforma
+    from PySide6.QtGui import QGuiApplication
+    tela = QGuiApplication.screens()[0]
+    dpr = tela.devicePixelRatio() or 1.0
+    monkeypatch.setattr(plataforma, "geometrias", lambda: {tela.name(): (-1920, 0, 0, 1080)})
+    monkeypatch.setattr(plataforma, "areas_uteis", lambda: {tela.name(): (-1920, 36, 0, 1080)})
+    assert pet_app.screen_geometries()[0] == tuple(v / dpr for v in (-1920, 0, 0, 1080))
+    assert pet_app.screen_bounds()[0] == tuple(v / dpr for v in (-1920, 36, 0, 1080))
+    assert pet_app._telas()[0] == (-1920, 0, 1920 / dpr, 1080 / dpr, dpr)
+    monkeypatch.setattr(plataforma, "geometrias", dict)
+    g = tela.geometry()
+    assert pet_app.screen_geometries()[0] == (g.x(), g.y(), g.x() + g.width(), g.y() + g.height())
+
+
+def test_painel_salvo_num_monitor_que_o_qt_nao_ve_continua_la():
+    from pestinha.world.arrastavel import posicao_acessivel
+    areas = [(0, 36, 1920, 1080), (-1920, 36, 0, 1080)]          # o HDMI à esquerda, como o pet o vê
+    assert posicao_acessivel((-800, 900), (1700, 900), (150, 110), areas) == (-800, 900)
+    assert posicao_acessivel((-5000, 900), (1700, 900), (150, 110), areas) == (1700, 900)

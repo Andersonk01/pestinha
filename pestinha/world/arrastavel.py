@@ -34,8 +34,11 @@ def save_position(path, key, x, y):
         log(f"[painel] não salvou a posição: {error}")
 
 
-def posicao_acessivel(salva, padrao, tamanho):
-        """A posição salva se for válida e cair numa tela atual; senão o padrão; senão o canto da tela."""
+def posicao_acessivel(salva, padrao, tamanho, areas=None):
+        """
+        A posição salva se for válida e cair numa tela atual; senão o padrão; senão o canto da tela.
+        areas: (l, t, r, b) das telas, como o app as vê (no Hyprland não são as do Qt).
+        """
         candidatos = []
         try:
             x, y = salva
@@ -43,7 +46,10 @@ def posicao_acessivel(salva, padrao, tamanho):
         except (TypeError, ValueError):
             pass                                  # entrada inválida: ignora
         candidatos.append((padrao[0], padrao[1]))
-        telas = [s.availableGeometry() for s in QGuiApplication.screens()]
+        if areas:
+            telas = [QRect(int(l), int(t), int(r - l), int(b - t)) for l, t, r, b in areas]
+        else:
+            telas = [s.availableGeometry() for s in QGuiApplication.screens()]
         for x, y in candidatos:
             retangulo = QRect(int(x), int(y), tamanho[0], tamanho[1])
             if any(t.intersects(retangulo) for t in telas):
@@ -65,7 +71,8 @@ class FloatingWidget(QWidget):
         self.setMinimumSize(*minimum)
         self._grab = None
         saved = load_positions(app.paths.panels).get(key)
-        self.move(*posicao_acessivel(saved, default_pos, size))
+        areas = app.screen_bounds() if hasattr(app, "screen_bounds") else None
+        self.move(*posicao_acessivel(saved, default_pos, size, areas))
 
     def showEvent(self, event):
         """Ao aparecer, não rouba o foco do programa que você está usando."""

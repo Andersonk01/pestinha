@@ -18,6 +18,7 @@ Opcionais (quem não tem fica com o padrão do Qt):
     preparar_qt()                antes do QApplication (o Hyprland escolhe o XWayland)
     posicao_cursor()             cursor em pixels físicos, ou None para usar o do Qt
     areas_uteis()                {nome da tela: (l, t, r, b)} sem as barras, ou {} para usar o do Qt
+    geometrias()                 {nome da tela: (l, t, r, b)} da tela inteira, ou {} para usar o do Qt
     CLASSE_DAS_JANELAS           nome do programa para o sistema (WM_CLASS), ou ""
     TITULO_DAS_JANELAS           começo do título das janelinhas do pet (regras do compositor), ou ""
     trazer_para_frente(titulo)   põe a janela por cima quando o raise() do Qt não basta
@@ -62,6 +63,7 @@ iniciar_atalho = _backend.iniciar_atalho
 preparar_qt = getattr(_backend, "preparar_qt", lambda: None)
 posicao_cursor = getattr(_backend, "posicao_cursor", lambda: None)
 areas_uteis = getattr(_backend, "areas_uteis", dict)
+geometrias = getattr(_backend, "geometrias", dict)
 CLASSE_DAS_JANELAS = getattr(_backend, "CLASSE_DAS_JANELAS", "")
 TITULO_DAS_JANELAS = getattr(_backend, "TITULO_DAS_JANELAS", "")
 trazer_para_frente = getattr(_backend, "trazer_para_frente", lambda titulo: False)
