@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## Instalação no Hyprland explicada
+
+- O README mostra como baixar este fork (branch `anderson`) e instalar num ambiente virtual.
+- Passo a passo do Hyprland: a regra das janelas, o atalho de pânico e a abertura ao entrar na sessão,
+  em Lua (0.55 ou mais novo, conferido no 0.57) e no `hyprland.conf` (0.53 a 0.56), e como religar depois
+  do pânico.
+
 ## Idioma do sistema (português ou inglês)
 
 - O pet fala o idioma do sistema: português num sistema em português, inglês em qualquer outro.

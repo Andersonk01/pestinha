@@ -64,19 +64,32 @@ fica salvo localmente e muda o jeito dele com o tempo.
 ## Requisitos
 
 - Windows 10 ou 11, macOS (Quartz/pyobjc), Linux com X11 ou Linux com Hyprland (Wayland, ver abaixo).
-- Python 3.11 ou mais novo.
-- No Linux, para as janelas e o tempo ocioso: `xdotool`, `wmctrl` e `xprintidle`. Sem eles, o pet continua
-  andando, mas não enxerga as janelas.
+- Python 3.11 ou mais novo, e o `git` para baixar.
+- No Linux com X11, para as janelas e o tempo ocioso: `xdotool`, `wmctrl` e `xprintidle`. Sem eles, o pet
+  continua andando, mas não enxerga as janelas.
+- No Hyprland: o 0.55 ou mais novo com a config em Lua (testado no 0.57), ou do 0.53 ao 0.56 com o
+  `hyprland.conf`, e o XWayland ligado (já vem ligado). Lá, `xdotool`, `wmctrl` e `xprintidle` não são
+  usados.
 - Cerca de 70 MB de RAM com ele rodando.
 
 ## Instalação e uso
 
+Este é o fork [Andersonk01/pestinha](https://github.com/Andersonk01/pestinha), que traz o suporte ao Hyprland
+no branch `anderson` (o `main` é igual ao projeto original). Baixe o branch e instale as dependências num
+ambiente virtual (o Arch e outras distribuições não deixam o `pip` instalar no Python do sistema):
+
 ```bash
-pip install -r requirements.txt
+git clone -b anderson https://github.com/Andersonk01/pestinha.git
+cd pestinha
+python -m venv .venv
+.venv/bin/pip install -r requirements.txt
 ```
 ```bash
-python main.py
+.venv/bin/python main.py
 ```
+
+No Windows, os mesmos comandos usam `.venv\Scripts\pip` e `.venv\Scripts\python`. Para atualizar depois,
+`git pull` na pasta e, se o `requirements.txt` mudou, o `pip install` de novo.
 
 Na primeira vez, um passo a passo explica o que ele vê e não vê, e depois abre a tela de permissões. Depois
 de clicar em **Começar**, as próximas aberturas vão direto para o pet. A tela volta a aparecer se o pânico
@@ -91,8 +104,68 @@ se marca **Abrir o Pestinha ao entrar no Windows**. Só uma cópia abre por vez.
 
 ### Linux com Hyprland
 
-No Wayland, um programa não pode posicionar as próprias janelas e os comandos do X11 não enxergam as outras.
-Dentro de uma sessão do Hyprland, o Pestinha usa um backend próprio (`pestinha/plataforma/hyprland.py`):
+Dentro de uma sessão do Hyprland, o pet usa sozinho o backend do Hyprland. Falta só a config do Hyprland:
+
+1. Instale como acima. Nos exemplos, troque `/caminho/do/pestinha` pela pasta do clone (por exemplo
+   `/home/voce/pestinha`).
+2. Na config do Hyprland, acrescente a regra das janelas do pet (flutuam em todas as áreas de trabalho, sem
+   borda, sombra, blur nem animação, e nunca pegam o foco), o atalho de pânico e, se quiser, a abertura ao
+   entrar na sessão. O Hyprland relê a config quando você salva.
+3. Abra com `/caminho/do/pestinha/.venv/bin/python /caminho/do/pestinha/main.py` (ou saia e entre de novo
+   na sessão, com a abertura automática). Na primeira vez aparecem as boas-vindas e as permissões.
+
+**Hyprland 0.55 ou mais novo, config em Lua** (`~/.config/hypr/hyprland.lua`). Conferido com
+`Hyprland --verify-config` no 0.57:
+
+```lua
+hl.window_rule({
+    name  = "pestinha-janelas",
+    match = { class = "^pestinha$", title = "^pestinha:janela(:.*)?$" },
+    float = true, pin = true, no_focus = true, no_initial_focus = true,
+    border_size = 0, rounding = 0, no_shadow = true, no_blur = true, no_anim = true, no_dim = true,
+})
+hl.bind("CTRL + ALT + SHIFT + B", hl.dsp.exec_cmd("python3 /caminho/do/pestinha/ferramentas/pestinha_ctl.py panico"))
+-- abre o pet ao entrar na sessão (opcional)
+hl.on("hyprland.start", function()
+    hl.exec_cmd("/caminho/do/pestinha/.venv/bin/python /caminho/do/pestinha/main.py")
+end)
+```
+
+**Hyprland 0.53 a 0.56, `hyprland.conf`** (sintaxe da wiki do Hyprland 0.54; não testada aqui, porque o 0.57
+só lê Lua):
+
+```ini
+windowrule {
+    name = pestinha-janelas
+    match:class = ^pestinha$
+    match:title = ^pestinha:janela(:.*)?$
+    float = on
+    pin = on
+    no_focus = on
+    no_initial_focus = on
+    border_size = 0
+    rounding = 0
+    no_shadow = on
+    no_blur = on
+    no_anim = on
+    no_dim = on
+}
+bind = CTRL ALT SHIFT, B, exec, python3 /caminho/do/pestinha/ferramentas/pestinha_ctl.py panico
+# abre o pet ao entrar na sessão (opcional)
+exec-once = /caminho/do/pestinha/.venv/bin/python /caminho/do/pestinha/main.py
+```
+
+Antes do 0.53, as regras de janela tinham outra sintaxe (`windowrulev2`); os efeitos são os mesmos e o pet
+ainda funciona, mas a regra precisa ser adaptada.
+
+Sem o atalho na config, o pet avisa ao abrir. Depois de um pânico, ele volta com
+`python3 /caminho/do/pestinha/ferramentas/pestinha_ctl.py religar`; `pestinha_ctl.py -h` lista os outros
+comandos (status, permissões, configurações, pausar, esconder, sair). No [Ryoku](https://github.com/Andersonk01/ryoku)
+(branch `anderson`), nada disso é preciso: a regra, o atalho e a abertura já vêm prontos, e o pet se liga
+e configura em Hub > Desktop > Pestinha.
+
+Como funciona: no Wayland, um programa não pode posicionar as próprias janelas e os comandos do X11 não
+enxergam as outras, então o Pestinha usa um backend próprio (`pestinha/plataforma/hyprland.py`):
 
 - As janelas do pet rodam pelo **XWayland**, onde podem andar pela tela. Os títulos delas começam com
   `pestinha:janela` (`pestinha:janela:notebook`...), para as regras de janela do Hyprland as acharem; o
@@ -105,18 +178,6 @@ Dentro de uma sessão do Hyprland, o Pestinha usa um backend próprio (`pestinha
   que só o seu usuário alcança. O `ferramentas/pestinha_ctl.py` fala com ele (status, perms, panico,
   religar, configuracoes, pausar, esconder, sair).
 - `PESTINHA_PLATAFORMA=x11` volta ao backend do X11; `PESTINHA_QPA=wayland` tira o XWayland (o pet não anda).
-
-Na config do Hyprland (Lua; no hyprlang é o mesmo com `windowrule`):
-
-```lua
-hl.window_rule({
-    name  = "pestinha-janelas",
-    match = { class = "^pestinha$", title = "^pestinha:janela(:.*)?$" },
-    float = true, pin = true, no_focus = true, no_initial_focus = true,
-    border_size = 0, rounding = 0, no_shadow = true, no_blur = true, no_anim = true, no_dim = true,
-})
-hl.bind("CTRL + ALT + SHIFT + B", hl.dsp.exec_cmd("python3 /caminho/do/pestinha/ferramentas/pestinha_ctl.py panico"))
-```
 
 `python main.py --pet jorge` troca o personagem antes de abrir.
 
@@ -133,7 +194,7 @@ hl.bind("CTRL + ALT + SHIFT + B", hl.dsp.exec_cmd("python3 /caminho/do/pestinha/
 ### Pânico
 
 `Ctrl + Alt + Shift + B` desliga tudo na hora, e ele continua desligado até você religar em
-Configurações.
+Configurações (no Hyprland, com `ferramentas/pestinha_ctl.py religar` ou pelo Hub do Ryoku).
 
 ### Modo teste
 
